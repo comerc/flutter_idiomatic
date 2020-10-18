@@ -1,10 +1,8 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_firebase_login/authentication/authentication.dart';
 import 'package:formz/formz.dart';
-
-part 'sign_up_state.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit(this._authenticationRepository)
@@ -41,5 +39,32 @@ class SignUpCubit extends Cubit<SignUpState> {
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
     }
+  }
+}
+
+class SignUpState extends Equatable {
+  const SignUpState({
+    this.email = const Email.pure(),
+    this.password = const Password.pure(),
+    this.status = FormzStatus.pure,
+  });
+
+  final Email email;
+  final Password password;
+  final FormzStatus status;
+
+  @override
+  List<Object> get props => [email, password, status];
+
+  SignUpState copyWith({
+    Email email,
+    Password password,
+    FormzStatus status,
+  }) {
+    return SignUpState(
+      email: email ?? this.email,
+      password: password ?? this.password,
+      status: status ?? this.status,
+    );
   }
 }

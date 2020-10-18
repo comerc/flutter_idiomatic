@@ -1,11 +1,33 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_login/login/login.dart';
-import 'package:flutter_firebase_login/sign_up/sign_up.dart';
+import 'package:authentication_repository/authentication_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
+import 'package:flutter_firebase_login/import.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginScreen extends StatelessWidget {
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => LoginScreen());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Login')),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: BlocProvider(
+          create: (_) => LoginCubit(
+            context.repository<AuthenticationRepository>(),
+          ),
+          child: _LoginForm(),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
@@ -139,7 +161,7 @@ class _SignUpButton extends StatelessWidget {
         'CREATE ACCOUNT',
         style: TextStyle(color: theme.primaryColor),
       ),
-      onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
+      onPressed: () => Navigator.of(context).push<void>(SignUpScreen.route()),
     );
   }
 }

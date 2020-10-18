@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_firebase_login/authentication/authentication.dart';
-import 'package:flutter_firebase_login/home/home.dart';
+import 'package:flutter_firebase_login/import.dart';
 
-class HomePage extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => HomePage());
+    return MaterialPageRoute<void>(builder: (_) => HomeScreen());
   }
 
   @override
@@ -17,7 +16,7 @@ class HomePage extends StatelessWidget {
         title: const Text('Home'),
         actions: <Widget>[
           IconButton(
-            key: const Key('homePage_logout_iconButton'),
+            key: const Key('homeScreen_logout_iconButton'),
             icon: const Icon(Icons.exit_to_app),
             onPressed: () => context
                 .bloc<AuthenticationBloc>()
