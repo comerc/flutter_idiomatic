@@ -1,4 +1,3 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -19,16 +18,16 @@ class SignUpScreen extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider<SignUpCubit>(
           create: (_) => SignUpCubit(
-            context.repository<AuthenticationRepository>(),
+            getRepository<AuthenticationRepository>(context),
           ),
-          child: SignUpForm(),
+          child: _SignUpForm(),
         ),
       ),
     );
   }
 }
 
-class SignUpForm extends StatelessWidget {
+class _SignUpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpCubit, SignUpState>(
@@ -66,7 +65,8 @@ class _EmailInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('signUpForm_emailInput_textField'),
-          onChanged: (email) => context.bloc<SignUpCubit>().emailChanged(email),
+          onChanged: (email) =>
+              getBloc<SignUpCubit>(context).emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'email',
@@ -88,7 +88,7 @@ class _PasswordInput extends StatelessWidget {
         return TextField(
           key: const Key('signUpForm_passwordInput_textField'),
           onChanged: (password) =>
-              context.bloc<SignUpCubit>().passwordChanged(password),
+              getBloc<SignUpCubit>(context).passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',
@@ -117,7 +117,7 @@ class _SignUpButton extends StatelessWidget {
                 ),
                 color: Colors.orangeAccent,
                 onPressed: state.status.isValidated
-                    ? () => context.bloc<SignUpCubit>().signUpFormSubmitted()
+                    ? () => getBloc<SignUpCubit>(context).signUpFormSubmitted()
                     : null,
               );
       },

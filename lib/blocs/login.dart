@@ -1,4 +1,3 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
@@ -12,7 +11,7 @@ class LoginCubit extends Cubit<LoginState> {
   final AuthenticationRepository _authenticationRepository;
 
   void emailChanged(String value) {
-    final email = Email.dirty(value);
+    final email = EmailModel.dirty(value);
     emit(state.copyWith(
       email: email,
       status: Formz.validate([email, state.password]),
@@ -20,7 +19,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void passwordChanged(String value) {
-    final password = Password.dirty(value);
+    final password = PasswordModel.dirty(value);
     emit(state.copyWith(
       password: password,
       status: Formz.validate([state.email, password]),
@@ -56,21 +55,21 @@ class LoginCubit extends Cubit<LoginState> {
 
 class LoginState extends Equatable {
   const LoginState({
-    this.email = const Email.pure(),
-    this.password = const Password.pure(),
+    this.email = const EmailModel.pure(),
+    this.password = const PasswordModel.pure(),
     this.status = FormzStatus.pure,
   });
 
-  final Email email;
-  final Password password;
+  final EmailModel email;
+  final PasswordModel password;
   final FormzStatus status;
 
   @override
   List<Object> get props => [email, password, status];
 
   LoginState copyWith({
-    Email email,
-    Password password,
+    EmailModel email,
+    PasswordModel password,
     FormzStatus status,
   }) {
     return LoginState(

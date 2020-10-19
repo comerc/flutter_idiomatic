@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,7 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final user = context.bloc<AuthenticationBloc>().state.user;
+    final user = getBloc<AuthenticationCubit>(context).state.user;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -18,9 +17,8 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             key: const Key('homeScreen_logout_iconButton'),
             icon: const Icon(Icons.exit_to_app),
-            onPressed: () => context
-                .bloc<AuthenticationBloc>()
-                .add(AuthenticationLogoutRequested()),
+            onPressed: () =>
+                getBloc<AuthenticationCubit>(context).requestLogout(),
           )
         ],
       ),

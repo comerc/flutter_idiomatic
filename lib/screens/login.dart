@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
@@ -18,7 +17,7 @@ class LoginScreen extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
           create: (_) => LoginCubit(
-            context.repository<AuthenticationRepository>(),
+            getRepository<AuthenticationRepository>(context),
           ),
           child: _LoginForm(),
         ),
@@ -74,7 +73,8 @@ class _EmailInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_emailInput_textField'),
-          onChanged: (email) => context.bloc<LoginCubit>().emailChanged(email),
+          onChanged: (email) =>
+              getBloc<LoginCubit>(context).emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'email',
@@ -96,7 +96,7 @@ class _PasswordInput extends StatelessWidget {
         return TextField(
           key: const Key('loginForm_passwordInput_textField'),
           onChanged: (password) =>
-              context.bloc<LoginCubit>().passwordChanged(password),
+              getBloc<LoginCubit>(context).passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',
@@ -125,7 +125,7 @@ class _LoginButton extends StatelessWidget {
                 ),
                 color: const Color(0xFFFFD600),
                 onPressed: state.status.isValidated
-                    ? () => context.bloc<LoginCubit>().logInWithCredentials()
+                    ? () => getBloc<LoginCubit>(context).logInWithCredentials()
                     : null,
               );
       },
@@ -146,7 +146,7 @@ class _GoogleLoginButton extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
       color: theme.accentColor,
-      onPressed: () => context.bloc<LoginCubit>().logInWithGoogle(),
+      onPressed: () => getBloc<LoginCubit>(context).logInWithGoogle(),
     );
   }
 }
@@ -161,7 +161,7 @@ class _SignUpButton extends StatelessWidget {
         'CREATE ACCOUNT',
         style: TextStyle(color: theme.primaryColor),
       ),
-      onPressed: () => Navigator.of(context).push<void>(SignUpScreen.route()),
+      onPressed: () => navigator.push<void>(SignUpScreen.route()),
     );
   }
 }

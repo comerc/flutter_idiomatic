@@ -3,14 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   EquatableConfig.stringify = kDebugMode;
-  Bloc.observer = SimpleBlocObserver();
+  // Bloc.observer = SimpleBlocObserver();
   runApp(App(authenticationRepository: AuthenticationRepository()));
 }
 
@@ -28,7 +27,7 @@ class App extends StatelessWidget {
     return RepositoryProvider.value(
       value: authenticationRepository,
       child: BlocProvider(
-        create: (_) => AuthenticationBloc(
+        create: (_) => AuthenticationCubit(
           authenticationRepository: authenticationRepository,
         ),
         child: AppView(),
@@ -37,40 +36,34 @@ class App extends StatelessWidget {
   }
 }
 
-class AppView extends StatefulWidget {
-  @override
-  _AppViewState createState() => _AppViewState();
-}
+final _navigatorKey = GlobalKey<NavigatorState>();
 
-class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
+NavigatorState get navigator => _navigatorKey.currentState;
 
-  NavigatorState get _navigator => _navigatorKey.currentState;
-
+class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: theme,
       navigatorKey: _navigatorKey,
-      builder: (context, child) {
-        return BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  HomeScreen.route(),
-                  (route) => false,
-                );
-                break;
-              case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  LoginScreen.route(),
-                  (route) => false,
-                );
-                break;
-              default:
-                break;
-            }
+      builder: (BuildContext context, Widget child) {
+        return BlocListener<AuthenticationCubit, AuthenticationState>(
+          listener: (BuildContext context, AuthenticationState state) {
+            final cases = {
+              AuthenticationStatus.authenticated: () =>
+                  navigator.pushAndRemoveUntil<void>(
+                    HomeScreen.route(),
+                    (Route route) => false,
+                  ),
+              AuthenticationStatus.unauthenticated: () =>
+                  navigator.pushAndRemoveUntil<void>(
+                    LoginScreen.route(),
+                    (Route route) => false,
+                  ),
+              AuthenticationStatus.unknown: () => null,
+            };
+            assert(cases.length == AuthenticationStatus.values.length);
+            cases[state.status]();
           },
           child: child,
         );
