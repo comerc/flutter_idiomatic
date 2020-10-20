@@ -7,7 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-// don't use async for main!
 void main() {
   // debugPaintSizeEnabled = true;
   // FlutterError.onError = (FlutterErrorDetails details) {
@@ -20,10 +19,8 @@ void main() {
   //     Zone.current.handleUncaughtError(details.exception, details.stack);
   //   }
   // };
-
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Future.delayed(Duration(seconds: 10));
     await Firebase.initializeApp();
     EquatableConfig.stringify = kDebugMode;
     // Bloc.observer = SimpleBlocObserver();
