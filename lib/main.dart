@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
@@ -5,12 +7,30 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  EquatableConfig.stringify = kDebugMode;
-  // Bloc.observer = SimpleBlocObserver();
-  runApp(App(authenticationRepository: AuthenticationRepository()));
+// don't use async for main!
+void main() {
+  // debugPaintSizeEnabled = true;
+  // FlutterError.onError = (FlutterErrorDetails details) {
+  //   if (kDebugMode) {
+  //     // In development mode, simply print to console.
+  //     FlutterError.dumpErrorToConsole(details);
+  //   } else {
+  //     // In production mode, report to the application zone to report to
+  //     // Sentry.
+  //     Zone.current.handleUncaughtError(details.exception, details.stack);
+  //   }
+  // };
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    EquatableConfig.stringify = kDebugMode;
+    // Bloc.observer = SimpleBlocObserver();
+    runApp(App(authenticationRepository: AuthenticationRepository()));
+  }, (error, stackTrace) {
+    // Whenever an error occurs, call the `_reportError` function. This sends
+    // Dart errors to the dev console or Sentry depending on the environment.
+    // _reportError(error, stackTrace);
+  });
 }
 
 class App extends StatelessWidget {
@@ -27,9 +47,7 @@ class App extends StatelessWidget {
     return RepositoryProvider.value(
       value: authenticationRepository,
       child: BlocProvider(
-        create: (_) => AuthenticationCubit(
-          authenticationRepository: authenticationRepository,
-        ),
+        create: (BuildContext context) => AuthenticationCubit(context),
         child: AppView(),
       ),
     );
