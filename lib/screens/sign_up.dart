@@ -29,7 +29,7 @@ class _SignUpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpCubit, SignUpState>(
-      listener: (context, state) {
+      listener: (BuildContext context, SignUpState state) {
         if (state.status.isSubmissionFailure) {
           Scaffold.of(context)
             ..hideCurrentSnackBar()
@@ -59,11 +59,12 @@ class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) => previous.email != current.email,
-      builder: (context, state) {
+      buildWhen: (SignUpState previous, SignUpState current) =>
+          previous.email != current.email,
+      builder: (BuildContext context, SignUpState state) {
         return TextField(
           key: const Key('signUpForm_emailInput_textField'),
-          onChanged: (email) =>
+          onChanged: (String email) =>
               getBloc<SignUpCubit>(context).emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
@@ -81,8 +82,9 @@ class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) => previous.password != current.password,
-      builder: (context, state) {
+      buildWhen: (SignUpState previous, SignUpState current) =>
+          previous.password != current.password,
+      builder: (BuildContext context, SignUpState state) {
         return TextField(
           key: const Key('signUpForm_passwordInput_textField'),
           onChanged: (password) =>
@@ -103,8 +105,9 @@ class _SignUpButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) => previous.status != current.status,
-      builder: (context, state) {
+      buildWhen: (SignUpState previous, SignUpState current) =>
+          previous.status != current.status,
+      builder: (BuildContext context, SignUpState state) {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : RaisedButton(
