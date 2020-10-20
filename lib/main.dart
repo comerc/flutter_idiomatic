@@ -20,12 +20,14 @@ void main() {
   //     Zone.current.handleUncaughtError(details.exception, details.stack);
   //   }
   // };
+
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await Future.delayed(Duration(seconds: 10));
     await Firebase.initializeApp();
     EquatableConfig.stringify = kDebugMode;
     // Bloc.observer = SimpleBlocObserver();
-    runApp(App(authenticationRepository: AuthenticationRepository()));
+    runApp(App());
   }, (error, stackTrace) {
     // Whenever an error occurs, call the `_reportError` function. This sends
     // Dart errors to the dev console or Sentry depending on the environment.
@@ -34,18 +36,10 @@ void main() {
 }
 
 class App extends StatelessWidget {
-  const App({
-    Key key,
-    @required this.authenticationRepository,
-  })  : assert(authenticationRepository != null),
-        super(key: key);
-
-  final AuthenticationRepository authenticationRepository;
-
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: authenticationRepository,
+      value: AuthenticationRepository(),
       child: BlocProvider(
         create: (BuildContext context) => AuthenticationCubit(context),
         child: AppView(),
