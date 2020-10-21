@@ -4,13 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:formz/formz.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-class LoginCubit extends Cubit<LoginState> {
+class LoginCubit<R extends AuthenticationRepository> extends Cubit<LoginState> {
   LoginCubit(BuildContext context)
-      : _authenticationRepository =
-            getRepository<AuthenticationRepository>(context),
+      : _authenticationRepository = getRepository<R>(context),
         super(const LoginState());
 
-  final AuthenticationRepository _authenticationRepository;
+  final R _authenticationRepository;
 
   void emailChanged(String value) {
     final email = EmailModel.dirty(value);
