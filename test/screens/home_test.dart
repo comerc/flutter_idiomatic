@@ -1,31 +1,29 @@
-import 'package:authentication_repository/authentication_repository.dart';
-import 'package:bloc_test/bloc_test.dart';
+// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_firebase_login/authentication/authentication.dart';
-import 'package:flutter_firebase_login/home/home.dart';
-import 'package:flutter_firebase_login/home/widgets/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 class MockAuthenticationBloc extends MockBloc<AuthenticationState>
-    implements AuthenticationBloc {}
+    implements AuthenticationCubit {}
 
 // ignore: must_be_immutable
-class MockUser extends Mock implements User {
+class MockUserModel extends Mock implements UserModel {
   @override
   String get email => 'test@gmail.com';
 }
 
 void main() {
-  const logoutButtonKey = Key('homePage_logout_iconButton');
-  group('HomePage', () {
-    AuthenticationBloc authenticationBloc;
-    User user;
+  const logoutButtonKey = Key('homeScreen_logout_iconButton');
+  group('HomeScreen', () {
+    AuthenticationCubit authenticationBloc;
+    UserModel user;
 
     setUp(() {
       authenticationBloc = MockAuthenticationBloc();
-      user = MockUser();
+      user = MockUserModel();
       when(authenticationBloc.state).thenReturn(
         AuthenticationState.authenticated(user),
       );
@@ -38,14 +36,12 @@ void main() {
           BlocProvider.value(
             value: authenticationBloc,
             child: MaterialApp(
-              home: HomePage(),
+              home: HomeScreen(),
             ),
           ),
         );
         await tester.tap(find.byKey(logoutButtonKey));
-        verify(
-          authenticationBloc.add(AuthenticationLogoutRequested()),
-        ).called(1);
+        verify(authenticationBloc.requestLogout()).called(1);
       });
     });
 
@@ -55,7 +51,7 @@ void main() {
           BlocProvider.value(
             value: authenticationBloc,
             child: MaterialApp(
-              home: HomePage(),
+              home: HomeScreen(),
             ),
           ),
         );
@@ -67,7 +63,7 @@ void main() {
           BlocProvider.value(
             value: authenticationBloc,
             child: MaterialApp(
-              home: HomePage(),
+              home: HomeScreen(),
             ),
           ),
         );
@@ -80,7 +76,7 @@ void main() {
           BlocProvider.value(
             value: authenticationBloc,
             child: MaterialApp(
-              home: HomePage(),
+              home: HomeScreen(),
             ),
           ),
         );

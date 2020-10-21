@@ -1,16 +1,12 @@
-import 'package:authentication_repository/authentication_repository.dart';
+// // ignore_for_file: prefer_const_constructors
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_firebase_login/app.dart';
-import 'package:flutter_firebase_login/authentication/authentication.dart';
-import 'package:flutter_firebase_login/home/home.dart';
-import 'package:flutter_firebase_login/login/login.dart';
-import 'package:flutter_firebase_login/splash/splash.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 // ignore: must_be_immutable
-class MockUser extends Mock implements User {
+class MockUser extends Mock implements UserModel {
   @override
   String get id => 'id';
 
@@ -24,8 +20,8 @@ class MockUser extends Mock implements User {
 class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
-class MockAuthenticationBloc extends MockBloc<AuthenticationState>
-    implements AuthenticationBloc {}
+class MockAuthenticationCubit extends MockBloc<AuthenticationState>
+    implements AuthenticationCubit {}
 
 void main() {
   group('App', () {
@@ -51,58 +47,58 @@ void main() {
   });
 
   group('AppView', () {
-    AuthenticationBloc authenticationBloc;
+    AuthenticationCubit authenticationCubit;
     AuthenticationRepository authenticationRepository;
 
     setUp(() {
-      authenticationBloc = MockAuthenticationBloc();
+      authenticationCubit = MockAuthenticationCubit();
       authenticationRepository = MockAuthenticationRepository();
     });
 
-    testWidgets('renders SplashPage by default', (tester) async {
+    testWidgets('renders SplashScreen by default', (tester) async {
       await tester.pumpWidget(
-        BlocProvider.value(value: authenticationBloc, child: AppView()),
+        BlocProvider.value(value: authenticationCubit, child: AppView()),
       );
       await tester.pumpAndSettle();
-      expect(find.byType(SplashPage), findsOneWidget);
+      expect(find.byType(SplashScreen), findsOneWidget);
     });
 
-    testWidgets('navigates to LoginPage when status is unauthenticated',
+    testWidgets('navigates to LoginScreen when status is unauthenticated',
         (tester) async {
       whenListen(
-        authenticationBloc,
+        authenticationCubit,
         Stream.value(const AuthenticationState.unauthenticated()),
       );
       await tester.pumpWidget(
         RepositoryProvider.value(
           value: authenticationRepository,
           child: BlocProvider.value(
-            value: authenticationBloc,
+            value: authenticationCubit,
             child: AppView(),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byType(LoginPage), findsOneWidget);
+      expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('navigates to HomePage when status is authenticated',
+    testWidgets('navigates to HomeScreen when status is authenticated',
         (tester) async {
       whenListen(
-        authenticationBloc,
+        authenticationCubit,
         Stream.value(AuthenticationState.authenticated(MockUser())),
       );
       await tester.pumpWidget(
         RepositoryProvider.value(
           value: authenticationRepository,
           child: BlocProvider.value(
-            value: authenticationBloc,
+            value: authenticationCubit,
             child: AppView(),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byType(HomePage), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
     });
   });
 }

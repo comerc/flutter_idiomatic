@@ -1,24 +1,38 @@
-import 'package:authentication_repository/authentication_repository.dart';
-import 'package:bloc_test/bloc_test.dart';
+// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_firebase_login/authentication/authentication.dart';
-import 'package:flutter_firebase_login/login/login.dart';
-import 'package:flutter_firebase_login/sign_up/sign_up.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:formz/formz.dart';
 import 'package:mockito/mockito.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
 class MockLoginCubit extends MockBloc<LoginState> implements LoginCubit {}
 
-class MockEmail extends Mock implements Email {}
+class MockEmail extends Mock implements EmailModel {}
 
-class MockPassword extends Mock implements Password {}
+class MockPassword extends Mock implements PasswordModel {}
 
 void main() {
+  group('LoginScreen', () {
+    test('has a route', () {
+      expect(LoginScreen.route(), isA<MaterialPageRoute>());
+    });
+
+    testWidgets('renders a LoginForm', (tester) async {
+      await tester.pumpWidget(
+        RepositoryProvider<AuthenticationRepository>.value(
+          value: MockAuthenticationRepository(),
+          child: MaterialApp(home: LoginScreen()),
+        ),
+      );
+      expect(find.byType(LoginForm), findsOneWidget);
+    });
+  });
+
   const loginButtonKey = Key('loginForm_continue_raisedButton');
   const signInWithGoogleButtonKey = Key('loginForm_googleLogin_raisedButton');
   const emailInputKey = Key('loginForm_emailInput_textField');
@@ -221,12 +235,13 @@ void main() {
     });
 
     group('navigates', () {
-      testWidgets('to SignUpPage when Create Account is pressed',
+      testWidgets('to SignUpScreen when Create Account is pressed',
           (tester) async {
         await tester.pumpWidget(
           RepositoryProvider<AuthenticationRepository>(
             create: (_) => MockAuthenticationRepository(),
             child: MaterialApp(
+              navigatorKey: navigatorKey,
               home: Scaffold(
                 body: BlocProvider.value(
                   value: loginCubit,
@@ -238,7 +253,7 @@ void main() {
         );
         await tester.tap(find.byKey(createAccountButtonKey));
         await tester.pumpAndSettle();
-        expect(find.byType(SignUpPage), findsOneWidget);
+        expect(find.byType(SignUpScreen), findsOneWidget);
       });
     });
   });

@@ -17,14 +17,14 @@ class LoginScreen extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
           create: (BuildContext context) => LoginCubit(context),
-          child: _LoginForm(),
+          child: LoginForm(),
         ),
       ),
     );
   }
 }
 
-class _LoginForm extends StatelessWidget {
+class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(

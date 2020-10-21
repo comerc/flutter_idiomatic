@@ -1,25 +1,40 @@
-import 'package:authentication_repository/authentication_repository.dart';
-import 'package:bloc_test/bloc_test.dart';
+// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_firebase_login/authentication/authentication.dart';
-import 'package:flutter_firebase_login/sign_up/sign_up.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:formz/formz.dart';
 import 'package:mockito/mockito.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
 class MockSignUpCubit extends MockBloc<SignUpState> implements SignUpCubit {}
 
-class MockEmail extends Mock implements Email {}
+class MockEmail extends Mock implements EmailModel {}
 
-class MockPassword extends Mock implements Password {}
+class MockPassword extends Mock implements PasswordModel {}
 
-class MockConfirmedPassword extends Mock implements ConfirmedPassword {}
+class MockConfirmedPassword extends Mock implements ConfirmedPasswordModel {}
 
 void main() {
+  group('SignUpScreen', () {
+    test('has a route', () {
+      expect(SignUpScreen.route(), isA<MaterialPageRoute>());
+    });
+
+    testWidgets('renders a SignUpForm', (tester) async {
+      await tester.pumpWidget(
+        RepositoryProvider<AuthenticationRepository>(
+          create: (_) => MockAuthenticationRepository(),
+          child: MaterialApp(home: SignUpScreen()),
+        ),
+      );
+      expect(find.byType(SignUpForm), findsOneWidget);
+    });
+  });
+
   const signUpButtonKey = Key('signUpForm_continue_raisedButton');
   const emailInputKey = Key('signUpForm_emailInput_textField');
   const passwordInputKey = Key('signUpForm_passwordInput_textField');

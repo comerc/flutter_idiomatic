@@ -24,7 +24,7 @@ void main() {
     await Firebase.initializeApp();
     EquatableConfig.stringify = kDebugMode;
     // Bloc.observer = SimpleBlocObserver();
-    runApp(App());
+    runApp(App(authenticationRepository: AuthenticationRepository()));
   }, (error, stackTrace) {
     // Whenever an error occurs, call the `_reportError` function. This sends
     // Dart errors to the dev console or Sentry depending on the environment.
@@ -33,10 +33,18 @@ void main() {
 }
 
 class App extends StatelessWidget {
+  const App({
+    Key key,
+    @required this.authenticationRepository,
+  })  : assert(authenticationRepository != null),
+        super(key: key);
+
+  final AuthenticationRepository authenticationRepository;
+
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: AuthenticationRepository(),
+      value: authenticationRepository,
       child: BlocProvider(
         create: (BuildContext context) => AuthenticationCubit(context),
         child: AppView(),
@@ -45,31 +53,33 @@ class App extends StatelessWidget {
   }
 }
 
-final _navigatorKey = GlobalKey<NavigatorState>();
+final navigatorKey = GlobalKey<NavigatorState>();
 
-NavigatorState get navigator => _navigatorKey.currentState;
+NavigatorState get navigator => navigatorKey.currentState;
 
 class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: theme,
-      navigatorKey: _navigatorKey,
+      navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget child) {
         return BlocListener<AuthenticationCubit, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
             final cases = {
-              AuthenticationStatus.authenticated: () =>
-                  navigator.pushAndRemoveUntil<void>(
-                    HomeScreen.route(),
-                    (Route route) => false,
-                  ),
-              AuthenticationStatus.unauthenticated: () =>
-                  navigator.pushAndRemoveUntil<void>(
-                    LoginScreen.route(),
-                    (Route route) => false,
-                  ),
-              AuthenticationStatus.unknown: () => null,
+              AuthenticationStatus.authenticated: () {
+                navigator.pushAndRemoveUntil<void>(
+                  HomeScreen.route(),
+                  (Route route) => false,
+                );
+              },
+              AuthenticationStatus.unauthenticated: () {
+                navigator.pushAndRemoveUntil<void>(
+                  LoginScreen.route(),
+                  (Route route) => false,
+                );
+              },
+              AuthenticationStatus.unknown: () {},
             };
             assert(cases.length == AuthenticationStatus.values.length);
             cases[state.status]();

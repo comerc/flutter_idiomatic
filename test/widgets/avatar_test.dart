@@ -1,9 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_login/home/home.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 void main() {
   const imageUrl = 'https://www.fnordware.com/superpng/pngtest16rgba.png';
