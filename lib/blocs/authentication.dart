@@ -24,8 +24,6 @@ class AuthenticationCubit<R extends AuthenticationRepository>
   }
 
   void changeUser(UserModel user) {
-    // TODO: почему при старте срабатывает два раза?
-    print('changeUser');
     final result = user == UserModel.empty
         ? const AuthenticationState.unauthenticated()
         : AuthenticationState.authenticated(user);
