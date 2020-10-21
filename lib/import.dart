@@ -5,6 +5,7 @@ export 'common/helpers.dart';
 export 'common/simple_bloc_observer.dart';
 export 'common/theme.dart';
 export 'main.dart';
+export 'models/confirmed_password.dart';
 export 'models/email.dart';
 export 'models/password.dart';
 export 'models/user.dart';
