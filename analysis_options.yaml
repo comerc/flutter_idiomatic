@@ -36,6 +36,5 @@ analyzer:
     - plugins/**
     - pubspec.lock
     - pubspec.yaml
-    - test/**
     - test_driver/**
     - web/**
