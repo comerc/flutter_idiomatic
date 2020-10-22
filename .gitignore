@@ -9,6 +9,7 @@
 .history
 .svn/
 output.mp4
+coverage/
 
 # IntelliJ related
 *.iml
