@@ -1,20 +1,18 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-class AuthenticationCubit<R extends AuthenticationRepository>
-    extends Cubit<AuthenticationState> {
-  AuthenticationCubit(BuildContext context)
-      : _authenticationRepository = getRepository<R>(context),
+class AuthenticationCubit extends Cubit<AuthenticationState> {
+  AuthenticationCubit(this.authenticationRepository)
+      : assert(authenticationRepository != null),
         super(const AuthenticationState.unknown()) {
-    _userSubscription = _authenticationRepository.user.listen(
+    _userSubscription = authenticationRepository.user.listen(
       (UserModel user) => changeUser(user),
     );
   }
 
-  final R _authenticationRepository;
+  final AuthenticationRepository authenticationRepository;
   StreamSubscription<UserModel> _userSubscription;
 
   @override
@@ -31,7 +29,7 @@ class AuthenticationCubit<R extends AuthenticationRepository>
   }
 
   void requestLogout() {
-    _authenticationRepository.logOut();
+    authenticationRepository.logOut();
   }
 }
 
