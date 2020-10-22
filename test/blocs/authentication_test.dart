@@ -1,144 +1,111 @@
-void main() {}
+// ignore_for_file: prefer_const_constructors
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:flutter_firebase_login/import.dart';
 
-// // ignore_for_file: prefer_const_constructors
-// import 'package:authentication_repository/authentication_repository.dart';
-// import 'package:bloc_test/bloc_test.dart';
-// import 'package:flutter_firebase_login/authentication/authentication.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:mockito/mockito.dart';
+class MockAuthenticationRepository extends Mock
+    implements AuthenticationRepository {}
 
-// class MockAuthenticationRepository extends Mock
-//     implements AuthenticationRepository {}
+// ignore: must_be_immutable
+class MockUserModel extends Mock implements UserModel {}
 
-// // ignore: must_be_immutable
-// class MockUser extends Mock implements User {}
+void main() {
+  final user = MockUserModel();
+  AuthenticationRepository authenticationRepository;
 
-// void main() {
-//   final user = MockUser();
-//   AuthenticationRepository authenticationRepository;
+  setUp(() {
+    authenticationRepository = MockAuthenticationRepository();
+    when(authenticationRepository.user).thenAnswer((_) => const Stream.empty());
+  });
 
-//   setUp(() {
-//     authenticationRepository = MockAuthenticationRepository();
-//     when(authenticationRepository.user).thenAnswer((_) => const Stream.empty());
-//   });
+  group('AuthenticationState', () {
+    group('AuthenticationState.unknown', () {
+      test('supports value comparisons', () {
+        expect(
+          AuthenticationState.unknown(),
+          AuthenticationState.unknown(),
+        );
+      });
+    });
 
-//   group('AuthenticationState', () {
-//     group('AuthenticationState.unknown', () {
-//       test('supports value comparisons', () {
-//         expect(
-//           AuthenticationState.unknown(),
-//           AuthenticationState.unknown(),
-//         );
-//       });
-//     });
+    group('AuthenticationState.authenticated', () {
+      test('supports value comparisons', () {
+        final user = MockUserModel();
+        expect(
+          AuthenticationState.authenticated(user),
+          AuthenticationState.authenticated(user),
+        );
+      });
+    });
 
-//     group('AuthenticationState.authenticated', () {
-//       test('supports value comparisons', () {
-//         final user = MockUser();
-//         expect(
-//           AuthenticationState.authenticated(user),
-//           AuthenticationState.authenticated(user),
-//         );
-//       });
-//     });
+    group('AuthenticationState.unauthenticated', () {
+      test('supports value comparisons', () {
+        expect(
+          AuthenticationState.unauthenticated(),
+          AuthenticationState.unauthenticated(),
+        );
+      });
+    });
+  });
 
-//     group('AuthenticationState.unauthenticated', () {
-//       test('supports value comparisons', () {
-//         expect(
-//           AuthenticationState.unauthenticated(),
-//           AuthenticationState.unauthenticated(),
-//         );
-//       });
-//     });
-//   });
+  group('AuthenticationCubit', () {
+    test('throws when authenticationRepository is null', () {
+      expect(
+        () => AuthenticationCubit(null),
+        throwsAssertionError,
+      );
+    });
 
-//   group('AuthenticationEvent', () {
-//     group('LoggedOut', () {
-//       test('supports value comparisons', () {
-//         expect(
-//           AuthenticationLogoutRequested(),
-//           AuthenticationLogoutRequested(),
-//         );
-//       });
-//     });
+    test('initial state is AuthenticationState.unknown', () {
+      final authenticationCubit = AuthenticationCubit(authenticationRepository);
+      expect(authenticationCubit.state, const AuthenticationState.unknown());
+      authenticationCubit.close();
+    });
 
-//     group('AuthenticationUserChanged', () {
-//       test('supports value comparisons', () {
-//         expect(
-//           AuthenticationUserChanged(null),
-//           AuthenticationUserChanged(null),
-//         );
-//       });
-//     });
-//   });
+    blocTest<AuthenticationCubit, AuthenticationState>(
+      'subscribes to user stream',
+      build: () {
+        when(authenticationRepository.user).thenAnswer(
+          (_) => Stream.value(user),
+        );
+        return AuthenticationCubit(authenticationRepository);
+      },
+      expect: <AuthenticationState>[
+        AuthenticationState.authenticated(user),
+      ],
+    );
 
-//   group('AuthenticationBloc', () {
-//     test('throws when authenticationRepository is null', () {
-//       expect(
-//         () => AuthenticationBloc(authenticationRepository: null),
-//         throwsAssertionError,
-//       );
-//     });
+    group('changeUser', () {
+      blocTest<AuthenticationCubit, AuthenticationState>(
+        'emits [authenticated] when user is not null',
+        build: () => AuthenticationCubit(authenticationRepository),
+        act: (bloc) => bloc.changeUser(user),
+        expect: <AuthenticationState>[
+          AuthenticationState.authenticated(user),
+        ],
+      );
 
-//     test('initial state is AuthenticationState.unknown', () {
-//       final authenticationBloc = AuthenticationBloc(
-//         authenticationRepository: authenticationRepository,
-//       );
-//       expect(authenticationBloc.state, const AuthenticationState.unknown());
-//       authenticationBloc.close();
-//     });
+      blocTest<AuthenticationCubit, AuthenticationState>(
+        'emits [unauthenticated] when user is empty',
+        build: () => AuthenticationCubit(authenticationRepository),
+        act: (bloc) => bloc.changeUser(UserModel.empty),
+        expect: const <AuthenticationState>[
+          AuthenticationState.unauthenticated(),
+        ],
+      );
+    });
 
-//     blocTest<AuthenticationBloc, AuthenticationState>(
-//       'subscribes to user stream',
-//       build: () {
-//         when(authenticationRepository.user).thenAnswer(
-//           (_) => Stream.value(user),
-//         );
-//         return AuthenticationBloc(
-//           authenticationRepository: authenticationRepository,
-//         );
-//       },
-//       expect: <AuthenticationState>[
-//         AuthenticationState.authenticated(user),
-//       ],
-//     );
-
-//     group('AuthenticationUserChanged', () {
-//       blocTest<AuthenticationBloc, AuthenticationState>(
-//         'emits [authenticated] when user is not null',
-//         build: () => AuthenticationBloc(
-//           authenticationRepository: authenticationRepository,
-//         ),
-//         act: (bloc) => bloc.add(AuthenticationUserChanged(user)),
-//         expect: <AuthenticationState>[
-//           AuthenticationState.authenticated(user),
-//         ],
-//       );
-
-//       blocTest<AuthenticationBloc, AuthenticationState>(
-//         'emits [unauthenticated] when user is empty',
-//         build: () => AuthenticationBloc(
-//           authenticationRepository: authenticationRepository,
-//         ),
-//         act: (bloc) => bloc.add(const AuthenticationUserChanged(User.empty)),
-//         expect: const <AuthenticationState>[
-//           AuthenticationState.unauthenticated(),
-//         ],
-//       );
-//     });
-
-//     group('AuthenticationLogoutRequested', () {
-//       blocTest<AuthenticationBloc, AuthenticationState>(
-//         'calls logOut on authenticationRepository '
-//         'when AuthenticationLogoutRequested is added',
-//         build: () => AuthenticationBloc(
-//           authenticationRepository: authenticationRepository,
-//         ),
-//         act: (bloc) => bloc.add(AuthenticationLogoutRequested()),
-//         verify: (_) {
-//           verify(authenticationRepository.logOut()).called(1);
-//         },
-//       );
-//     });
-//   });
-// }
+    group('requestLogout', () {
+      blocTest<AuthenticationCubit, AuthenticationState>(
+        'calls logOut on authenticationRepository '
+        'when AuthenticationLogoutRequested is added',
+        build: () => AuthenticationCubit(authenticationRepository),
+        act: (bloc) => bloc.requestLogout(),
+        verify: (_) {
+          verify(authenticationRepository.logOut()).called(1);
+        },
+      );
+    });
+  });
+}
