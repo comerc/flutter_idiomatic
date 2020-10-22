@@ -5,7 +5,3 @@ T getBloc<T extends Cubit<Object>>(BuildContext context) =>
     BlocProvider.of<T>(context);
 
 T getRepository<T>(BuildContext context) => RepositoryProvider.of<T>(context);
-
-void out(value) {
-  print(value);
-}
