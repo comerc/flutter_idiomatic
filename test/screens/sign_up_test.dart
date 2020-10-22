@@ -12,11 +12,12 @@ class MockAuthenticationRepository extends Mock
 
 class MockSignUpCubit extends MockBloc<SignUpState> implements SignUpCubit {}
 
-class MockEmail extends Mock implements EmailModel {}
+class MockEmailModel extends Mock implements EmailModel {}
 
-class MockPassword extends Mock implements PasswordModel {}
+class MockPasswordModel extends Mock implements PasswordModel {}
 
-class MockConfirmedPassword extends Mock implements ConfirmedPasswordModel {}
+class MockConfirmedPasswordModel extends Mock
+    implements ConfirmedPasswordModel {}
 
 void main() {
   group('SignUpScreen', () {
@@ -148,7 +149,7 @@ void main() {
 
       testWidgets('invalid email error text when email is invalid',
           (tester) async {
-        final email = MockEmail();
+        final email = MockEmailModel();
         when(email.invalid).thenReturn(true);
         when(signUpCubit.state).thenReturn(SignUpState(email: email));
         await tester.pumpWidget(
@@ -166,7 +167,7 @@ void main() {
 
       testWidgets('invalid password error text when password is invalid',
           (tester) async {
-        final password = MockPassword();
+        final password = MockPasswordModel();
         when(password.invalid).thenReturn(true);
         when(signUpCubit.state).thenReturn(SignUpState(password: password));
         await tester.pumpWidget(
@@ -185,7 +186,7 @@ void main() {
       testWidgets(
           'invalid confirmedPassword error text'
           ' when confirmedPassword is invalid', (tester) async {
-        final confirmedPassword = MockConfirmedPassword();
+        final confirmedPassword = MockConfirmedPasswordModel();
         when(confirmedPassword.invalid).thenReturn(true);
         when(signUpCubit.state)
             .thenReturn(SignUpState(confirmedPassword: confirmedPassword));

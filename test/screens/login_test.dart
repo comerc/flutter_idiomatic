@@ -12,9 +12,9 @@ class MockAuthenticationRepository extends Mock
 
 class MockLoginCubit extends MockBloc<LoginState> implements LoginCubit {}
 
-class MockEmail extends Mock implements EmailModel {}
+class MockEmailModel extends Mock implements EmailModel {}
 
-class MockPassword extends Mock implements PasswordModel {}
+class MockPasswordModel extends Mock implements PasswordModel {}
 
 void main() {
   group('LoginScreen', () {
@@ -143,7 +143,7 @@ void main() {
 
       testWidgets('invalid email error text when email is invalid',
           (tester) async {
-        final email = MockEmail();
+        final email = MockEmailModel();
         when(email.invalid).thenReturn(true);
         when(loginCubit.state).thenReturn(LoginState(email: email));
         await tester.pumpWidget(
@@ -161,7 +161,7 @@ void main() {
 
       testWidgets('invalid password error text when password is invalid',
           (tester) async {
-        final password = MockPassword();
+        final password = MockPasswordModel();
         when(password.invalid).thenReturn(true);
         when(loginCubit.state).thenReturn(LoginState(password: password));
         await tester.pumpWidget(
