@@ -1,9 +1,9 @@
-export 'blocs/authentication.dart';
-export 'blocs/login.dart';
-export 'blocs/sign_up.dart';
 export 'common/helpers.dart';
 export 'common/simple_bloc_observer.dart';
 export 'common/theme.dart';
+export 'cubits/authentication.dart';
+export 'cubits/login.dart';
+export 'cubits/sign_up.dart';
 export 'main.dart';
 export 'models/confirmed_password.dart';
 export 'models/email.dart';
