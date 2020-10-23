@@ -1,4 +1,5 @@
 export 'common/helpers.dart';
+export 'common/route.dart';
 export 'common/simple_bloc_observer.dart';
 export 'common/theme.dart';
 export 'cubits/authentication.dart';

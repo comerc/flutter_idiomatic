@@ -29,6 +29,10 @@ void main() {
       );
     });
 
+    test('has a route', () {
+      expect(HomeScreen().route, isA<Route>());
+    });
+
     group('calls', () {
       testWidgets('AuthenticationLogoutRequested when logout is pressed',
           (tester) async {

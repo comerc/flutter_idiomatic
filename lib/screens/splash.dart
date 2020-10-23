@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 class SplashScreen extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => SplashScreen());
+  Route get route {
+    return buildRoute<void>(
+      '/splash',
+      builder: (_) => this,
+      fullscreenDialog: true,
+    );
   }
 
   @override

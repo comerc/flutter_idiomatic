@@ -5,8 +5,11 @@ import 'package:formz/formz.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 class LoginScreen extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => LoginScreen());
+  Route get route {
+    return buildRoute<void>(
+      '/login',
+      builder: (_) => this,
+    );
   }
 
   @override
@@ -163,7 +166,7 @@ class _SignUpButton extends StatelessWidget {
         'CREATE ACCOUNT',
         style: TextStyle(color: theme.primaryColor),
       ),
-      onPressed: () => navigator.push<void>(SignUpScreen.route()),
+      onPressed: () => navigator.push<void>(SignUpScreen().route),
     );
   }
 }

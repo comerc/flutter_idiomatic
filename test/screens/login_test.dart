@@ -19,7 +19,7 @@ class MockPasswordModel extends Mock implements PasswordModel {}
 void main() {
   group('LoginScreen', () {
     test('has a route', () {
-      expect(LoginScreen.route(), isA<MaterialPageRoute>());
+      expect(LoginScreen().route, isA<Route>());
     });
 
     testWidgets('renders a LoginForm', (tester) async {

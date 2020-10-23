@@ -6,8 +6,11 @@ import 'package:flutter_firebase_login/import.dart';
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({Key key}) : super(key: key);
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const SignUpScreen());
+  Route get route {
+    return buildRoute<void>(
+      '/sign_up',
+      builder: (_) => this,
+    );
   }
 
   @override

@@ -70,13 +70,13 @@ class AppView extends StatelessWidget {
             final cases = {
               AuthenticationStatus.authenticated: () {
                 navigator.pushAndRemoveUntil<void>(
-                  HomeScreen.route(),
+                  HomeScreen().route,
                   (Route route) => false,
                 );
               },
               AuthenticationStatus.unauthenticated: () {
                 navigator.pushAndRemoveUntil<void>(
-                  LoginScreen.route(),
+                  LoginScreen().route,
                   (Route route) => false,
                 );
               },
@@ -88,7 +88,7 @@ class AppView extends StatelessWidget {
           child: child,
         );
       },
-      onGenerateRoute: (_) => SplashScreen.route(),
+      onGenerateRoute: (_) => SplashScreen().route,
     );
   }
 }

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 class HomeScreen extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => HomeScreen());
+  Route get route {
+    return buildRoute<void>(
+      '/home',
+      builder: (_) => this,
+    );
   }
 
   @override

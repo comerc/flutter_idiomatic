@@ -22,7 +22,7 @@ class MockConfirmedPasswordModel extends Mock
 void main() {
   group('SignUpScreen', () {
     test('has a route', () {
-      expect(SignUpScreen.route(), isA<MaterialPageRoute>());
+      expect(SignUpScreen().route, isA<Route>());
     });
 
     testWidgets('renders a SignUpForm', (tester) async {
