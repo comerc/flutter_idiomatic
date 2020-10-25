@@ -70,14 +70,15 @@ class LoginForm extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cubit = getBloc<LoginCubit>(context);
     return BlocBuilder<LoginCubit, LoginState>(
+      cubit: cubit,
       buildWhen: (LoginState previous, LoginState current) =>
           previous.email != current.email,
       builder: (BuildContext context, LoginState state) {
         return TextField(
           key: const Key('loginForm_emailInput_textField'),
-          onChanged: (email) =>
-              getBloc<LoginCubit>(context).emailChanged(email),
+          onChanged: (email) => cubit.emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'email',
@@ -93,14 +94,15 @@ class _EmailInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cubit = getBloc<LoginCubit>(context);
     return BlocBuilder<LoginCubit, LoginState>(
+      cubit: cubit,
       buildWhen: (LoginState previous, LoginState current) =>
           previous.password != current.password,
       builder: (BuildContext context, LoginState state) {
         return TextField(
           key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) =>
-              getBloc<LoginCubit>(context).passwordChanged(password),
+          onChanged: (password) => cubit.passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',
@@ -116,7 +118,9 @@ class _PasswordInput extends StatelessWidget {
 class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cubit = getBloc<LoginCubit>(context);
     return BlocBuilder<LoginCubit, LoginState>(
+      cubit: cubit,
       buildWhen: (LoginState previous, LoginState current) =>
           previous.status != current.status,
       builder: (BuildContext context, LoginState state) {
@@ -128,7 +132,7 @@ class _LoginButton extends StatelessWidget {
                 shape: StadiumBorder(),
                 color: const Color(0xFFFFD600),
                 onPressed: state.status.isValidated
-                    ? () => getBloc<LoginCubit>(context).logInWithCredentials()
+                    ? () => cubit.logInWithCredentials()
                     : null,
               );
       },

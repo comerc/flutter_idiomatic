@@ -42,6 +42,7 @@ class GitHubBody extends StatelessWidget {
           return Center(child: const CircularProgressIndicator());
         }
         if (state is GitHubLoadSuccess && state.repositories.isNotEmpty) {
+          final repository = getRepository<GitHubRepository>(context);
           return Column(
             children: <Widget>[
               Expanded(
@@ -51,7 +52,7 @@ class GitHubBody extends StatelessWidget {
                     final item = state.repositories[index];
                     return BlocProvider(
                       create: (context) => GitHubItemCubit(
-                        getRepository<GitHubRepository>(context),
+                        repository,
                         item: item,
                       ),
                       child: GitHubItem(key: Key(item.id)),
@@ -95,7 +96,12 @@ class GitHubItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = getBloc<GitHubItemCubit>(context);
     return BlocBuilder<GitHubItemCubit, GitHubItemState>(
+      cubit: cubit,
+      buildWhen: (GitHubItemState previos, GitHubItemState current) {
+        return previos != current;
+      },
       builder: (BuildContext context, GitHubItemState state) {
         final repository = state.item;
         return ListTile(
@@ -110,7 +116,7 @@ class GitHubItem extends StatelessWidget {
               : null,
           title: Text(repository.name),
           onTap: () {
-            getBloc<GitHubItemCubit>(context).toggleStar(
+            cubit.toggleStar(
               id: repository.id,
               value: true,
             );

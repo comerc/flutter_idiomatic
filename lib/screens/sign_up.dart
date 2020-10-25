@@ -62,14 +62,15 @@ class SignUpForm extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cubit = getBloc<SignUpCubit>(context);
     return BlocBuilder<SignUpCubit, SignUpState>(
+      cubit: cubit,
       buildWhen: (SignUpState previous, SignUpState current) =>
           previous.email != current.email,
       builder: (BuildContext context, SignUpState state) {
         return TextField(
           key: const Key('signUpForm_emailInput_textField'),
-          onChanged: (String email) =>
-              getBloc<SignUpCubit>(context).emailChanged(email),
+          onChanged: (String email) => cubit.emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'email',
@@ -85,14 +86,15 @@ class _EmailInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cubit = getBloc<SignUpCubit>(context);
     return BlocBuilder<SignUpCubit, SignUpState>(
+      cubit: cubit,
       buildWhen: (SignUpState previous, SignUpState current) =>
           previous.password != current.password,
       builder: (BuildContext context, SignUpState state) {
         return TextField(
           key: const Key('signUpForm_passwordInput_textField'),
-          onChanged: (password) =>
-              getBloc<SignUpCubit>(context).passwordChanged(password),
+          onChanged: (password) => cubit.passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',
@@ -135,7 +137,9 @@ class _ConfirmPasswordInput extends StatelessWidget {
 class _SignUpButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cubit = getBloc<SignUpCubit>(context);
     return BlocBuilder<SignUpCubit, SignUpState>(
+      cubit: cubit,
       buildWhen: (SignUpState previous, SignUpState current) =>
           previous.status != current.status,
       builder: (BuildContext context, SignUpState state) {
@@ -147,7 +151,7 @@ class _SignUpButton extends StatelessWidget {
                 shape: StadiumBorder(),
                 color: Colors.orangeAccent,
                 onPressed: state.status.isValidated
-                    ? () => getBloc<SignUpCubit>(context).signUpFormSubmitted()
+                    ? () => cubit.signUpFormSubmitted()
                     : null,
               );
       },
