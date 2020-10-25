@@ -5,8 +5,8 @@ import 'package:formz/formz.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 class LoginScreen extends StatelessWidget {
-  Route get route {
-    return buildRoute<void>(
+  Route<T> getRoute<T>() {
+    return buildRoute<T>(
       '/login',
       builder: (_) => this,
     );
@@ -16,13 +16,10 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: BlocProvider(
-          create: (BuildContext context) =>
-              LoginCubit(getRepository<AuthenticationRepository>(context)),
-          child: LoginForm(),
-        ),
+      body: BlocProvider(
+        create: (BuildContext context) =>
+            LoginCubit(getRepository<AuthenticationRepository>(context)),
+        child: LoginForm(),
       ),
     );
   }
@@ -41,26 +38,29 @@ class LoginForm extends StatelessWidget {
             );
         }
       },
-      child: Align(
-        alignment: const Alignment(0, -1 / 3),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/bloc_logo_small.png',
-              height: 120,
-            ),
-            const SizedBox(height: 16.0),
-            _EmailInput(),
-            const SizedBox(height: 8.0),
-            _PasswordInput(),
-            const SizedBox(height: 8.0),
-            _LoginButton(),
-            const SizedBox(height: 8.0),
-            _GoogleLoginButton(),
-            const SizedBox(height: 4.0),
-            _SignUpButton(),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Align(
+          alignment: const Alignment(0, -1 / 3),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/bloc_logo_small.png',
+                height: 120,
+              ),
+              const SizedBox(height: 16.0),
+              _EmailInput(),
+              const SizedBox(height: 8.0),
+              _PasswordInput(),
+              const SizedBox(height: 8.0),
+              _LoginButton(),
+              const SizedBox(height: 8.0),
+              _GoogleLoginButton(),
+              const SizedBox(height: 4.0),
+              _SignUpButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -124,10 +124,8 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : RaisedButton(
                 key: const Key('loginForm_continue_raisedButton'),
-                child: const Text('LOGIN'),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
+                child: const Text('LOGIN!'),
+                shape: StadiumBorder(),
                 color: const Color(0xFFFFD600),
                 onPressed: state.status.isValidated
                     ? () => getBloc<LoginCubit>(context).logInWithCredentials()
@@ -148,7 +146,7 @@ class _GoogleLoginButton extends StatelessWidget {
         'SIGN IN WITH GOOGLE',
         style: TextStyle(color: Colors.white),
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      shape: StadiumBorder(),
       icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
       color: theme.accentColor,
       onPressed: () => getBloc<LoginCubit>(context).logInWithGoogle(),
@@ -166,7 +164,8 @@ class _SignUpButton extends StatelessWidget {
         'CREATE ACCOUNT',
         style: TextStyle(color: theme.primaryColor),
       ),
-      onPressed: () => navigator.push<void>(SignUpScreen().route),
+      shape: StadiumBorder(),
+      onPressed: () => navigator.push<void>(SignUpScreen().getRoute()),
     );
   }
 }

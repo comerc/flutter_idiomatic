@@ -6,7 +6,7 @@ import 'package:flutter_firebase_login/import.dart';
 void main() {
   group('SplashScreen', () {
     test('has a route', () {
-      expect(SplashScreen().route, isA<Route>());
+      expect(SplashScreen().getRoute(), isA<Route>());
     });
 
     testWidgets('renders bloc image', (tester) async {

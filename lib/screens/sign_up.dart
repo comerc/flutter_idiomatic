@@ -4,10 +4,8 @@ import 'package:formz/formz.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({Key key}) : super(key: key);
-
-  Route get route {
-    return buildRoute<void>(
+  Route<T> getRoute<T>() {
+    return buildRoute<T>(
       '/sign_up',
       builder: (_) => this,
     );
@@ -17,13 +15,10 @@ class SignUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Sign Up')),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: BlocProvider(
-          create: (BuildContext context) =>
-              SignUpCubit(getRepository<AuthenticationRepository>(context)),
-          child: SignUpForm(),
-        ),
+      body: BlocProvider(
+        create: (BuildContext context) =>
+            SignUpCubit(getRepository<AuthenticationRepository>(context)),
+        child: SignUpForm(),
       ),
     );
   }
@@ -42,19 +37,22 @@ class SignUpForm extends StatelessWidget {
             );
         }
       },
-      child: Align(
-        alignment: const Alignment(0, -1 / 3),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _EmailInput(),
-            const SizedBox(height: 8.0),
-            _PasswordInput(),
-            const SizedBox(height: 8.0),
-            _ConfirmPasswordInput(),
-            const SizedBox(height: 8.0),
-            _SignUpButton(),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Align(
+          alignment: const Alignment(0, -1 / 3),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _EmailInput(),
+              const SizedBox(height: 8.0),
+              _PasswordInput(),
+              const SizedBox(height: 8.0),
+              _ConfirmPasswordInput(),
+              const SizedBox(height: 8.0),
+              _SignUpButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -146,9 +144,7 @@ class _SignUpButton extends StatelessWidget {
             : RaisedButton(
                 key: const Key('signUpForm_continue_raisedButton'),
                 child: const Text('SIGN UP'),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
+                shape: StadiumBorder(),
                 color: Colors.orangeAccent,
                 onPressed: state.status.isValidated
                     ? () => getBloc<SignUpCubit>(context).signUpFormSubmitted()

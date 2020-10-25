@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 class HomeScreen extends StatelessWidget {
-  Route get route {
-    return buildRoute<void>(
+  Route<T> getRoute<T>() {
+    return buildRoute<T>(
       '/home',
       builder: (_) => this,
     );
@@ -35,9 +35,28 @@ class HomeScreen extends StatelessWidget {
             Text(user.email, style: textTheme.headline6),
             const SizedBox(height: 4.0),
             Text(user.name ?? '', style: textTheme.headline5),
+            const SizedBox(height: 4.0),
+            _GitHubButton(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _GitHubButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return RaisedButton(
+      key: const Key('homeScreen_gitHub_raisedButton'),
+      child: const Text(
+        'GitHub',
+        style: TextStyle(color: Colors.white),
+      ),
+      shape: StadiumBorder(),
+      color: theme.accentColor,
+      onPressed: () => navigator.push<void>(GitHubScreen().getRoute()),
     );
   }
 }

@@ -30,7 +30,7 @@ void main() {
     });
 
     test('has a route', () {
-      expect(HomeScreen().route, isA<Route>());
+      expect(HomeScreen().getRoute(), isA<Route>());
     });
 
     group('calls', () {
