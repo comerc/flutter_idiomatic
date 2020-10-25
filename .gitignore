@@ -10,6 +10,7 @@
 .svn/
 output.mp4
 coverage/
+lib/local.dart
 
 # IntelliJ related
 *.iml

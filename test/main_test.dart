@@ -23,24 +23,37 @@ class MockAuthenticationRepository extends Mock
 class MockAuthenticationCubit extends MockBloc<AuthenticationState>
     implements AuthenticationCubit {}
 
+class MockGitHubRepository extends Mock implements GitHubRepository {}
+
 void main() {
   group('App', () {
     AuthenticationRepository authenticationRepository;
+    GitHubRepository gitHubRepository;
 
     setUp(() {
       authenticationRepository = MockAuthenticationRepository();
+      gitHubRepository = MockGitHubRepository();
       when(authenticationRepository.user).thenAnswer(
         (_) => const Stream.empty(),
       );
     });
 
     test('throws AssertionError when authenticationRepository is null', () {
-      expect(() => App(authenticationRepository: null), throwsAssertionError);
+      expect(
+        () => App(
+          authenticationRepository: null,
+          gitHubRepository: null,
+        ),
+        throwsAssertionError,
+      );
     });
 
     testWidgets('renders AppView', (tester) async {
       await tester.pumpWidget(
-        App(authenticationRepository: authenticationRepository),
+        App(
+          authenticationRepository: authenticationRepository,
+          gitHubRepository: gitHubRepository,
+        ),
       );
       expect(find.byType(AppView), findsOneWidget);
     });

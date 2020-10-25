@@ -8,6 +8,12 @@ It is starter kit with idiomatic code structure :)
 
 Inspired by flutter_bloc example.
 
+## How to Start
+
+```
+$ flutter packages pub run build_runner build --delete-conflicting-outputs
+```
+
 ## Contacts
 
 - E-Mail: [andrew.kachanov@gmail.com](mailto:andrew.kachanov@gmail.com)

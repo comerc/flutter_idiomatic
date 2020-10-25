@@ -24,7 +24,12 @@ void main() {
     await Firebase.initializeApp();
     EquatableConfig.stringify = kDebugMode;
     // Bloc.observer = SimpleBlocObserver();
-    runApp(App(authenticationRepository: AuthenticationRepository()));
+    runApp(
+      App(
+        authenticationRepository: AuthenticationRepository(),
+        gitHubRepository: GitHubRepository(),
+      ),
+    );
   }, (error, stackTrace) {
     // Whenever an error occurs, call the `_reportError` function. This sends
     // Dart errors to the dev console or Sentry depending on the environment.
@@ -36,15 +41,25 @@ class App extends StatelessWidget {
   const App({
     Key key,
     @required this.authenticationRepository,
+    @required this.gitHubRepository,
   })  : assert(authenticationRepository != null),
+        assert(gitHubRepository != null),
         super(key: key);
 
   final AuthenticationRepository authenticationRepository;
+  final GitHubRepository gitHubRepository;
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(
+          value: authenticationRepository,
+        ),
+        RepositoryProvider.value(
+          value: gitHubRepository,
+        ),
+      ],
       child: BlocProvider(
         create: (BuildContext context) =>
             AuthenticationCubit(authenticationRepository),
@@ -70,13 +85,13 @@ class AppView extends StatelessWidget {
             final cases = {
               AuthenticationStatus.authenticated: () {
                 navigator.pushAndRemoveUntil<void>(
-                  HomeScreen().route,
+                  HomeScreen().getRoute(),
                   (Route route) => false,
                 );
               },
               AuthenticationStatus.unauthenticated: () {
                 navigator.pushAndRemoveUntil<void>(
-                  LoginScreen().route,
+                  LoginScreen().getRoute(),
                   (Route route) => false,
                 );
               },
@@ -88,7 +103,7 @@ class AppView extends StatelessWidget {
           child: child,
         );
       },
-      onGenerateRoute: (_) => SplashScreen().route,
+      onGenerateRoute: (_) => SplashScreen().getRoute(),
     );
   }
 }
