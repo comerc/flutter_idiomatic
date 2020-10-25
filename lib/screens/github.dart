@@ -17,8 +17,7 @@ class GitHubScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('GitHub')),
       body: BlocProvider(
         create: (BuildContext context) =>
-            GitHubCubit(getRepository<GitHubRepository>(context))
-              ..readRepositories(),
+            GitHubCubit(getRepository<GitHubRepository>(context))..load(),
         child: GitHubBody(),
       ),
     );
@@ -43,18 +42,20 @@ class GitHubBody extends StatelessWidget {
           return Center(child: const CircularProgressIndicator());
         }
         if (state is GitHubLoadSuccess && state.repositories.isNotEmpty) {
-          // return Center(
-          //   child: Text('${state.repositories.length}'),
-          // );
-
           return Column(
             children: <Widget>[
               Expanded(
                 child: ListView.builder(
                   itemCount: state.repositories.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return _StarrableRepository(
-                        repository: state.repositories[index]);
+                    final item = state.repositories[index];
+                    return BlocProvider(
+                      create: (context) => GitHubItemCubit(
+                        getRepository<GitHubRepository>(context),
+                        item: item,
+                      ),
+                      child: GitHubItem(key: Key(item.id)),
+                    );
                   },
                 ),
               ),
@@ -69,13 +70,10 @@ class GitHubBody extends StatelessWidget {
   }
 }
 
-class _StarrableRepository extends StatelessWidget {
-  const _StarrableRepository({
+class GitHubItem extends StatelessWidget {
+  const GitHubItem({
     Key key,
-    @required this.repository,
   }) : super(key: key);
-
-  final RepositoryModel repository;
 
   // Map<String, Object> extractRepositoryData(Object data) {
   //   final action =
@@ -97,24 +95,34 @@ class _StarrableRepository extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: repository.viewerHasStarred
-          ? const Icon(
-              Icons.star,
-              color: Colors.amber,
-            )
-          : const Icon(Icons.star_border),
-      // trailing: result.loading || optimistic
-      //     ? const CircularProgressIndicator()
-      //     : null,
-      title: Text(repository.name),
-      onTap: () {
-        // toggleStar(
-        //   <String, dynamic>{
-        //     'starrableId': repository['id'],
-        //   },
-        //   optimisticResult: expectedResult,
-        // );
+    return BlocBuilder<GitHubItemCubit, GitHubItemState>(
+      builder: (BuildContext context, GitHubItemState state) {
+        final repository = state.item;
+        return ListTile(
+          leading: repository.viewerHasStarred
+              ? const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                )
+              : const Icon(Icons.star_border),
+          trailing: state.status == GitHubItemStatus.loading
+              ? const CircularProgressIndicator()
+              : null,
+          title: Text(repository.name),
+          onTap: () {
+            getBloc<GitHubItemCubit>(context).toggleStar(
+              id: repository.id,
+              value: true,
+            );
+
+            // toggleStar(
+            //   <String, dynamic>{
+            //     'starrableId': repository['id'],
+            //   },
+            //   optimisticResult: expectedResult,
+            // );
+          },
+        );
       },
     );
   }

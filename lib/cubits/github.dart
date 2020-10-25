@@ -10,7 +10,7 @@ class GitHubCubit extends Cubit<GitHubState> {
 
   final GitHubRepository gitHubRepository;
 
-  Future<void> readRepositories() async {
+  Future<void> load() async {
     emit(GitHubLoadInProgress());
     try {
       final repositories = await gitHubRepository.readRepositories();
