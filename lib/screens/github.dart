@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
@@ -16,9 +17,32 @@ class GitHubScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('GitHub')),
       body: BlocProvider(
-        create: (BuildContext context) =>
-            GitHubCubit(getRepository<GitHubRepository>(context))..load(),
+        create: (BuildContext context) {
+          final cubit = GitHubCubit(getRepository<GitHubRepository>(context));
+          _loadRepositories(cubit);
+          return cubit;
+        },
         child: GitHubBody(),
+      ),
+    );
+  }
+
+  void _loadRepositories(GitHubCubit cubit) async {
+    final result = await cubit.loadRepositories();
+    if (result) return;
+    BotToast.showNotification(
+      title: (_) => const Text(
+        'Can not load repositories',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _loadRepositories(cubit);
+        },
+        child: const Text('REPEAT'),
       ),
     );
   }
@@ -27,44 +51,33 @@ class GitHubScreen extends StatelessWidget {
 class GitHubBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<GitHubCubit, GitHubState>(
-      listener: (BuildContext context, GitHubState state) {
-        if (state is GitHubLoadFailure) {
-          Scaffold.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('GitHub Load Failure')),
-            );
-        }
-      },
+    return BlocBuilder<GitHubCubit, GitHubState>(
       builder: (BuildContext context, GitHubState state) {
-        if (state is GitHubLoadInProgress) {
+        if (state.status == GitHubStatus.busy && state.repositories.isEmpty) {
           return Center(child: const CircularProgressIndicator());
         }
-        if (state is GitHubLoadSuccess && state.repositories.isNotEmpty) {
-          final repository = getRepository<GitHubRepository>(context);
-          return Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView.builder(
-                  itemCount: state.repositories.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = state.repositories[index];
-                    return BlocProvider(
-                      create: (context) => GitHubItemCubit(
-                        repository,
-                        item: item,
-                      ),
-                      child: GitHubItem(key: Key(item.id)), // TODO: key нужен?
-                    );
-                  },
-                ),
+        return Column(
+          children: <Widget>[
+            Expanded(
+              child: ListView.builder(
+                itemCount: state.repositories.length + 1,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == state.repositories.length) {
+                    if (state.status == GitHubStatus.busy) {
+                      return Center(child: const CircularProgressIndicator());
+                    }
+                    return Center(child: const Text('LOAD MORE'));
+                  }
+                  final item = state.repositories[index];
+                  return GitHubItem(
+                    key: Key(item.id),
+                    repository: item,
+                    isLoading: state.loadingRepositories.contains(item.id),
+                  );
+                },
               ),
-            ],
-          );
-        }
-        return Center(
-          child: Text('none'),
+            ),
+          ],
         );
       },
     );
@@ -74,7 +87,12 @@ class GitHubBody extends StatelessWidget {
 class GitHubItem extends StatelessWidget {
   const GitHubItem({
     Key key,
+    this.repository,
+    this.isLoading,
   }) : super(key: key);
+
+  final RepositoryModel repository;
+  final bool isLoading;
 
   // Map<String, Object> extractRepositoryData(Object data) {
   //   final action =
@@ -96,39 +114,54 @@ class GitHubItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = getBloc<GitHubItemCubit>(context);
-    return BlocBuilder<GitHubItemCubit, GitHubItemState>(
-      cubit: cubit,
-      buildWhen: (GitHubItemState previos, GitHubItemState current) {
-        return previos != current;
-      },
-      builder: (BuildContext context, GitHubItemState state) {
-        final repository = state.item;
-        return ListTile(
-          leading: repository.viewerHasStarred
-              ? const Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                )
-              : const Icon(Icons.star_border),
-          trailing: state.status == GitHubItemStatus.loading
-              ? const CircularProgressIndicator()
-              : null,
-          title: Text(repository.name),
-          onTap: () {
-            cubit.toggleStar(
-              id: repository.id,
-              value: true,
-            );
-            // toggleStar(
-            //   <String, dynamic>{
-            //     'starrableId': repository['id'],
-            //   },
-            //   optimisticResult: expectedResult,
-            // );
-          },
-        );
+    return ListTile(
+      leading: repository.viewerHasStarred
+          ? const Icon(
+              Icons.star,
+              color: Colors.amber,
+            )
+          : const Icon(Icons.star_border),
+      trailing: isLoading ? const CircularProgressIndicator() : null,
+      title: Text(repository.name),
+      onTap: () {
+        _toggleStar(getBloc<GitHubCubit>(context));
       },
     );
+  }
+
+  void _toggleStar(GitHubCubit cubit) async {
+    final value = !repository.viewerHasStarred;
+    final result = await cubit.toggleStar(
+      id: repository.id,
+      value: value,
+    );
+    if (result) return;
+    BotToast.showNotification(
+      title: (_) => Text(
+        value
+            ? 'Can not starred "${repository.name}"'
+            : 'Can not unstarred "${repository.name}"',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _toggleStar(cubit);
+        },
+        child: const Text('REPEAT'),
+      ),
+    );
+    // getBloc<GitHubLoadingItemCubit>(context).toggleStar(
+    //   id: repository.id,
+    //   value: true,
+    // );
+    // toggleStar(
+    //   <String, dynamic>{
+    //     'starrableId': repository['id'],
+    //   },
+    //   optimisticResult: expectedResult,
+    // );
   }
 }

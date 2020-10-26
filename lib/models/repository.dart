@@ -23,4 +23,16 @@ class RepositoryModel extends Equatable {
       _$RepositoryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RepositoryModelToJson(this);
+
+  RepositoryModel copyWith({
+    String id,
+    String name,
+    bool viewerHasStarred,
+  }) {
+    return RepositoryModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      viewerHasStarred: viewerHasStarred ?? this.viewerHasStarred,
+    );
+  }
 }
