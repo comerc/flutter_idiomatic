@@ -6,7 +6,6 @@ export 'common/route.dart';
 export 'common/simple_bloc_observer.dart';
 export 'common/theme.dart';
 export 'cubits/authentication.dart';
-export 'cubits/github_item.dart';
 export 'cubits/github.dart';
 export 'cubits/login.dart';
 export 'cubits/sign_up.dart';
