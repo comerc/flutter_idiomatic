@@ -19,10 +19,6 @@ class GitHubCubit extends Cubit<GitHubState> {
       emit(GitHubLoadFailure());
     }
   }
-
-  Future<void> toggleStar({String id, bool value}) async {
-    return null;
-  }
 }
 
 abstract class GitHubState extends Equatable {
