@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_firebase_login/import.dart';
 
+// TODO: дублирую данные в item?
 class GitHubItemCubit extends Cubit<GitHubItemState> {
   GitHubItemCubit(this.gitHubRepository, {RepositoryModel item})
       : assert(gitHubRepository != null),
@@ -12,8 +13,12 @@ class GitHubItemCubit extends Cubit<GitHubItemState> {
 
   Future<void> toggleStar({String id, bool value}) async {
     emit(state.copyWith(status: GitHubItemStatus.loading));
-    await Future.delayed(Duration(seconds: 4));
-    emit(state.copyWith(status: GitHubItemStatus.ready));
+    try {
+      await Future.delayed(Duration(seconds: 4));
+      emit(state.copyWith(status: GitHubItemStatus.ready));
+    } catch (error) {
+      emit(state.copyWith(status: GitHubItemStatus.error));
+    }
   }
 }
 
@@ -36,7 +41,7 @@ class GitHubItemState extends Equatable {
     GitHubItemStatus status,
   }) {
     return GitHubItemState(
-      item: item ?? this.item,
+      item: item ?? this.item, // TODO: по значению или по ссылке?
       status: status ?? this.status,
     );
   }

@@ -55,7 +55,7 @@ class GitHubBody extends StatelessWidget {
                         repository,
                         item: item,
                       ),
-                      child: GitHubItem(key: Key(item.id)),
+                      child: GitHubItem(key: Key(item.id)), // TODO: key нужен?
                     );
                   },
                 ),
@@ -120,7 +120,6 @@ class GitHubItem extends StatelessWidget {
               id: repository.id,
               value: true,
             );
-
             // toggleStar(
             //   <String, dynamic>{
             //     'starrableId': repository['id'],
