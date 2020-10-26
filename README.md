@@ -14,6 +14,12 @@ Inspired by flutter_bloc example.
 $ flutter packages pub run build_runner build --delete-conflicting-outputs
 ```
 
+Add `lib/local.dart`:
+
+```dart
+const kGitHubPersonalAccessToken = 'value';
+```
+
 ## Contacts
 
 - E-Mail: [andrew.kachanov@gmail.com](mailto:andrew.kachanov@gmail.com)
