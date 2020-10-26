@@ -1,6 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_firebase_login/import.dart';
-// // ignore: uri_does_not_exist
+
+// ignore: uri_does_not_exist
 import '../local.dart';
 
 const kEnableWebsockets = false;
@@ -23,9 +24,9 @@ class GitHubRepository {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    final dataItems = <Map<String, dynamic>>[
-      ...queryResult.data['viewer']['repositories']['nodes']
-    ];
+    final dataItems =
+        (queryResult.data['viewer']['repositories']['nodes'] as List)
+            .cast<Map<String, dynamic>>();
     final result = <RepositoryModel>[];
     for (final dataItem in dataItems) {
       result.add(RepositoryModel.fromJson(dataItem));
@@ -41,7 +42,7 @@ GraphQLClient _getClient() {
     uri: 'https://api.github.com/graphql',
   );
   final authLink = AuthLink(
-    getToken: () async => 'Bearer $kPersonalAccessToken',
+    getToken: () async => 'Bearer $kGitHubPersonalAccessToken',
   );
   var link = authLink.concat(httpLink);
   if (kEnableWebsockets) {
