@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
@@ -79,6 +80,9 @@ class AppView extends StatelessWidget {
     return MaterialApp(
       theme: theme,
       navigatorKey: navigatorKey,
+      navigatorObservers: [
+        BotToastNavigatorObserver(),
+      ],
       builder: (BuildContext context, Widget child) {
         return BlocListener<AuthenticationCubit, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
@@ -100,7 +104,7 @@ class AppView extends StatelessWidget {
             assert(cases.length == AuthenticationStatus.values.length);
             cases[state.status]();
           },
-          child: child,
+          child: BotToastInit()(context, child),
         );
       },
       onGenerateRoute: (_) => SplashScreen().getRoute(),

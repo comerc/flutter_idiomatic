@@ -70,7 +70,7 @@ class GraphQLWidgetScreen extends StatelessWidget {
 
     final authLink = AuthLink(
       // ignore: undefined_identifier
-      getToken: () async => 'Bearer $kPersonalAccessToken',
+      getToken: () async => 'Bearer $kGitHubPersonalAccessToken',
     );
 
     var link = authLink.concat(httpLink);
