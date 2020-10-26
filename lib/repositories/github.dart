@@ -5,7 +5,7 @@ import 'package:flutter_firebase_login/import.dart';
 import '../local.dart';
 
 const kEnableWebsockets = false;
-const kRepositoriesLimit = 5;
+const kRepositoriesLimit = 8;
 
 class GitHubRepository {
   GitHubRepository({GraphQLClient client}) : _client = client ?? _getClient();
@@ -13,10 +13,9 @@ class GitHubRepository {
   final GraphQLClient _client;
 
   Future<List<RepositoryModel>> readRepositories() async {
-    final variables = {'nRepositories': kRepositoriesLimit};
     final options = QueryOptions(
       documentNode: _API.readRepositories,
-      variables: variables,
+      variables: {'nRepositories': kRepositoriesLimit},
       fetchPolicy: FetchPolicy.noCache,
     );
     final queryResult =
@@ -34,7 +33,20 @@ class GitHubRepository {
     return result;
   }
 
-  void toggleStar({String id, bool value}) {}
+  Future<bool> toggleStar({String id, bool value}) async {
+    final options = MutationOptions(
+      documentNode: value ? _API.addStar : _API.removeStar,
+      variables: {'starrableId': id},
+      fetchPolicy: FetchPolicy.noCache,
+    );
+    final mutationResult =
+        await _client.mutate(options).timeout(kGraphQLQueryTimeoutDuration);
+    if (mutationResult.hasException) {
+      throw mutationResult.exception;
+    }
+    return mutationResult.data['action']['starrable']['viewerHasStarred']
+        as bool;
+  }
 }
 
 GraphQLClient _getClient() {
@@ -84,6 +96,26 @@ class _API {
     }
   ''')..definitions.addAll(fragments.definitions);
 
+  static final addStar = gql(r'''
+    mutation AddStar($starrableId: ID!) {
+      action: addStar(input: {starrableId: $starrableId}) {
+        starrable {
+          viewerHasStarred
+        }
+      }
+    }
+  ''');
+
+  static final removeStar = gql(r'''
+    mutation RemoveStar($starrableId: ID!) {
+      action: removeStar(input: {starrableId: $starrableId}) {
+        starrable {
+          viewerHasStarred
+        }
+      }
+    }
+  ''');
+
   // static final searchRepositories = gql(r'''
   //   query SearchRepositories($nRepositories: Int!, $query: String!, $cursor: String) {
   //     search(last: $nRepositories, query: $query, type: REPOSITORY, after: $cursor) {
@@ -110,23 +142,3 @@ class _API {
   //   }
   // '''); // ..definitions.addAll(fragments.definitions);
 }
-
-// const String addStar = r'''
-//   mutation AddStar($starrableId: ID!) {
-//     action: addStar(input: {starrableId: $starrableId}) {
-//       starrable {
-//         viewerHasStarred
-//       }
-//     }
-//   }
-// ''';
-
-// const String removeStar = r'''
-//   mutation RemoveStar($starrableId: ID!) {
-//     action: removeStar(input: {starrableId: $starrableId}) {
-//       starrable {
-//         viewerHasStarred
-//       }
-//     }
-//   }
-// ''';

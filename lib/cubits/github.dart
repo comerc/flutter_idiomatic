@@ -15,7 +15,12 @@ class GitHubCubit extends Cubit<GitHubState> {
     try {
       final repositories = await gitHubRepository.readRepositories();
       emit(state.copyWith(
-        repositories: [...state.repositories, ...repositories],
+        repositories: [],
+        status: GitHubStatus.initial,
+      ));
+      await Future.delayed(Duration(milliseconds: 300));
+      emit(state.copyWith(
+        repositories: repositories,
         status: GitHubStatus.ready,
       ));
     } catch (error) {
@@ -43,8 +48,7 @@ class GitHubCubit extends Cubit<GitHubState> {
       loadingRepositories: {...state.loadingRepositories}..add(id),
     ));
     try {
-      await Future.delayed(Duration(seconds: 4));
-      throw '1234';
+      await gitHubRepository.toggleStar(id: id, value: value);
     } catch (error) {
       emit(state.copyWith(
         repositories: _updateStar(id, !value),
@@ -58,12 +62,12 @@ class GitHubCubit extends Cubit<GitHubState> {
   }
 }
 
-enum GitHubStatus { busy, ready }
+enum GitHubStatus { initial, busy, ready }
 
 class GitHubState extends Equatable {
   const GitHubState({
     this.repositories = const [],
-    this.status = GitHubStatus.ready,
+    this.status = GitHubStatus.initial,
     this.loadingRepositories = const {},
   }) : assert(repositories != null);
 

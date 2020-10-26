@@ -26,26 +26,26 @@ class GitHubScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  void _loadRepositories(GitHubCubit cubit) async {
-    final result = await cubit.loadRepositories();
-    if (result) return;
-    BotToast.showNotification(
-      title: (_) => const Text(
-        'Can not load repositories',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _loadRepositories(cubit);
-        },
-        child: const Text('REPEAT'),
-      ),
-    );
-  }
+void _loadRepositories(GitHubCubit cubit) async {
+  final result = await cubit.loadRepositories();
+  if (result) return;
+  BotToast.showNotification(
+    title: (_) => const Text(
+      'Can not load repositories',
+      overflow: TextOverflow.fade,
+      softWrap: false,
+    ),
+    trailing: (Function close) => FlatButton(
+      onLongPress: () {}, // чтобы сократить время для splashColor
+      onPressed: () {
+        close();
+        _loadRepositories(cubit);
+      },
+      child: const Text('REPEAT'),
+    ),
+  );
 }
 
 class GitHubBody extends StatelessWidget {
@@ -66,7 +66,20 @@ class GitHubBody extends StatelessWidget {
                     if (state.status == GitHubStatus.busy) {
                       return Center(child: const CircularProgressIndicator());
                     }
-                    return Center(child: const Text('LOAD MORE'));
+                    if (state.status == GitHubStatus.ready) {
+                      return Center(
+                        child: FlatButton(
+                            child: Text(
+                              'REFRESH',
+                              style: TextStyle(color: theme.primaryColor),
+                            ),
+                            shape: StadiumBorder(),
+                            onPressed: () {
+                              _loadRepositories(getBloc<GitHubCubit>(context));
+                            }),
+                      );
+                    }
+                    return Container();
                   }
                   final item = state.repositories[index];
                   return GitHubItem(
@@ -114,18 +127,22 @@ class GitHubItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: repository.viewerHasStarred
-          ? const Icon(
-              Icons.star,
-              color: Colors.amber,
-            )
-          : const Icon(Icons.star_border),
-      trailing: isLoading ? const CircularProgressIndicator() : null,
-      title: Text(repository.name),
-      onTap: () {
-        _toggleStar(getBloc<GitHubCubit>(context));
-      },
+    return Tooltip(
+      preferBelow: false,
+      message: 'Toggle Star',
+      child: ListTile(
+        leading: repository.viewerHasStarred
+            ? const Icon(
+                Icons.star,
+                color: Colors.amber,
+              )
+            : const Icon(Icons.star_border),
+        trailing: isLoading ? const CircularProgressIndicator() : null,
+        title: Text(repository.name),
+        onTap: () {
+          _toggleStar(getBloc<GitHubCubit>(context));
+        },
+      ),
     );
   }
 
