@@ -107,24 +107,6 @@ class GitHubItem extends StatelessWidget {
   final RepositoryModel repository;
   final bool isLoading;
 
-  // Map<String, Object> extractRepositoryData(Object data) {
-  //   final action =
-  //       (data as Map<String, Object>)['action'] as Map<String, Object>;
-  //   if (action == null) {
-  //     return null;
-  //   }
-  //   return action['starrable'] as Map<String, Object>;
-  // }
-
-  // bool get starred => repository['viewerHasStarred'] as bool;
-  // bool get optimistic => (repository as LazyCacheMap).isOptimistic;
-
-  // Map<String, dynamic> get expectedResult => <String, dynamic>{
-  //       'action': <String, dynamic>{
-  //         'starrable': <String, dynamic>{'viewerHasStarred': !starred}
-  //       }
-  //     };
-
   @override
   Widget build(BuildContext context) {
     return Tooltip(
@@ -170,15 +152,5 @@ class GitHubItem extends StatelessWidget {
         child: const Text('REPEAT'),
       ),
     );
-    // getBloc<GitHubLoadingItemCubit>(context).toggleStar(
-    //   id: repository.id,
-    //   value: true,
-    // );
-    // toggleStar(
-    //   <String, dynamic>{
-    //     'starrableId': repository['id'],
-    //   },
-    //   optimisticResult: expectedResult,
-    // );
   }
 }
