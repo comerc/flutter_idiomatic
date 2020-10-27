@@ -14,10 +14,7 @@ class GitHubCubit extends Cubit<GitHubState> {
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
       final repositories = await gitHubRepository.readRepositories();
-      emit(state.copyWith(
-        repositories: [],
-        status: GitHubStatus.initial,
-      ));
+      emit(GitHubState());
       await Future.delayed(Duration(milliseconds: 300));
       emit(state.copyWith(
         repositories: repositories,
