@@ -38,14 +38,14 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 4.0),
             _CommonButton(
               title: 'GitHub',
-              buttonKey: 'homeScreen_gitHub_raisedButton',
-              route: GitHubScreen().getRoute(),
+              buttonKey: const Key('homeScreen_gitHub_raisedButton'),
+              onPressed: () => navigator.push<void>(GitHubScreen().getRoute()),
             ),
             const SizedBox(height: 4.0),
             _CommonButton(
               title: 'My Todos',
-              buttonKey: 'homeScreen_myTodosButton_raisedButton',
-              route: MyTodosScreen().getRoute(),
+              buttonKey: const Key('homeScreen_myTodosButton_raisedButton'),
+              onPressed: () => navigator.push<void>(MyTodosScreen().getRoute()),
             ),
           ],
         ),
@@ -55,24 +55,24 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _CommonButton extends StatelessWidget {
-  _CommonButton({this.title, this.buttonKey, this.route});
+  _CommonButton({this.title, this.buttonKey, this.onPressed});
 
   final String title;
-  final String buttonKey;
-  final Route route;
+  final Key buttonKey;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return RaisedButton(
-      key: Key(buttonKey),
+      key: buttonKey,
       child: Text(
         title,
         style: TextStyle(color: Colors.white),
       ),
       shape: StadiumBorder(),
       color: theme.accentColor,
-      onPressed: () => navigator.push<void>(route),
+      onPressed: onPressed,
     );
   }
 }
