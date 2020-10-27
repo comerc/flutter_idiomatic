@@ -18,6 +18,10 @@ Add `lib/local.dart`:
 
 ```dart
 const kGitHubPersonalAccessToken = 'value';
+// from https://github.com/settings/tokens
+
+const kDatabaseToken = 'value';
+// from https://hasura.io/learn/graphql/graphiql
 ```
 
 ## Contacts
