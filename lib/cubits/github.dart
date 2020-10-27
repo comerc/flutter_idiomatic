@@ -5,7 +5,7 @@ import 'package:flutter_firebase_login/import.dart';
 class GitHubCubit extends Cubit<GitHubState> {
   GitHubCubit(this.gitHubRepository)
       : assert(gitHubRepository != null),
-        super(GitHubState());
+        super(const GitHubState());
 
   final GitHubRepository gitHubRepository;
 
@@ -14,7 +14,7 @@ class GitHubCubit extends Cubit<GitHubState> {
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
       final repositories = await gitHubRepository.readRepositories();
-      emit(GitHubState());
+      emit(const GitHubState());
       await Future.delayed(const Duration(milliseconds: 300));
       emit(state.copyWith(
         repositories: repositories,
