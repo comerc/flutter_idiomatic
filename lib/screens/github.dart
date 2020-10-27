@@ -26,26 +26,26 @@ class GitHubScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-void _loadRepositories(GitHubCubit cubit) async {
-  final result = await cubit.loadRepositories();
-  if (result) return;
-  BotToast.showNotification(
-    title: (_) => const Text(
-      'Can not load repositories',
-      overflow: TextOverflow.fade,
-      softWrap: false,
-    ),
-    trailing: (Function close) => FlatButton(
-      onLongPress: () {}, // чтобы сократить время для splashColor
-      onPressed: () {
-        close();
-        _loadRepositories(cubit);
-      },
-      child: const Text('REPEAT'),
-    ),
-  );
+  static void _loadRepositories(GitHubCubit cubit) async {
+    final result = await cubit.loadRepositories();
+    if (result) return;
+    BotToast.showNotification(
+      title: (_) => const Text(
+        'Can not load repositories',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _loadRepositories(cubit);
+        },
+        child: const Text('REPEAT'),
+      ),
+    );
+  }
 }
 
 class GitHubBody extends StatelessWidget {
@@ -75,7 +75,9 @@ class GitHubBody extends StatelessWidget {
                             ),
                             shape: StadiumBorder(),
                             onPressed: () {
-                              _loadRepositories(getBloc<GitHubCubit>(context));
+                              GitHubScreen._loadRepositories(
+                                getBloc<GitHubCubit>(context),
+                              );
                             }),
                       );
                     }

@@ -61,7 +61,12 @@ GraphQLClient _getClient() {
     final websocketLink = WebSocketLink(
       url: 'ws://localhost:8080/ws/graphql',
       config: SocketClientConfig(
-          autoReconnect: true, inactivityTimeout: const Duration(seconds: 15)),
+        autoReconnect: true,
+        inactivityTimeout: const Duration(seconds: 15),
+        // initPayload: () => {
+        //   'headers': {'Authorization': 'Bearer ' + token}
+        // },
+      ),
     );
     link = link.concat(websocketLink);
   }
