@@ -81,7 +81,7 @@ GraphQLClient _getClient() {
 class _API {
   static final fragments = gql(r'''
     fragment RepositoryFields on Repository {
-      __typename
+      # __typename
       id
       name
       viewerHasStarred
@@ -124,7 +124,7 @@ class _API {
   //   query SearchRepositories($nRepositories: Int!, $query: String!, $cursor: String) {
   //     search(last: $nRepositories, query: $query, type: REPOSITORY, after: $cursor) {
   //       nodes {
-  //         __typename
+  //         # __typename
   //         ... on Repository {
   //           name
   //           shortDescriptionHTML
