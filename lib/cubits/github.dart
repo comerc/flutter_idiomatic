@@ -29,7 +29,7 @@ class GitHubCubit extends Cubit<GitHubState> {
     return result;
   }
 
-  List<RepositoryModel> _updateStar(String id, bool value) {
+  List<RepositoryModel> _updateStarLocally(String id, bool value) {
     final index = state.repositories
         .indexWhere((RepositoryModel repository) => repository.id == id);
     if (index == -1) {
@@ -44,19 +44,20 @@ class GitHubCubit extends Cubit<GitHubState> {
   Future<bool> toggleStar({String id, bool value}) async {
     var result = true;
     emit(state.copyWith(
-      repositories: _updateStar(id, value),
+      repositories: _updateStarLocally(id, value),
       loadingRepositories: {...state.loadingRepositories}..add(id),
     ));
     try {
       await gitHubRepository.toggleStar(id: id, value: value);
     } catch (error) {
       emit(state.copyWith(
-        repositories: _updateStar(id, !value),
+        repositories: _updateStarLocally(id, !value),
       ));
       result = false;
     } finally {
       emit(state.copyWith(
-          loadingRepositories: {...state.loadingRepositories}..remove(id)));
+        loadingRepositories: {...state.loadingRepositories}..remove(id),
+      ));
     }
     return result;
   }
