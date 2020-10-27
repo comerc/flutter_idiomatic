@@ -21,7 +21,7 @@ const kGitHubPersonalAccessToken = 'value';
 // from https://github.com/settings/tokens
 
 const kDatabaseToken = 'value';
-// from https://hasura.io/learn/graphql/graphiql
+// from https://hasura.io/learn/graphql/graphiql?tutorial=react-native
 ```
 
 ## Contacts
