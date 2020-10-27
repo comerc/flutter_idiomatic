@@ -63,13 +63,17 @@ GraphQLClient _getClient() {
       config: SocketClientConfig(
           autoReconnect: true, inactivityTimeout: const Duration(seconds: 15)),
     );
-
     link = link.concat(websocketLink);
   }
+
   return GraphQLClient(
-    cache: OptimisticCache(
-      dataIdFromObject: typenameDataIdFromObject,
-    ),
+    cache: InMemoryCache(),
+    // cache: NormalizedInMemoryCache(
+    //   dataIdFromObject: typenameDataIdFromObject,
+    // ),
+    // cache: OptimisticCache(
+    //   dataIdFromObject: typenameDataIdFromObject,
+    // ),
     link: link,
   );
 }
