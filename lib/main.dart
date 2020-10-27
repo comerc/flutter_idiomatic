@@ -29,6 +29,7 @@ void main() {
       App(
         authenticationRepository: AuthenticationRepository(),
         gitHubRepository: GitHubRepository(),
+        databaseRepository: DatabaseRepository(),
       ),
     );
   }, (error, stackTrace) {
@@ -43,12 +44,15 @@ class App extends StatelessWidget {
     Key key,
     @required this.authenticationRepository,
     @required this.gitHubRepository,
+    @required this.databaseRepository,
   })  : assert(authenticationRepository != null),
         assert(gitHubRepository != null),
+        assert(databaseRepository != null),
         super(key: key);
 
   final AuthenticationRepository authenticationRepository;
   final GitHubRepository gitHubRepository;
+  final DatabaseRepository databaseRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +63,9 @@ class App extends StatelessWidget {
         ),
         RepositoryProvider.value(
           value: gitHubRepository,
+        ),
+        RepositoryProvider.value(
+          value: databaseRepository,
         ),
       ],
       child: BlocProvider(

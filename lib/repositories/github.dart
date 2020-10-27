@@ -4,8 +4,8 @@ import 'package:flutter_firebase_login/import.dart';
 // ignore: uri_does_not_exist
 import '../local.dart';
 
-const kEnableWebsockets = false;
-const kRepositoriesLimit = 8;
+const _kEnableWebsockets = false;
+const _kRepositoriesLimit = 8;
 
 class GitHubRepository {
   GitHubRepository({GraphQLClient client}) : _client = client ?? _getClient();
@@ -16,7 +16,7 @@ class GitHubRepository {
     final queryResult = await _client
         .query(QueryOptions(
           documentNode: _API.readRepositories,
-          variables: {'nRepositories': kRepositoriesLimit},
+          variables: {'nRepositories': _kRepositoriesLimit},
           fetchPolicy: FetchPolicy.noCache,
         ))
         .timeout(kGraphQLQueryTimeoutDuration);
@@ -57,7 +57,7 @@ GraphQLClient _getClient() {
     getToken: () async => 'Bearer $kGitHubPersonalAccessToken',
   );
   var link = authLink.concat(httpLink);
-  if (kEnableWebsockets) {
+  if (_kEnableWebsockets) {
     final websocketLink = WebSocketLink(
       url: 'ws://localhost:8080/ws/graphql',
       config: SocketClientConfig(
