@@ -39,7 +39,7 @@ dependencies:
   firebase_auth: ^0.18.0+1
   firebase_core: ^0.5.0
   google_sign_in: ^4.5.4
-  graphql_flutter: ^3.0.0
+  graphql: ^3.1.0
   json_annotation: 3.1.0
   # enum_to_string: 1.0.8
   bot_toast: ^3.0.4

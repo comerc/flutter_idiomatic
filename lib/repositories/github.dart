@@ -1,4 +1,4 @@
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:graphql/client.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 // ignore: uri_does_not_exist
