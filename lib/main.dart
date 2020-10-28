@@ -90,8 +90,11 @@ class AppView extends StatelessWidget {
       navigatorObservers: [
         BotToastNavigatorObserver(),
       ],
+      // home: MyTodosScreen(),
       builder: (BuildContext context, Widget child) {
-        return BlocListener<AuthenticationCubit, AuthenticationState>(
+        var result = child;
+        result = BotToastInit()(context, result);
+        result = BlocListener<AuthenticationCubit, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
             final cases = {
               AuthenticationStatus.authenticated: () {
@@ -111,8 +114,9 @@ class AppView extends StatelessWidget {
             assert(cases.length == AuthenticationStatus.values.length);
             cases[state.status]();
           },
-          child: BotToastInit()(context, child),
+          child: result,
         );
+        return result;
       },
       onGenerateRoute: (_) => SplashScreen().getRoute(),
     );

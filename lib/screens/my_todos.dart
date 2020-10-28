@@ -28,8 +28,9 @@ class MyTodosScreen extends StatelessWidget {
     );
   }
 
-  static void _load(MyTodosCubit cubit) async {
-    final result = await cubit.load();
+  static Future<void> _load(MyTodosCubit cubit,
+      {bool isRefresh = false}) async {
+    final result = await cubit.load(isRefresh: isRefresh);
     if (result) return;
     BotToast.showNotification(
       title: (_) => const Text(
@@ -41,7 +42,7 @@ class MyTodosScreen extends StatelessWidget {
         onLongPress: () {}, // чтобы сократить время для splashColor
         onPressed: () {
           close();
-          _load(cubit);
+          _load(cubit, isRefresh: isRefresh);
         },
         child: const Text('REPEAT'),
       ),
@@ -52,49 +53,65 @@ class MyTodosScreen extends StatelessWidget {
 class MyTodosBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MyTodosCubit, MyTodosState>(
-      builder: (BuildContext context, MyTodosState state) {
-        if (state.status == MyTodosStatus.busy && state.items.isEmpty) {
-          return Center(child: const CircularProgressIndicator());
-        }
-        return Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                itemCount: state.items.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == state.items.length) {
-                    if (state.status == MyTodosStatus.busy) {
-                      return Center(child: const CircularProgressIndicator());
-                    }
-                    if (state.status == MyTodosStatus.ready) {
-                      return Center(
-                        child: FlatButton(
-                            child: Text(
-                              'REFRESH',
-                              style: TextStyle(color: theme.primaryColor),
-                            ),
-                            shape: StadiumBorder(),
-                            onPressed: () {
-                              MyTodosScreen._load(
-                                getBloc<MyTodosCubit>(context),
-                              );
-                            }),
-                      );
-                    }
-                    return Container();
-                  }
-                  final item = state.items[index];
-                  return MyTodosItem(
-                    key: Key('${item.id}'),
-                    item: item,
-                  );
-                },
-              ),
-            ),
-          ],
+    return RefreshIndicator(
+      onRefresh: () async {
+        return MyTodosScreen._load(
+          getBloc<MyTodosCubit>(context),
+          isRefresh: true,
         );
       },
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: 'Add new Todo',
+              ),
+              onSubmitted: (value) => print('changeQuery $value'),
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<MyTodosCubit, MyTodosState>(
+              builder: (BuildContext context, MyTodosState state) {
+                return ListView.builder(
+                  itemCount: state.items.length + 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index == state.items.length) {
+                      if (state.status == MyTodosStatus.busy) {
+                        return Center(child: const CircularProgressIndicator());
+                      }
+                      if (state.status == MyTodosStatus.ready) {
+                        final isRefresh = state.nextDateTime == null;
+                        return Center(
+                          child: FlatButton(
+                              child: Text(
+                                isRefresh ? 'REFRESH' : 'LOAD MORE',
+                                style: TextStyle(color: theme.primaryColor),
+                              ),
+                              shape: StadiumBorder(),
+                              onPressed: () {
+                                MyTodosScreen._load(
+                                  getBloc<MyTodosCubit>(context),
+                                  isRefresh: isRefresh,
+                                );
+                              }),
+                        );
+                      }
+                      return Container();
+                    }
+                    final item = state.items[index];
+                    return MyTodosItem(
+                      key: Key('${item.id}'),
+                      item: item,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

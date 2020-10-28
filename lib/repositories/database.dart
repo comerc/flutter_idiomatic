@@ -12,12 +12,18 @@ class DatabaseRepository {
 
   final GraphQLClient _client;
 
-  Future<List<TodoModel>> readMyTodos() async {
+  Future<List<TodoModel>> readMyTodos({DateTime createdAt, int limit}) async {
     final queryResult = await _client
         .query(QueryOptions(
           documentNode: _API.readMyTodos,
-          // variables: null,
+          variables: {
+            'user_id': kDatabaseUserId,
+            'created_at':
+                (createdAt ?? DateTime.now().toUtc()).toIso8601String(),
+            'limit': limit,
+          },
           fetchPolicy: FetchPolicy.noCache,
+          errorPolicy: ErrorPolicy.all,
         ))
         .timeout(kGraphQLQueryTimeoutDuration);
     if (queryResult.hasException) {
@@ -68,13 +74,19 @@ GraphQLClient _getClient() {
 
 class _API {
   static final readMyTodos = gql(r'''
-    query ReadMyTodos {
-      todos(order_by: { created_at: desc }) {
+    query ReadMyTodos($user_id: String!, $created_at: timestamptz!, $limit: Int!) {
+      todos(
+        where: {
+          user_id: {_eq: $user_id},
+          created_at: {_lte: $created_at}
+        },
+        order_by: { created_at: desc },
+        limit: $limit,
+      ) {
         ...TodosFields
       }
     }
   ''')..definitions.addAll(fragments.definitions);
-  // where: { is_public: { _eq: false} },
 
   static final fragments = gql(r'''
     fragment TodosFields on todos {
@@ -82,6 +94,7 @@ class _API {
       id
       title
       is_completed
+      created_at
     }
   ''');
 
