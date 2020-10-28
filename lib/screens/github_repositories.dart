@@ -15,7 +15,7 @@ class GitHubRepositoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('GitHub')),
+      appBar: AppBar(title: const Text('GitHub Repositories')),
       body: BlocProvider(
         create: (BuildContext context) {
           final cubit =
@@ -85,7 +85,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
                     return Container();
                   }
                   final item = state.items[index];
-                  return GitHubItem(
+                  return GitHubRepositoriesItem(
                     key: Key(item.id),
                     item: item,
                     isLoading: state.loadingItems.contains(item.id),
@@ -100,8 +100,8 @@ class GitHubRepositoriesBody extends StatelessWidget {
   }
 }
 
-class GitHubItem extends StatelessWidget {
-  const GitHubItem({
+class GitHubRepositoriesItem extends StatelessWidget {
+  const GitHubRepositoriesItem({
     Key key,
     this.item,
     this.isLoading,
