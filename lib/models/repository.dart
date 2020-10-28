@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 
 part 'repository.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.none)
 class RepositoryModel extends Equatable {
   RepositoryModel({
     this.id,
