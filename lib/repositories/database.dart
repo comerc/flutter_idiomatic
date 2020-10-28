@@ -48,7 +48,7 @@ GraphQLClient _getClient() {
       config: SocketClientConfig(
         autoReconnect: true,
         inactivityTimeout: const Duration(seconds: 15),
-        // initPayload: () => {
+        // initPayload: () async => {
         //   'headers': {'Authorization': 'Bearer ' + token}
         // },
       ),
@@ -79,6 +79,7 @@ class _API {
 
   static final fragments = gql(r'''
     fragment TodosFields on todos {
+      # __typename
       id
       title
       is_completed

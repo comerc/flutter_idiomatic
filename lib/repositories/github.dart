@@ -63,7 +63,7 @@ GraphQLClient _getClient() {
       config: SocketClientConfig(
         autoReconnect: true,
         inactivityTimeout: const Duration(seconds: 15),
-        // initPayload: () => {
+        // initPayload: () async => {
         //   'headers': {'Authorization': 'Bearer ' + token}
         // },
       ),
