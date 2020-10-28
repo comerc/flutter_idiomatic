@@ -27,15 +27,15 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
   }
 
   List<RepositoryModel> _updateStarLocally(String id, bool value) {
-    final index = state.items
-        .indexWhere((RepositoryModel repository) => repository.id == id);
+    final index =
+        state.items.indexWhere((RepositoryModel item) => item.id == id);
     if (index == -1) {
       return state.items;
     }
-    final repositories = [...state.items];
-    final repository = repositories[index];
-    repositories[index] = repository.copyWith(viewerHasStarred: value);
-    return repositories;
+    final items = [...state.items];
+    final item = items[index];
+    items[index] = item.copyWith(viewerHasStarred: value);
+    return items;
   }
 
   Future<bool> toggleStar({String id, bool value}) async {
