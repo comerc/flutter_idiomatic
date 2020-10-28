@@ -25,12 +25,11 @@ class DatabaseRepository {
     }
     final dataItems =
         (queryResult.data['todos'] as List).cast<Map<String, dynamic>>();
-    final result = <TodoModel>[];
+    final items = <TodoModel>[];
     for (final dataItem in dataItems) {
-      result.add(TodoModel.fromJson(dataItem));
+      items.add(TodoModel.fromJson(dataItem));
     }
-    // print(dataItems.length);
-    return result;
+    return items;
   }
 }
 

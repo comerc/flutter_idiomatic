@@ -26,11 +26,11 @@ class GitHubRepository {
     final dataItems =
         (queryResult.data['viewer']['repositories']['nodes'] as List)
             .cast<Map<String, dynamic>>();
-    final result = <RepositoryModel>[];
+    final items = <RepositoryModel>[];
     for (final dataItem in dataItems) {
-      result.add(RepositoryModel.fromJson(dataItem));
+      items.add(RepositoryModel.fromJson(dataItem));
     }
-    return result;
+    return items;
   }
 
   Future<bool> toggleStar({String id, bool value}) async {
