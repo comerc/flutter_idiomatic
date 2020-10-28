@@ -33,8 +33,7 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
       return state.items;
     }
     final items = [...state.items];
-    final item = items[index];
-    items[index] = item.copyWith(viewerHasStarred: value);
+    items[index] = items[index].copyWith(viewerHasStarred: value);
     return items;
   }
 
