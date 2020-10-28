@@ -2,22 +2,22 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-class GitHubCubit extends Cubit<GitHubState> {
-  GitHubCubit(this.gitHubRepository)
+class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
+  GitHubRepositoriesCubit(this.gitHubRepository)
       : assert(gitHubRepository != null),
-        super(const GitHubState());
+        super(const GitHubRepositoriesState());
 
   final GitHubRepository gitHubRepository;
 
-  Future<bool> loadRepositories() async {
+  Future<bool> load() async {
     var result = true;
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
-      final repositories = await gitHubRepository.readRepositories();
-      emit(const GitHubState());
+      final items = await gitHubRepository.readRepositories();
+      emit(const GitHubRepositoriesState());
       await Future.delayed(const Duration(milliseconds: 300));
       emit(state.copyWith(
-        repositories: repositories,
+        items: items,
         status: GitHubStatus.ready,
       ));
     } catch (error) {
@@ -27,12 +27,12 @@ class GitHubCubit extends Cubit<GitHubState> {
   }
 
   List<RepositoryModel> _updateStarLocally(String id, bool value) {
-    final index = state.repositories
+    final index = state.items
         .indexWhere((RepositoryModel repository) => repository.id == id);
     if (index == -1) {
-      return state.repositories;
+      return state.items;
     }
-    final repositories = [...state.repositories];
+    final repositories = [...state.items];
     final repository = repositories[index];
     repositories[index] = repository.copyWith(viewerHasStarred: value);
     return repositories;
@@ -41,19 +41,19 @@ class GitHubCubit extends Cubit<GitHubState> {
   Future<bool> toggleStar({String id, bool value}) async {
     var result = true;
     emit(state.copyWith(
-      repositories: _updateStarLocally(id, value),
-      loadingRepositories: {...state.loadingRepositories}..add(id),
+      items: _updateStarLocally(id, value),
+      loadingItems: {...state.loadingItems}..add(id),
     ));
     try {
       await gitHubRepository.toggleStar(id: id, value: value);
     } catch (error) {
       emit(state.copyWith(
-        repositories: _updateStarLocally(id, !value),
+        items: _updateStarLocally(id, !value),
       ));
       result = false;
     } finally {
       emit(state.copyWith(
-        loadingRepositories: {...state.loadingRepositories}..remove(id),
+        loadingItems: {...state.loadingItems}..remove(id),
       ));
     }
     return result;
@@ -62,29 +62,29 @@ class GitHubCubit extends Cubit<GitHubState> {
 
 enum GitHubStatus { initial, busy, ready }
 
-class GitHubState extends Equatable {
-  const GitHubState({
-    this.repositories = const [],
+class GitHubRepositoriesState extends Equatable {
+  const GitHubRepositoriesState({
+    this.items = const [],
     this.status = GitHubStatus.initial,
-    this.loadingRepositories = const {},
-  }) : assert(repositories != null);
+    this.loadingItems = const {},
+  }) : assert(items != null);
 
-  final List<RepositoryModel> repositories;
+  final List<RepositoryModel> items;
   final GitHubStatus status;
-  final Set<String> loadingRepositories;
+  final Set<String> loadingItems;
 
   @override
-  List<Object> get props => [repositories, status, loadingRepositories];
+  List<Object> get props => [items, status, loadingItems];
 
-  GitHubState copyWith({
-    List<RepositoryModel> repositories,
+  GitHubRepositoriesState copyWith({
+    List<RepositoryModel> items,
     GitHubStatus status,
-    Set<String> loadingRepositories,
+    Set<String> loadingItems,
   }) {
-    return GitHubState(
-      repositories: repositories ?? this.repositories,
+    return GitHubRepositoriesState(
+      items: items ?? this.items,
       status: status ?? this.status,
-      loadingRepositories: loadingRepositories ?? this.loadingRepositories,
+      loadingItems: loadingItems ?? this.loadingItems,
     );
   }
 }

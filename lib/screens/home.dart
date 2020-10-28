@@ -36,15 +36,17 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 4.0),
             Text(user.name ?? '', style: textTheme.headline5),
             const SizedBox(height: 4.0),
-            _CommonButton(
-              title: 'GitHub',
-              buttonKey: const Key('homeScreen_gitHub_raisedButton'),
-              onPressed: () => navigator.push<void>(GitHubScreen().getRoute()),
+            _CommonRaisedButton(
+              title: 'GitHub Repositories',
+              buttonKey:
+                  const Key('homeScreen_gitHubRepositories_raisedButton'),
+              onPressed: () =>
+                  navigator.push<void>(GitHubRepositoriesScreen().getRoute()),
             ),
             const SizedBox(height: 4.0),
-            _CommonButton(
+            _CommonRaisedButton(
               title: 'My Todos',
-              buttonKey: const Key('homeScreen_myTodosButton_raisedButton'),
+              buttonKey: const Key('homeScreen_myTodos_raisedButton'),
               onPressed: () => navigator.push<void>(MyTodosScreen().getRoute()),
             ),
           ],
@@ -54,8 +56,8 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _CommonButton extends StatelessWidget {
-  _CommonButton({this.title, this.buttonKey, this.onPressed});
+class _CommonRaisedButton extends StatelessWidget {
+  _CommonRaisedButton({this.title, this.buttonKey, this.onPressed});
 
   final String title;
   final Key buttonKey;
