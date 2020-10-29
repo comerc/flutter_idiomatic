@@ -95,6 +95,7 @@ class MyTodosBody extends StatelessWidget {
                                     ),
                                     shape: StadiumBorder(),
                                     onPressed: () {
+                                      // TODO: load new items in AnimatedList
                                       MyTodosScreen._load(
                                         getBloc<MyTodosCubit>(context),
                                       );
@@ -113,9 +114,24 @@ class MyTodosBody extends StatelessWidget {
                           return Container();
                         }
                         final item = state.items[index];
-                        return MyTodosItem(
+                        return Dismissible(
                           key: Key('${item.id}'),
-                          item: item,
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (DismissDirection direction) {
+                            _remove(getBloc<MyTodosCubit>(context),
+                                id: item.id);
+                          },
+                          background: Container(
+                            color: Colors.red,
+                            child: Row(children: <Widget>[
+                              const Spacer(),
+                              const Icon(Icons.delete_outline),
+                              const SizedBox(width: 8),
+                            ]),
+                          ),
+                          child: MyTodosItem(
+                            item: item,
+                          ),
                         );
                       },
                     ),
@@ -132,7 +148,7 @@ class MyTodosBody extends StatelessWidget {
                       shape: StadiumBorder(),
                       color: theme.accentColor,
                       onPressed: () {
-                        getBloc<MyTodosCubit>(context).loadNew();
+                        getBloc<MyTodosCubit>(context).load(isRefresh: true);
                       },
                       child: Text(
                         'LOAD NEW',
@@ -147,32 +163,40 @@ class MyTodosBody extends StatelessWidget {
       ),
     );
   }
+
+  void _remove(MyTodosCubit cubit, {int id}) async {
+    final result = await cubit.remove(id);
+    if (result) return; // TODO: undo
+    BotToast.showNotification(
+      title: (_) => Text(
+        'Can not remove todo $id',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _remove(cubit, id: id);
+        },
+        child: const Text('REPEAT'),
+      ),
+    );
+  }
 }
 
 class MyTodosItem extends StatelessWidget {
   const MyTodosItem({
     Key key,
     this.item,
-    // this.isLoading,
   }) : super(key: key);
 
   final TodoModel item;
-  // final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      // leading: repository.viewerHasStarred
-      //     ? const Icon(
-      //         Icons.star,
-      //         color: Colors.amber,
-      //       )
-      //     : const Icon(Icons.star_border),
-      // trailing: isLoading ? const CircularProgressIndicator() : null,
-      title: Text(item.title),
-      // onTap: () {
-      //   _toggleStar(getBloc<GitHubCubit>(context));
-      // },
+      title: Text('${item.id} ${item.title}'),
     );
   }
 }

@@ -39,13 +39,28 @@ class DatabaseRepository {
   Stream<int> get fetchNewNotification {
     final operation = Operation(
       documentNode: _API.fetchNewNotification,
-      // variables: null,
+      variables: {'user_id': kDatabaseUserId},
       // extensions: null,
       // operationName: 'FetchNewNotification',
     );
     return _client.subscribe(operation).map((FetchResult fetchResult) {
       return fetchResult.data['todos'][0]['id'] as int;
     });
+  }
+
+  Future<int> deleteTodo(int id) async {
+    final options = MutationOptions(
+      documentNode: _API.deleteTodo,
+      variables: {'id': id},
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final mutationResult =
+        await _client.mutate(options).timeout(kGraphQLQueryTimeoutDuration);
+    if (mutationResult.hasException) {
+      throw mutationResult.exception;
+    }
+    return mutationResult.data['delete_todos_by_pk']['id'] as int;
   }
 }
 
@@ -63,8 +78,11 @@ GraphQLClient _getClient() {
       config: SocketClientConfig(
         autoReconnect: true,
         inactivityTimeout: const Duration(seconds: 15),
-        initPayload: () async => {
-          'headers': {'Authorization': 'Bearer $kDatabaseToken'}
+        initPayload: () async {
+          print('initPayload');
+          return {
+            'headers': {'Authorization': 'Bearer $kDatabaseToken'},
+          };
         },
       ),
     );
@@ -83,9 +101,23 @@ GraphQLClient _getClient() {
 }
 
 class _API {
+  static final deleteTodo = gql(r'''
+    mutation DeleteTodo($id: Int!) {
+      delete_todos_by_pk(id: $id) {
+        id
+      }
+    }
+  ''');
+
   static final fetchNewNotification = gql(r'''
-    subscription FetchNewNotification {
-      todos(limit: 1, order_by: {created_at: desc}) {
+    subscription FetchNewNotification($user_id: String!) {
+      todos(
+        where: {
+          user_id: {_eq: $user_id},
+        }, 
+        order_by: {created_at: desc},
+        limit: 1, 
+      ) {
         id
       }
     }
@@ -97,7 +129,7 @@ class _API {
       todos(
         where: {
           user_id: {_eq: $user_id},
-          created_at: {_lte: $created_at}
+          created_at: {_lte: $created_at},
         },
         order_by: { created_at: desc },
         limit: $limit,
@@ -116,6 +148,25 @@ class _API {
       created_at
     }
   ''');
+
+  //   mutation {
+  //     insert_todos_one(object: {title: "1111"}) {
+  //       id
+  //     }
+  //   }
+
+  // static String addPublicTodo = """mutation (\$title: String!){
+  //   insert_todos (
+  //     objects: [{
+  //       title: \$title,
+  //       is_public: true
+  //     }]
+  //   ){
+  //     returning {
+  //       id
+  //     }
+  //   }
+  // }""";
 
   // static final addStar = gql(r'''
   //   mutation AddStar($starrableId: ID!) {

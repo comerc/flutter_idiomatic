@@ -12,7 +12,7 @@ class MyTodosCubit extends Cubit<MyTodosState> {
   }
 
   final DatabaseRepository databaseRepository;
-  StreamSubscription _fetchNewNotificationSubscription;
+  StreamSubscription<int> _fetchNewNotificationSubscription;
   bool isStartedSubscription = false;
 
   @override
@@ -30,7 +30,7 @@ class MyTodosCubit extends Cubit<MyTodosState> {
   }
 
   Future<bool> load({bool isRefresh = false}) async {
-    const kLimit = 4;
+    const kLimit = 10;
     var result = true;
     emit(state.copyWith(status: MyTodosStatus.busy));
     try {
@@ -61,10 +61,22 @@ class MyTodosCubit extends Cubit<MyTodosState> {
     return result;
   }
 
-  void loadNew() {
-    emit(state.copyWith(
-      items: [TodoModel(id: state.newId, title: '1234'), ...state.items],
-    ));
+  Future<bool> remove(int id) async {
+    var result = true;
+    emit(
+      state.copyWith(
+        items: [...state.items..removeWhere((TodoModel item) => item.id == id)],
+      ),
+    );
+    try {
+      final deletedId = await databaseRepository.deleteTodo(id);
+      if (deletedId != id) {
+        throw 'Can not remove todo $id';
+      }
+    } catch (error) {
+      result = false;
+    }
+    return result;
   }
 }
 
