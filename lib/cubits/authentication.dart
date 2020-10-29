@@ -7,9 +7,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit(this.authenticationRepository)
       : assert(authenticationRepository != null),
         super(const AuthenticationState.unknown()) {
-    _userSubscription = authenticationRepository.user.listen(
-      (UserModel user) => changeUser(user),
-    );
+    _userSubscription = authenticationRepository.user.listen(changeUser);
   }
 
   final AuthenticationRepository authenticationRepository;
