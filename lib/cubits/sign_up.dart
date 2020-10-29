@@ -69,7 +69,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 }
 
-enum ConfirmPasswordValidationError { invalid }
+// enum ConfirmPasswordValidationError { invalid }
 
 class SignUpState extends Equatable {
   const SignUpState({

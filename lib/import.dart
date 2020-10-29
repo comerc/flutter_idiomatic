@@ -1,5 +1,3 @@
-export 'common/_mutations.dart';
-export 'common/_queries.dart';
 export 'common/const.dart';
 export 'common/helpers.dart';
 export 'common/route.dart';
