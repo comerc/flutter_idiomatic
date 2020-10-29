@@ -36,12 +36,12 @@ class DatabaseRepository {
     return items;
   }
 
-  Stream<int> get fetchNewNotification {
+  Stream<int> get fetchNewTodoNotification {
     final operation = Operation(
-      documentNode: _API.fetchNewNotification,
+      documentNode: _API.fetchNewTodoNotification,
       variables: {'user_id': kDatabaseUserId},
       // extensions: null,
-      // operationName: 'FetchNewNotification',
+      // operationName: 'FetchNewTodoNotification',
     );
     return _client.subscribe(operation).map((FetchResult fetchResult) {
       return fetchResult.data['todos'][0]['id'] as int;
@@ -109,8 +109,8 @@ class _API {
     }
   ''');
 
-  static final fetchNewNotification = gql(r'''
-    subscription FetchNewNotification($user_id: String!) {
+  static final fetchNewTodoNotification = gql(r'''
+    subscription FetchNewTodoNotification($user_id: String!) {
       todos(
         where: {
           user_id: {_eq: $user_id},

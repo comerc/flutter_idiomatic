@@ -6,7 +6,7 @@ import 'package:flutter_firebase_login/import.dart';
 class TodosScreen extends StatelessWidget {
   Route<T> getRoute<T>() {
     return buildRoute<T>(
-      '/my_todos',
+      '/todos',
       builder: (_) => this,
       fullscreenDialog: true,
     );
@@ -15,7 +15,7 @@ class TodosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Todos')),
+      appBar: AppBar(title: const Text('Todos')),
       body: BlocProvider(
         create: (BuildContext context) {
           final cubit = TodosCubit(getRepository<DatabaseRepository>(context));
@@ -32,7 +32,7 @@ class TodosScreen extends StatelessWidget {
     if (result) return;
     BotToast.showNotification(
       title: (_) => const Text(
-        'Can not load my todos',
+        'Can not load todos',
         overflow: TextOverflow.fade,
         softWrap: false,
       ),

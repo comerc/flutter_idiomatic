@@ -7,21 +7,22 @@ class TodosCubit extends Cubit<TodosState> {
   TodosCubit(this.databaseRepository)
       : assert(databaseRepository != null),
         super(const TodosState()) {
-    _fetchNewNotificationSubscription =
-        databaseRepository.fetchNewNotification.listen(fetchNewNotification);
+    _fetchNewTodoNotificationSubscription = databaseRepository
+        .fetchNewTodoNotification
+        .listen(fetchNewTodoNotification);
   }
 
   final DatabaseRepository databaseRepository;
-  StreamSubscription<int> _fetchNewNotificationSubscription;
+  StreamSubscription<int> _fetchNewTodoNotificationSubscription;
   bool isStartedSubscription = false;
 
   @override
   Future<void> close() {
-    _fetchNewNotificationSubscription?.cancel();
+    _fetchNewTodoNotificationSubscription?.cancel();
     return super.close();
   }
 
-  void fetchNewNotification(int id) {
+  void fetchNewTodoNotification(int id) {
     if (!isStartedSubscription) {
       isStartedSubscription = true;
       return;
