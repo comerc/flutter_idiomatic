@@ -35,7 +35,7 @@ class AuthenticationRepository {
   ///
   /// Emits [User.empty] if the user is not authenticated.
   Stream<UserModel> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
+    return _firebaseAuth.authStateChanges().map((User firebaseUser) {
       return firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
     });
   }
