@@ -17,10 +17,13 @@ $ flutter packages pub run build_runner build --delete-conflicting-outputs
 Add `lib/local.dart`:
 
 ```dart
-const kGitHubPersonalAccessToken = 'value';
+const kGitHubPersonalAccessToken = 'token';
 // from https://github.com/settings/tokens
 
-const kDatabaseToken = 'value';
+const kDatabaseToken = 'token';
+// from https://hasura.io/learn/graphql/graphiql?tutorial=react-native
+
+const kDatabaseUserId = 'your@email.com';
 // from https://hasura.io/learn/graphql/graphiql?tutorial=react-native
 ```
 
