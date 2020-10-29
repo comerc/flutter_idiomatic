@@ -25,14 +25,18 @@ class MockAuthenticationCubit extends MockBloc<AuthenticationState>
 
 class MockGitHubRepository extends Mock implements GitHubRepository {}
 
+class MockDatabaseRepository extends Mock implements DatabaseRepository {}
+
 void main() {
   group('App', () {
     AuthenticationRepository authenticationRepository;
     GitHubRepository gitHubRepository;
+    DatabaseRepository databaseRepository;
 
     setUp(() {
       authenticationRepository = MockAuthenticationRepository();
       gitHubRepository = MockGitHubRepository();
+      databaseRepository = MockDatabaseRepository();
       when(authenticationRepository.user).thenAnswer(
         (_) => const Stream.empty(),
       );
@@ -43,6 +47,7 @@ void main() {
         () => App(
           authenticationRepository: null,
           gitHubRepository: null,
+          databaseRepository: null,
         ),
         throwsAssertionError,
       );
@@ -53,6 +58,7 @@ void main() {
         App(
           authenticationRepository: authenticationRepository,
           gitHubRepository: gitHubRepository,
+          databaseRepository: databaseRepository,
         ),
       );
       expect(find.byType(AppView), findsOneWidget);
