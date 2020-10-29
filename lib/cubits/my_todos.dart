@@ -46,7 +46,7 @@ class MyTodosCubit extends Cubit<MyTodosState> {
         nextDateTime = lastItem.createdAt;
       }
       if (isRefresh) {
-        emit(state.copyWith(items: []));
+        emit(const MyTodosState());
         await Future.delayed(const Duration(milliseconds: 300));
       }
       emit(state.copyWith(
