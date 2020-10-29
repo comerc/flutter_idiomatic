@@ -43,6 +43,7 @@ dependencies:
   json_annotation: 3.1.0
   # enum_to_string: 1.0.8
   bot_toast: ^3.0.4
+  copy_with_extension: ">=1.0.0 <2.0.0"
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +54,7 @@ dev_dependencies:
 
   build_runner: 1.10.3
   json_serializable: 3.5.0
+  copy_with_extension_gen: ">=1.0.0 <2.0.0"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

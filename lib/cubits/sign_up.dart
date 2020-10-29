@@ -1,7 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:flutter_firebase_login/import.dart';
+
+part 'sign_up.g.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit(this.authenticationRepository)
@@ -69,6 +72,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 }
 
+@CopyWith()
 class SignUpState extends Equatable {
   const SignUpState({
     this.email = const EmailModel.pure(),
@@ -84,18 +88,4 @@ class SignUpState extends Equatable {
 
   @override
   List<Object> get props => [email, password, confirmedPassword, status];
-
-  SignUpState copyWith({
-    EmailModel email,
-    PasswordModel password,
-    ConfirmedPasswordModel confirmedPassword,
-    FormzStatus status,
-  }) {
-    return SignUpState(
-      email: email ?? this.email,
-      password: password ?? this.password,
-      confirmedPassword: confirmedPassword ?? this.confirmedPassword,
-      status: status ?? this.status,
-    );
-  }
 }

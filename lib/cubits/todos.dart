@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_firebase_login/import.dart';
+
+part 'todos.g.dart';
 
 class TodosCubit extends Cubit<TodosState> {
   TodosCubit(this.databaseRepository)
@@ -83,6 +86,7 @@ class TodosCubit extends Cubit<TodosState> {
 
 enum TodosStatus { initial, busy, ready }
 
+@CopyWith()
 class TodosState extends Equatable {
   const TodosState({
     this.items = const [],
@@ -104,20 +108,4 @@ class TodosState extends Equatable {
 
   @override
   List<Object> get props => [items, status, hasMore, nextDateTime, newId];
-
-  TodosState copyWith({
-    List<TodoModel> items,
-    TodosStatus status,
-    bool hasMore,
-    DateTime nextDateTime,
-    int newId,
-  }) {
-    return TodosState(
-      items: items ?? this.items,
-      status: status ?? this.status,
-      hasMore: hasMore ?? this.hasMore,
-      nextDateTime: nextDateTime ?? this.nextDateTime,
-      newId: newId ?? this.newId,
-    );
-  }
 }

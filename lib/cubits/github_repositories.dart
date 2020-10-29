@@ -1,6 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_firebase_login/import.dart';
+
+part 'github_repositories.g.dart';
 
 class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
   GitHubRepositoriesCubit(this.gitHubRepository)
@@ -61,6 +64,7 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
 
 enum GitHubStatus { initial, busy, ready }
 
+@CopyWith()
 class GitHubRepositoriesState extends Equatable {
   const GitHubRepositoriesState({
     this.items = const [],
@@ -74,16 +78,4 @@ class GitHubRepositoriesState extends Equatable {
 
   @override
   List<Object> get props => [items, status, loadingItems];
-
-  GitHubRepositoriesState copyWith({
-    List<RepositoryModel> items,
-    GitHubStatus status,
-    Set<String> loadingItems,
-  }) {
-    return GitHubRepositoriesState(
-      items: items ?? this.items,
-      status: status ?? this.status,
-      loadingItems: loadingItems ?? this.loadingItems,
-    );
-  }
 }

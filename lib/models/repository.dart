@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 // import 'package:minsk8/import.dart';
 
 part 'repository.g.dart';
 
+@CopyWith()
 @JsonSerializable(fieldRename: FieldRename.none)
 class RepositoryModel extends Equatable {
   RepositoryModel({
@@ -23,16 +25,4 @@ class RepositoryModel extends Equatable {
       _$RepositoryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RepositoryModelToJson(this);
-
-  RepositoryModel copyWith({
-    String id,
-    String name,
-    bool viewerHasStarred,
-  }) {
-    return RepositoryModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      viewerHasStarred: viewerHasStarred ?? this.viewerHasStarred,
-    );
-  }
 }
