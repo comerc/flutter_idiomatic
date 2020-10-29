@@ -3,10 +3,10 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-class MyTodosCubit extends Cubit<MyTodosState> {
-  MyTodosCubit(this.databaseRepository)
+class TodosCubit extends Cubit<TodosState> {
+  TodosCubit(this.databaseRepository)
       : assert(databaseRepository != null),
-        super(const MyTodosState()) {
+        super(const TodosState()) {
     _fetchNewNotificationSubscription =
         databaseRepository.fetchNewNotification.listen(fetchNewNotification);
   }
@@ -32,9 +32,9 @@ class MyTodosCubit extends Cubit<MyTodosState> {
   Future<bool> load({bool isRefresh = false}) async {
     const kLimit = 10;
     var result = true;
-    emit(state.copyWith(status: MyTodosStatus.busy));
+    emit(state.copyWith(status: TodosStatus.busy));
     try {
-      final items = await databaseRepository.readMyTodos(
+      final items = await databaseRepository.readTodos(
         createdAt: isRefresh ? null : state.nextDateTime,
         limit: kLimit + 1,
       );
@@ -46,12 +46,12 @@ class MyTodosCubit extends Cubit<MyTodosState> {
         nextDateTime = lastItem.createdAt;
       }
       if (isRefresh) {
-        emit(const MyTodosState());
+        emit(const TodosState());
         await Future.delayed(const Duration(milliseconds: 300));
       }
       emit(state.copyWith(
         items: [...state.items, ...items],
-        status: MyTodosStatus.ready,
+        status: TodosStatus.ready,
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
@@ -80,19 +80,19 @@ class MyTodosCubit extends Cubit<MyTodosState> {
   }
 }
 
-enum MyTodosStatus { initial, busy, ready }
+enum TodosStatus { initial, busy, ready }
 
-class MyTodosState extends Equatable {
-  const MyTodosState({
+class TodosState extends Equatable {
+  const TodosState({
     this.items = const [],
-    this.status = MyTodosStatus.initial,
+    this.status = TodosStatus.initial,
     this.hasMore = false,
     this.nextDateTime,
     this.newId,
   }) : assert(items != null);
 
   final List<TodoModel> items;
-  final MyTodosStatus status;
+  final TodosStatus status;
   final DateTime nextDateTime;
   final bool hasMore;
   final int newId;
@@ -104,14 +104,14 @@ class MyTodosState extends Equatable {
   @override
   List<Object> get props => [items, status, hasMore, nextDateTime, newId];
 
-  MyTodosState copyWith({
+  TodosState copyWith({
     List<TodoModel> items,
-    MyTodosStatus status,
+    TodosStatus status,
     bool hasMore,
     DateTime nextDateTime,
     int newId,
   }) {
-    return MyTodosState(
+    return TodosState(
       items: items ?? this.items,
       status: status ?? this.status,
       hasMore: hasMore ?? this.hasMore,

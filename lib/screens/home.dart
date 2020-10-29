@@ -46,8 +46,8 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 4.0),
             _CommonRaisedButton(
               title: 'My Todos',
-              buttonKey: const Key('homeScreen_myTodos_raisedButton'),
-              onPressed: () => navigator.push<void>(MyTodosScreen().getRoute()),
+              buttonKey: const Key('homeScreen_todos_raisedButton'),
+              onPressed: () => navigator.push<void>(TodosScreen().getRoute()),
             ),
           ],
         ),

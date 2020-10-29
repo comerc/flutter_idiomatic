@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-class MyTodosScreen extends StatelessWidget {
+class TodosScreen extends StatelessWidget {
   Route<T> getRoute<T>() {
     return buildRoute<T>(
       '/my_todos',
@@ -18,18 +18,16 @@ class MyTodosScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('My Todos')),
       body: BlocProvider(
         create: (BuildContext context) {
-          final cubit =
-              MyTodosCubit(getRepository<DatabaseRepository>(context));
+          final cubit = TodosCubit(getRepository<DatabaseRepository>(context));
           _load(cubit);
           return cubit;
         },
-        child: MyTodosBody(),
+        child: TodosBody(),
       ),
     );
   }
 
-  static Future<void> _load(MyTodosCubit cubit,
-      {bool isRefresh = false}) async {
+  static Future<void> _load(TodosCubit cubit, {bool isRefresh = false}) async {
     final result = await cubit.load(isRefresh: isRefresh);
     if (result) return;
     BotToast.showNotification(
@@ -50,18 +48,18 @@ class MyTodosScreen extends StatelessWidget {
   }
 }
 
-class MyTodosBody extends StatelessWidget {
+class TodosBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        return MyTodosScreen._load(
-          getBloc<MyTodosCubit>(context),
+        return TodosScreen._load(
+          getBloc<TodosCubit>(context),
           isRefresh: true,
         );
       },
-      child: BlocBuilder<MyTodosCubit, MyTodosState>(
-        builder: (BuildContext context, MyTodosState state) {
+      child: BlocBuilder<TodosCubit, TodosState>(
+        builder: (BuildContext context, TodosState state) {
           return Stack(
             children: <Widget>[
               Column(
@@ -80,11 +78,11 @@ class MyTodosBody extends StatelessWidget {
                       itemCount: state.items.length + 1,
                       itemBuilder: (BuildContext context, int index) {
                         if (index == state.items.length) {
-                          if (state.status == MyTodosStatus.busy) {
+                          if (state.status == TodosStatus.busy) {
                             return Center(
                                 child: const CircularProgressIndicator());
                           }
-                          if (state.status == MyTodosStatus.ready) {
+                          if (state.status == TodosStatus.ready) {
                             if (state.hasMore) {
                               return Center(
                                 child: FlatButton(
@@ -96,8 +94,8 @@ class MyTodosBody extends StatelessWidget {
                                     shape: StadiumBorder(),
                                     onPressed: () {
                                       // TODO: load new items in AnimatedList
-                                      MyTodosScreen._load(
-                                        getBloc<MyTodosCubit>(context),
+                                      TodosScreen._load(
+                                        getBloc<TodosCubit>(context),
                                       );
                                     }),
                               );
@@ -118,8 +116,7 @@ class MyTodosBody extends StatelessWidget {
                           key: Key('${item.id}'),
                           direction: DismissDirection.endToStart,
                           onDismissed: (DismissDirection direction) {
-                            _remove(getBloc<MyTodosCubit>(context),
-                                id: item.id);
+                            _remove(getBloc<TodosCubit>(context), id: item.id);
                           },
                           background: Container(
                             color: Colors.red,
@@ -129,7 +126,7 @@ class MyTodosBody extends StatelessWidget {
                               const SizedBox(width: 8),
                             ]),
                           ),
-                          child: MyTodosItem(
+                          child: TodosItem(
                             item: item,
                           ),
                         );
@@ -148,7 +145,7 @@ class MyTodosBody extends StatelessWidget {
                       shape: StadiumBorder(),
                       color: theme.accentColor,
                       onPressed: () {
-                        getBloc<MyTodosCubit>(context).load(isRefresh: true);
+                        getBloc<TodosCubit>(context).load(isRefresh: true);
                       },
                       child: Text(
                         'LOAD NEW',
@@ -164,7 +161,7 @@ class MyTodosBody extends StatelessWidget {
     );
   }
 
-  void _remove(MyTodosCubit cubit, {int id}) async {
+  void _remove(TodosCubit cubit, {int id}) async {
     final result = await cubit.remove(id);
     if (result) return; // TODO: undo
     BotToast.showNotification(
@@ -185,8 +182,8 @@ class MyTodosBody extends StatelessWidget {
   }
 }
 
-class MyTodosItem extends StatelessWidget {
-  const MyTodosItem({
+class TodosItem extends StatelessWidget {
+  const TodosItem({
     Key key,
     this.item,
   }) : super(key: key);

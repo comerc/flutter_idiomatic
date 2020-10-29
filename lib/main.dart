@@ -90,7 +90,7 @@ class AppView extends StatelessWidget {
       navigatorObservers: [
         BotToastNavigatorObserver(),
       ],
-      // home: MyTodosScreen(),
+      // home: TodosScreen(),
       builder: (BuildContext context, Widget child) {
         var result = child;
         result = BotToastInit()(context, result);

@@ -11,9 +11,9 @@ class DatabaseRepository {
 
   final GraphQLClient _client;
 
-  Future<List<TodoModel>> readMyTodos({DateTime createdAt, int limit}) async {
+  Future<List<TodoModel>> readTodos({DateTime createdAt, int limit}) async {
     final options = QueryOptions(
-      documentNode: _API.readMyTodos,
+      documentNode: _API.readTodos,
       variables: {
         'user_id': kDatabaseUserId,
         'created_at': (createdAt ?? DateTime.now().toUtc()).toIso8601String(),
@@ -124,8 +124,8 @@ class _API {
   ''');
   //where: {is_public: {_eq: true}},
 
-  static final readMyTodos = gql(r'''
-    query ReadMyTodos($user_id: String!, $created_at: timestamptz!, $limit: Int!) {
+  static final readTodos = gql(r'''
+    query ReadTodos($user_id: String!, $created_at: timestamptz!, $limit: Int!) {
       todos(
         where: {
           user_id: {_eq: $user_id},
