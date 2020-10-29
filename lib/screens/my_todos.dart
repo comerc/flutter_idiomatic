@@ -60,57 +60,90 @@ class MyTodosBody extends StatelessWidget {
           isRefresh: true,
         );
       },
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Add new Todo',
-              ),
-              onSubmitted: (value) => print('changeQuery $value'),
-            ),
-          ),
-          Expanded(
-            child: BlocBuilder<MyTodosCubit, MyTodosState>(
-              builder: (BuildContext context, MyTodosState state) {
-                return ListView.builder(
-                  itemCount: state.items.length + 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index == state.items.length) {
-                      if (state.status == MyTodosStatus.busy) {
-                        return Center(child: const CircularProgressIndicator());
-                      }
-                      if (state.status == MyTodosStatus.ready) {
-                        final isRefresh = state.nextDateTime == null;
-                        return Center(
-                          child: FlatButton(
-                              child: Text(
-                                isRefresh ? 'REFRESH' : 'LOAD MORE',
-                                style: TextStyle(color: theme.primaryColor),
-                              ),
-                              shape: StadiumBorder(),
-                              onPressed: () {
-                                MyTodosScreen._load(
-                                  getBloc<MyTodosCubit>(context),
-                                  isRefresh: isRefresh,
-                                );
-                              }),
+      child: BlocBuilder<MyTodosCubit, MyTodosState>(
+        builder: (BuildContext context, MyTodosState state) {
+          return Stack(
+            children: [
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        labelText: 'Add new Todo',
+                      ),
+                      onSubmitted: (value) => print('changeQuery $value'),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.items.length + 1,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == state.items.length) {
+                          if (state.status == MyTodosStatus.busy) {
+                            return Center(
+                                child: const CircularProgressIndicator());
+                          }
+                          if (state.status == MyTodosStatus.ready) {
+                            if (state.hasMore) {
+                              return Center(
+                                child: FlatButton(
+                                    child: Text(
+                                      'LOAD MORE',
+                                      style:
+                                          TextStyle(color: theme.primaryColor),
+                                    ),
+                                    shape: StadiumBorder(),
+                                    onPressed: () {
+                                      MyTodosScreen._load(
+                                        getBloc<MyTodosCubit>(context),
+                                      );
+                                    }),
+                              );
+                            }
+                            return Column(
+                              children: [
+                                Text(state.items.isEmpty
+                                    ? 'NO DATA'
+                                    : 'NO MORE'),
+                                const SizedBox(height: 8),
+                              ],
+                            );
+                          }
+                          return Container();
+                        }
+                        final item = state.items[index];
+                        return MyTodosItem(
+                          key: Key('${item.id}'),
+                          item: item,
                         );
-                      }
-                      return Container();
-                    }
-                    final item = state.items[index];
-                    return MyTodosItem(
-                      key: Key('${item.id}'),
-                      item: item,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              if (state.hasReallyNewId)
+                Positioned(
+                  top: 56,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: RaisedButton(
+                      shape: StadiumBorder(),
+                      color: theme.accentColor,
+                      onPressed: () {
+                        getBloc<MyTodosCubit>(context).loadNew();
+                      },
+                      child: Text(
+                        'LOAD NEW',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

@@ -13,13 +13,14 @@ class GitHubRepository {
   final GraphQLClient _client;
 
   Future<List<RepositoryModel>> readRepositories() async {
-    final queryResult = await _client
-        .query(QueryOptions(
-          documentNode: _API.readRepositories,
-          variables: {'nRepositories': _kRepositoriesLimit},
-          fetchPolicy: FetchPolicy.noCache,
-        ))
-        .timeout(kGraphQLQueryTimeoutDuration);
+    final options = QueryOptions(
+      documentNode: _API.readRepositories,
+      variables: {'nRepositories': _kRepositoriesLimit},
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult =
+        await _client.query(options).timeout(kGraphQLQueryTimeoutDuration);
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -34,13 +35,14 @@ class GitHubRepository {
   }
 
   Future<bool> toggleStar({String id, bool value}) async {
-    final mutationResult = await _client
-        .mutate(MutationOptions(
-          documentNode: value ? _API.addStar : _API.removeStar,
-          variables: {'starrableId': id},
-          fetchPolicy: FetchPolicy.noCache,
-        ))
-        .timeout(kGraphQLQueryTimeoutDuration);
+    final options = MutationOptions(
+      documentNode: value ? _API.addStar : _API.removeStar,
+      variables: {'starrableId': id},
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final mutationResult =
+        await _client.mutate(options).timeout(kGraphQLQueryTimeoutDuration);
     if (mutationResult.hasException) {
       throw mutationResult.exception;
     }

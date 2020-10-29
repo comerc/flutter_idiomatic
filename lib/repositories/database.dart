@@ -4,8 +4,7 @@ import 'package:flutter_firebase_login/import.dart';
 // ignore: uri_does_not_exist
 import '../local.dart';
 
-const _kEnableWebsockets = false;
-// const _kRepositoriesLimit = 8;
+const _kEnableWebsockets = true;
 
 class DatabaseRepository {
   DatabaseRepository({GraphQLClient client}) : _client = client ?? _getClient();
@@ -13,19 +12,18 @@ class DatabaseRepository {
   final GraphQLClient _client;
 
   Future<List<TodoModel>> readMyTodos({DateTime createdAt, int limit}) async {
-    final queryResult = await _client
-        .query(QueryOptions(
-          documentNode: _API.readMyTodos,
-          variables: {
-            'user_id': kDatabaseUserId,
-            'created_at':
-                (createdAt ?? DateTime.now().toUtc()).toIso8601String(),
-            'limit': limit,
-          },
-          fetchPolicy: FetchPolicy.noCache,
-          errorPolicy: ErrorPolicy.all,
-        ))
-        .timeout(kGraphQLQueryTimeoutDuration);
+    final options = QueryOptions(
+      documentNode: _API.readMyTodos,
+      variables: {
+        'user_id': kDatabaseUserId,
+        'created_at': (createdAt ?? DateTime.now().toUtc()).toIso8601String(),
+        'limit': limit,
+      },
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult =
+        await _client.query(options).timeout(kGraphQLQueryTimeoutDuration);
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -36,6 +34,18 @@ class DatabaseRepository {
       items.add(TodoModel.fromJson(dataItem));
     }
     return items;
+  }
+
+  Stream<int> get fetchNewNotification {
+    final operation = Operation(
+      documentNode: _API.fetchNewNotification,
+      // variables: null,
+      // extensions: null,
+      // operationName: 'FetchNewNotification',
+    );
+    return _client.subscribe(operation).map((FetchResult fetchResult) {
+      return fetchResult.data['todos'][0]['id'] as int;
+    });
   }
 }
 
@@ -53,9 +63,9 @@ GraphQLClient _getClient() {
       config: SocketClientConfig(
         autoReconnect: true,
         inactivityTimeout: const Duration(seconds: 15),
-        // initPayload: () async => {
-        //   'headers': {'Authorization': 'Bearer ' + token}
-        // },
+        initPayload: () async => {
+          'headers': {'Authorization': 'Bearer $kDatabaseToken'}
+        },
       ),
     );
     link = link.concat(websocketLink);
@@ -73,6 +83,15 @@ GraphQLClient _getClient() {
 }
 
 class _API {
+  static final fetchNewNotification = gql(r'''
+    subscription FetchNewNotification {
+      todos(limit: 1, order_by: {created_at: desc}) {
+        id
+      }
+    }
+  ''');
+  //where: {is_public: {_eq: true}},
+
   static final readMyTodos = gql(r'''
     query ReadMyTodos($user_id: String!, $created_at: timestamptz!, $limit: Int!) {
       todos(
@@ -98,18 +117,6 @@ class _API {
     }
   ''');
 
-  // static final readRepositories = gql(r'''
-  //   query ReadRepositories($nRepositories: Int!) {
-  //     viewer {
-  //       repositories(last: $nRepositories) {
-  //         nodes {
-  //           ...RepositoryFields
-  //         }
-  //       }
-  //     }
-  //   }
-  // ''')..definitions.addAll(fragments.definitions);
-
   // static final addStar = gql(r'''
   //   mutation AddStar($starrableId: ID!) {
   //     action: addStar(input: {starrableId: $starrableId}) {
@@ -129,30 +136,4 @@ class _API {
   //     }
   //   }
   // ''');
-
-  // static final searchRepositories = gql(r'''
-  //   query SearchRepositories($nRepositories: Int!, $query: String!, $cursor: String) {
-  //     search(last: $nRepositories, query: $query, type: REPOSITORY, after: $cursor) {
-  //       nodes {
-  //         # __typename
-  //         ... on Repository {
-  //           name
-  //           shortDescriptionHTML
-  //           viewerHasStarred
-  //           stargazers {
-  //             totalCount
-  //           }
-  //           forks {
-  //             totalCount
-  //           }
-  //           updatedAt
-  //         }
-  //       }
-  //       pageInfo {
-  //         endCursor
-  //         hasNextPage
-  //       }
-  //     }
-  //   }
-  // '''); // ..definitions.addAll(fragments.definitions);
 }
