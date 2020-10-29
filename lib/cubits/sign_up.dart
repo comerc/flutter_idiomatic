@@ -69,8 +69,6 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 }
 
-// enum ConfirmPasswordValidationError { invalid }
-
 class SignUpState extends Equatable {
   const SignUpState({
     this.email = const EmailModel.pure(),
