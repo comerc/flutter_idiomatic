@@ -63,7 +63,7 @@ class MyTodosBody extends StatelessWidget {
       child: BlocBuilder<MyTodosCubit, MyTodosState>(
         builder: (BuildContext context, MyTodosState state) {
           return Stack(
-            children: [
+            children: <Widget>[
               Column(
                 children: <Widget>[
                   Padding(
