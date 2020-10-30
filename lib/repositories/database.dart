@@ -23,7 +23,7 @@ class DatabaseRepository {
       errorPolicy: ErrorPolicy.all,
     );
     final queryResult =
-        await _client.query(options).timeout(kGraphQLQueryTimeoutDuration);
+        await _client.query(options).timeout(kGraphQLTimeoutDuration);
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -56,11 +56,28 @@ class DatabaseRepository {
       errorPolicy: ErrorPolicy.all,
     );
     final mutationResult =
-        await _client.mutate(options).timeout(kGraphQLQueryTimeoutDuration);
+        await _client.mutate(options).timeout(kGraphQLTimeoutDuration);
     if (mutationResult.hasException) {
       throw mutationResult.exception;
     }
     return mutationResult.data['delete_todos_by_pk']['id'] as int;
+  }
+
+  Future<TodoModel> createTodo(String title) async {
+    final options = MutationOptions(
+      documentNode: _API.createTodo,
+      variables: {'title': title},
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final mutationResult =
+        await _client.mutate(options).timeout(kGraphQLTimeoutDuration);
+    if (mutationResult.hasException) {
+      throw mutationResult.exception;
+    }
+    final dataItem =
+        mutationResult.data['insert_todos_one'] as Map<String, dynamic>;
+    return TodoModel.fromJson(dataItem);
   }
 }
 
@@ -101,6 +118,14 @@ GraphQLClient _getClient() {
 }
 
 class _API {
+  static final createTodo = gql(r'''
+    mutation CreateTodo($title: String) {
+      insert_todos_one(object: {title: $title}) {
+        ...TodosFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
   static final deleteTodo = gql(r'''
     mutation DeleteTodo($id: Int!) {
       delete_todos_by_pk(id: $id) {
@@ -144,7 +169,6 @@ class _API {
       # __typename
       id
       title
-      is_completed
       created_at
     }
   ''');

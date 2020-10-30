@@ -11,17 +11,15 @@ class TodoModel extends Equatable {
   TodoModel({
     this.id,
     this.title,
-    this.isCompleted,
     this.createdAt,
   });
 
   final int id;
   final String title;
-  final bool isCompleted;
   final DateTime createdAt;
 
   @override
-  List<Object> get props => [id, title, isCompleted, createdAt];
+  List<Object> get props => [id, title, createdAt];
 
   factory TodoModel.fromJson(Map<String, dynamic> json) =>
       _$TodoModelFromJson(json);

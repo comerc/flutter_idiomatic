@@ -67,18 +67,32 @@ class TodosCubit extends Cubit<TodosState> {
 
   Future<bool> remove(int id) async {
     var result = true;
-    emit(
-      state.copyWith(
-        items: [...state.items..removeWhere((TodoModel item) => item.id == id)],
-      ),
-    );
+    emit(state.copyWith(
+      items: [...state.items..removeWhere((TodoModel item) => item.id == id)],
+    ));
     try {
       final deletedId = await databaseRepository.deleteTodo(id);
       if (deletedId != id) {
-        throw 'Can not remove todo $id';
+        throw 'Can not remove Todo $id';
       }
     } catch (error) {
       result = false;
+    }
+    return result;
+  }
+
+  Future<bool> add(String title) async {
+    var result = true;
+    emit(state.copyWith(isSubmitMode: true));
+    try {
+      final item = await databaseRepository.createTodo(title);
+      emit(state.copyWith(
+        items: [item, ...state.items],
+      ));
+    } catch (error) {
+      result = false;
+    } finally {
+      emit(state.copyWith(isSubmitMode: false));
     }
     return result;
   }
@@ -94,18 +108,21 @@ class TodosState extends Equatable {
     this.hasMore = false,
     this.nextDateTime,
     this.newId,
-  }) : assert(items != null);
+    this.isSubmitMode = false,
+  });
 
   final List<TodoModel> items;
   final TodosStatus status;
   final DateTime nextDateTime;
   final bool hasMore;
   final int newId;
+  final bool isSubmitMode;
 
   bool get hasReallyNewId =>
       newId != null &&
       items.indexWhere((TodoModel item) => item.id == newId) == -1;
 
   @override
-  List<Object> get props => [items, status, hasMore, nextDateTime, newId];
+  List<Object> get props =>
+      [items, status, hasMore, nextDateTime, newId, isSubmitMode];
 }

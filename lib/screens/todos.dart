@@ -49,6 +49,8 @@ class TodosScreen extends StatelessWidget {
 }
 
 class TodosBody extends StatelessWidget {
+  final _inputKey = GlobalKey<_InputState>();
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -58,7 +60,33 @@ class TodosBody extends StatelessWidget {
           isRefresh: true,
         );
       },
-      child: BlocBuilder<TodosCubit, TodosState>(
+      child: BlocConsumer<TodosCubit, TodosState>(
+        listenWhen: (TodosState previous, TodosState current) {
+          return previous.isSubmitMode != current.isSubmitMode &&
+              (previous.isSubmitMode || current.isSubmitMode);
+        },
+        listener: (BuildContext context, TodosState state) {
+          if (state.isSubmitMode) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              child: AlertDialog(
+                content: Row(
+                  children: <Widget>[
+                    const CircularProgressIndicator(),
+                    const SizedBox(width: 16),
+                    const Text('Loading...'),
+                  ],
+                ),
+              ),
+            );
+            return;
+          }
+          navigator.pop();
+        },
+        // buildWhen: (TodosState previous, TodosState current) {
+        //   return !current.isSubmitMode; // TODO: newId ?
+        // },
         builder: (BuildContext context, TodosState state) {
           return Stack(
             children: <Widget>[
@@ -66,11 +94,22 @@ class TodosBody extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Add new Todo',
-                      ),
-                      onSubmitted: (value) => print('changeQuery $value'),
+                    child: _Input(
+                      key: _inputKey,
+                      onSubmitted: (String value) {
+                        final title = value.trim();
+                        if (title.characters.length < 4) {
+                          BotToast.showNotification(
+                            title: (_) => const Text(
+                              'Invalid Todo < 4 characters',
+                              overflow: TextOverflow.fade,
+                              softWrap: false,
+                            ),
+                          );
+                          return;
+                        }
+                        _add(getBloc<TodosCubit>(context), title: title);
+                      },
                     ),
                   ),
                   Expanded(
@@ -166,7 +205,7 @@ class TodosBody extends StatelessWidget {
     if (result) return; // TODO: undo
     BotToast.showNotification(
       title: (_) => Text(
-        'Can not remove todo $id',
+        'Can not remove Todo $id',
         overflow: TextOverflow.fade,
         softWrap: false,
       ),
@@ -178,6 +217,64 @@ class TodosBody extends StatelessWidget {
         },
         child: const Text('REPEAT'),
       ),
+    );
+  }
+
+  void _add(TodosCubit cubit, {String title}) async {
+    final result = await cubit.add(title);
+    if (result) {
+      _inputKey.currentState?.controller?.clear();
+      return;
+    }
+    BotToast.showNotification(
+      title: (_) => Text(
+        'Can not add Todo "$title"',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _add(cubit, title: title);
+        },
+        child: const Text('REPEAT'),
+      ),
+    );
+  }
+}
+
+class _Input extends StatefulWidget {
+  const _Input({
+    Key key,
+    this.onSubmitted,
+  }) : super(key: key);
+
+  final ValueChanged<String> onSubmitted;
+
+  @override
+  _InputState createState() => _InputState();
+}
+
+class _InputState extends State<_Input> {
+  final controller = TextEditingController();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      decoration: const InputDecoration(
+        labelText: 'Add new Todo',
+        // helperText: '',
+        // errorText: null,
+      ),
+      onSubmitted: widget.onSubmitted,
     );
   }
 }

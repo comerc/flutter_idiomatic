@@ -20,7 +20,7 @@ class GitHubRepository {
       errorPolicy: ErrorPolicy.all,
     );
     final queryResult =
-        await _client.query(options).timeout(kGraphQLQueryTimeoutDuration);
+        await _client.query(options).timeout(kGraphQLTimeoutDuration);
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -42,7 +42,7 @@ class GitHubRepository {
       errorPolicy: ErrorPolicy.all,
     );
     final mutationResult =
-        await _client.mutate(options).timeout(kGraphQLQueryTimeoutDuration);
+        await _client.mutate(options).timeout(kGraphQLTimeoutDuration);
     if (mutationResult.hasException) {
       throw mutationResult.exception;
     }

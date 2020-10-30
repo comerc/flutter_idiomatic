@@ -1,1 +1,1 @@
-const kGraphQLQueryTimeoutDuration = Duration(seconds: 15);
+const kGraphQLTimeoutDuration = Duration(seconds: 15);
