@@ -66,6 +66,7 @@ class LoginState extends Equatable {
 
   final EmailModel email;
   final PasswordModel password;
+  // TODO: @CopyWithField(required: true)
   final FormzStatus status;
 
   @override
