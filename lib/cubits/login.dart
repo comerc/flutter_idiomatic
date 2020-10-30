@@ -14,7 +14,7 @@ class LoginCubit extends Cubit<LoginState> {
   final AuthenticationRepository authenticationRepository;
 
   void emailChanged(String value) {
-    final email = EmailModel.dirty(value);
+    final email = EmailInputModel.dirty(value);
     emit(state.copyWith(
       email: email,
       status: Formz.validate([email, state.password]),
@@ -22,7 +22,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void passwordChanged(String value) {
-    final password = PasswordModel.dirty(value);
+    final password = PasswordInputModel.dirty(value);
     emit(state.copyWith(
       password: password,
       status: Formz.validate([state.email, password]),
@@ -59,13 +59,13 @@ class LoginCubit extends Cubit<LoginState> {
 @CopyWith()
 class LoginState extends Equatable {
   const LoginState({
-    this.email = const EmailModel.pure(),
-    this.password = const PasswordModel.pure(),
+    this.email = const EmailInputModel.pure(),
+    this.password = const PasswordInputModel.pure(),
     this.status = FormzStatus.pure,
   });
 
-  final EmailModel email;
-  final PasswordModel password;
+  final EmailInputModel email;
+  final PasswordInputModel password;
   // TODO: @CopyWithField(required: true)
   final FormzStatus status;
 

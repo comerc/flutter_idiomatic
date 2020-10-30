@@ -14,7 +14,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   final AuthenticationRepository authenticationRepository;
 
   void emailChanged(String value) {
-    final email = EmailModel.dirty(value);
+    final email = EmailInputModel.dirty(value);
     emit(state.copyWith(
       email: email,
       status: Formz.validate([
@@ -26,8 +26,8 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 
   void passwordChanged(String value) {
-    final password = PasswordModel.dirty(value);
-    final confirmedPassword = ConfirmedPasswordModel.dirty(
+    final password = PasswordInputModel.dirty(value);
+    final confirmedPassword = ConfirmedPasswordInputModel.dirty(
       password: password.value,
       value: state.confirmedPassword.value,
     );
@@ -43,7 +43,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 
   void confirmedPasswordChanged(String value) {
-    final confirmedPassword = ConfirmedPasswordModel.dirty(
+    final confirmedPassword = ConfirmedPasswordInputModel.dirty(
       password: state.password.value,
       value: value,
     );
@@ -75,15 +75,15 @@ class SignUpCubit extends Cubit<SignUpState> {
 @CopyWith()
 class SignUpState extends Equatable {
   const SignUpState({
-    this.email = const EmailModel.pure(),
-    this.password = const PasswordModel.pure(),
-    this.confirmedPassword = const ConfirmedPasswordModel.pure(),
+    this.email = const EmailInputModel.pure(),
+    this.password = const PasswordInputModel.pure(),
+    this.confirmedPassword = const ConfirmedPasswordInputModel.pure(),
     this.status = FormzStatus.pure,
   });
 
-  final EmailModel email;
-  final PasswordModel password;
-  final ConfirmedPasswordModel confirmedPassword;
+  final EmailInputModel email;
+  final PasswordInputModel password;
+  final ConfirmedPasswordInputModel confirmedPassword;
   final FormzStatus status;
 
   @override

@@ -7,13 +7,13 @@ void main() {
   group('Email', () {
     group('constructors', () {
       test('pure creates correct instance', () {
-        final email = EmailModel.pure();
+        final email = EmailInputModel.pure();
         expect(email.value, '');
         expect(email.pure, true);
       });
 
       test('dirty creates correct instance', () {
-        final email = EmailModel.dirty(emailString);
+        final email = EmailInputModel.dirty(emailString);
         expect(email.value, emailString);
         expect(email.pure, false);
       });
@@ -22,21 +22,21 @@ void main() {
     group('validator', () {
       test('returns invalid error when email is empty', () {
         expect(
-          EmailModel.dirty('').error,
-          EmailValidationError.invalid,
+          EmailInputModel.dirty('').error,
+          EmailInputValidationError.invalid,
         );
       });
 
       test('returns invalid error when email is malformed', () {
         expect(
-          EmailModel.dirty('test').error,
-          EmailValidationError.invalid,
+          EmailInputModel.dirty('test').error,
+          EmailInputValidationError.invalid,
         );
       });
 
       test('is valid when email is valid', () {
         expect(
-          EmailModel.dirty(emailString).error,
+          EmailInputModel.dirty(emailString).error,
           isNull,
         );
       });

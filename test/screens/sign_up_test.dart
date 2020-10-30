@@ -12,12 +12,12 @@ class MockAuthenticationRepository extends Mock
 
 class MockSignUpCubit extends MockBloc<SignUpState> implements SignUpCubit {}
 
-class MockEmailModel extends Mock implements EmailModel {}
+class MockEmailModel extends Mock implements EmailInputModel {}
 
-class MockPasswordModel extends Mock implements PasswordModel {}
+class MockPasswordModel extends Mock implements PasswordInputModel {}
 
 class MockConfirmedPasswordModel extends Mock
-    implements ConfirmedPasswordModel {}
+    implements ConfirmedPasswordInputModel {}
 
 void main() {
   group('SignUpScreen', () {

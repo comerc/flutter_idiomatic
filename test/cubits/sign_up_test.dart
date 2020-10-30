@@ -10,10 +10,10 @@ class MockAuthenticationRepository extends Mock
 
 void main() {
   group('SignUpState', () {
-    const email = EmailModel.dirty('email');
+    const email = EmailInputModel.dirty('email');
     const passwordString = 'password';
-    const password = PasswordModel.dirty(passwordString);
-    const confirmedPassword = ConfirmedPasswordModel.dirty(
+    const password = PasswordInputModel.dirty(passwordString);
+    const confirmedPassword = ConfirmedPasswordInputModel.dirty(
       password: passwordString,
       value: passwordString,
     );
@@ -59,25 +59,25 @@ void main() {
 
   group('SignUpCubit', () {
     const invalidEmailString = 'invalid';
-    const invalidEmail = EmailModel.dirty(invalidEmailString);
+    const invalidEmail = EmailInputModel.dirty(invalidEmailString);
 
     const validEmailString = 'test@gmail.com';
-    const validEmail = EmailModel.dirty(validEmailString);
+    const validEmail = EmailInputModel.dirty(validEmailString);
 
     const invalidPasswordString = 'invalid';
-    const invalidPassword = PasswordModel.dirty(invalidPasswordString);
+    const invalidPassword = PasswordInputModel.dirty(invalidPasswordString);
 
     const validPasswordString = 't0pS3cret1234';
-    const validPassword = PasswordModel.dirty(validPasswordString);
+    const validPassword = PasswordInputModel.dirty(validPasswordString);
 
     const invalidConfirmedPasswordString = 'invalid';
-    const invalidConfirmedPassword = ConfirmedPasswordModel.dirty(
+    const invalidConfirmedPassword = ConfirmedPasswordInputModel.dirty(
       password: validPasswordString,
       value: invalidConfirmedPasswordString,
     );
 
     const validConfirmedPasswordString = 't0pS3cret1234';
-    const validConfirmedPassword = ConfirmedPasswordModel.dirty(
+    const validConfirmedPassword = ConfirmedPasswordInputModel.dirty(
       password: validPasswordString,
       value: validConfirmedPasswordString,
     );
@@ -133,7 +133,7 @@ void main() {
         act: (cubit) => cubit.passwordChanged(invalidPasswordString),
         expect: const <SignUpState>[
           SignUpState(
-            confirmedPassword: ConfirmedPasswordModel.dirty(
+            confirmedPassword: ConfirmedPasswordInputModel.dirty(
               password: invalidPasswordString,
               value: '',
             ),

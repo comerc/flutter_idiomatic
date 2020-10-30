@@ -10,8 +10,8 @@ class MockAuthenticationRepository extends Mock
 
 void main() {
   group('LoginState', () {
-    const email = EmailModel.dirty('email');
-    const password = PasswordModel.dirty('password');
+    const email = EmailInputModel.dirty('email');
+    const password = PasswordInputModel.dirty('password');
 
     test('supports value comparisons', () {
       expect(LoginState(), LoginState());
@@ -45,16 +45,16 @@ void main() {
 
   group('LoginCubit', () {
     const invalidEmailString = 'invalid';
-    const invalidEmail = EmailModel.dirty(invalidEmailString);
+    const invalidEmail = EmailInputModel.dirty(invalidEmailString);
 
     const validEmailString = 'test@gmail.com';
-    const validEmail = EmailModel.dirty(validEmailString);
+    const validEmail = EmailInputModel.dirty(validEmailString);
 
     const invalidPasswordString = 'invalid';
-    const invalidPassword = PasswordModel.dirty(invalidPasswordString);
+    const invalidPassword = PasswordInputModel.dirty(invalidPasswordString);
 
     const validPasswordString = 't0pS3cret1234';
-    const validPassword = PasswordModel.dirty(validPasswordString);
+    const validPassword = PasswordInputModel.dirty(validPasswordString);
 
     AuthenticationRepository authenticationRepository;
 

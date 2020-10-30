@@ -8,13 +8,13 @@ void main() {
   group('Password', () {
     group('constructors', () {
       test('pure creates correct instance', () {
-        final password = PasswordModel.pure();
+        final password = PasswordInputModel.pure();
         expect(password.value, '');
         expect(password.pure, true);
       });
 
       test('dirty creates correct instance', () {
-        final password = PasswordModel.dirty(passwordString);
+        final password = PasswordInputModel.dirty(passwordString);
         expect(password.value, passwordString);
         expect(password.pure, false);
       });
@@ -23,14 +23,14 @@ void main() {
     group('validator', () {
       test('returns invalid error when password is empty', () {
         expect(
-          PasswordModel.dirty('').error,
-          PasswordValidationError.invalid,
+          PasswordInputModel.dirty('').error,
+          PasswordInputValidationError.invalid,
         );
       });
 
       test('is valid when password is not empty', () {
         expect(
-          PasswordModel.dirty(passwordString).error,
+          PasswordInputModel.dirty(passwordString).error,
           isNull,
         );
       });

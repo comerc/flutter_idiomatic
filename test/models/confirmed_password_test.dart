@@ -5,17 +5,17 @@ import 'package:flutter_firebase_login/import.dart';
 void main() {
   const confirmedPasswordString = 'T0pS3cr3t123';
   const passwordString = 'T0pS3cr3t123';
-  const password = PasswordModel.dirty(passwordString);
+  const password = PasswordInputModel.dirty(passwordString);
   group('confirmedPassword', () {
     group('constructors', () {
       test('pure creates correct instance', () {
-        final confirmedPassword = ConfirmedPasswordModel.pure();
+        final confirmedPassword = ConfirmedPasswordInputModel.pure();
         expect(confirmedPassword.value, '');
         expect(confirmedPassword.pure, true);
       });
 
       test('dirty creates correct instance', () {
-        final confirmedPassword = ConfirmedPasswordModel.dirty(
+        final confirmedPassword = ConfirmedPasswordInputModel.dirty(
           password: password.value,
           value: confirmedPasswordString,
         );
@@ -28,15 +28,15 @@ void main() {
     group('validator', () {
       test('returns invalid error when confirmedPassword is empty', () {
         expect(
-          ConfirmedPasswordModel.dirty(password: password.value, value: '')
+          ConfirmedPasswordInputModel.dirty(password: password.value, value: '')
               .error,
-          ConfirmedPasswordValidationError.invalid,
+          ConfirmedPasswordInputValidationError.invalid,
         );
       });
 
       test('is valid when confirmedPassword is not empty', () {
         expect(
-          ConfirmedPasswordModel.dirty(
+          ConfirmedPasswordInputModel.dirty(
             password: password.value,
             value: confirmedPasswordString,
           ).error,
