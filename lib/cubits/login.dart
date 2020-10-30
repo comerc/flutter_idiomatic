@@ -14,18 +14,18 @@ class LoginCubit extends Cubit<LoginState> {
   final AuthenticationRepository authenticationRepository;
 
   void emailChanged(String value) {
-    final email = EmailInputModel.dirty(value);
+    final emailInput = EmailInputModel.dirty(value);
     emit(state.copyWith(
-      email: email,
-      status: Formz.validate([email, state.password]),
+      emailInput: emailInput,
+      status: Formz.validate([emailInput, state.passwordInput]),
     ));
   }
 
   void passwordChanged(String value) {
-    final password = PasswordInputModel.dirty(value);
+    final passwordInput = PasswordInputModel.dirty(value);
     emit(state.copyWith(
-      password: password,
-      status: Formz.validate([state.email, password]),
+      passwordInput: passwordInput,
+      status: Formz.validate([state.emailInput, passwordInput]),
     ));
   }
 
@@ -34,8 +34,8 @@ class LoginCubit extends Cubit<LoginState> {
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
       await authenticationRepository.logInWithEmailAndPassword(
-        email: state.email.value,
-        password: state.password.value,
+        email: state.emailInput.value,
+        password: state.passwordInput.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {
@@ -59,16 +59,16 @@ class LoginCubit extends Cubit<LoginState> {
 @CopyWith()
 class LoginState extends Equatable {
   const LoginState({
-    this.email = const EmailInputModel.pure(),
-    this.password = const PasswordInputModel.pure(),
+    this.emailInput = const EmailInputModel.pure(),
+    this.passwordInput = const PasswordInputModel.pure(),
     this.status = FormzStatus.pure,
   });
 
-  final EmailInputModel email;
-  final PasswordInputModel password;
+  final EmailInputModel emailInput;
+  final PasswordInputModel passwordInput;
   // TODO: @CopyWithField(required: true)
   final FormzStatus status;
 
   @override
-  List<Object> get props => [email, password, status];
+  List<Object> get props => [emailInput, passwordInput, status];
 }

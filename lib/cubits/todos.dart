@@ -85,15 +85,15 @@ class TodosCubit extends Cubit<TodosState> {
   }
 
   Future<bool> add(String title) async {
-    final todoInput = TodoInputModel.dirty(title);
-    final status = Formz.validate([todoInput]);
+    final titleInput = TitleInputModel.dirty(title);
+    final status = Formz.validate([titleInput]);
     if (status.isInvalid) {
-      throw todoInput.error;
+      throw titleInput.error;
     }
     var result = true;
     emit(state.copyWith(isSubmitMode: true));
     try {
-      final item = await databaseRepository.createTodo(todoInput.value);
+      final item = await databaseRepository.createTodo(titleInput.value);
       emit(state.copyWith(
         items: [item, ...state.items],
       ));

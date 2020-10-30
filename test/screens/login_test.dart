@@ -12,9 +12,9 @@ class MockAuthenticationRepository extends Mock
 
 class MockLoginCubit extends MockBloc<LoginState> implements LoginCubit {}
 
-class MockEmailModel extends Mock implements EmailInputModel {}
+class MockEmailInputModel extends Mock implements EmailInputModel {}
 
-class MockPasswordModel extends Mock implements PasswordInputModel {}
+class MockPasswordInputModel extends Mock implements PasswordInputModel {}
 
 void main() {
   group('LoginScreen', () {
@@ -143,9 +143,9 @@ void main() {
 
       testWidgets('invalid email error text when email is invalid',
           (tester) async {
-        final email = MockEmailModel();
-        when(email.invalid).thenReturn(true);
-        when(loginCubit.state).thenReturn(LoginState(email: email));
+        final emailInput = MockEmailInputModel();
+        when(emailInput.invalid).thenReturn(true);
+        when(loginCubit.state).thenReturn(LoginState(emailInput: emailInput));
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -161,9 +161,10 @@ void main() {
 
       testWidgets('invalid password error text when password is invalid',
           (tester) async {
-        final password = MockPasswordModel();
-        when(password.invalid).thenReturn(true);
-        when(loginCubit.state).thenReturn(LoginState(password: password));
+        final passwordInput = MockPasswordInputModel();
+        when(passwordInput.invalid).thenReturn(true);
+        when(loginCubit.state)
+            .thenReturn(LoginState(passwordInput: passwordInput));
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(

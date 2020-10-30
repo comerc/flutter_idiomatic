@@ -14,45 +14,45 @@ class SignUpCubit extends Cubit<SignUpState> {
   final AuthenticationRepository authenticationRepository;
 
   void emailChanged(String value) {
-    final email = EmailInputModel.dirty(value);
+    final emailInput = EmailInputModel.dirty(value);
     emit(state.copyWith(
-      email: email,
+      emailInput: emailInput,
       status: Formz.validate([
-        email,
-        state.password,
-        state.confirmedPassword,
+        emailInput,
+        state.passwordInput,
+        state.confirmedPasswordInput,
       ]),
     ));
   }
 
   void passwordChanged(String value) {
-    final password = PasswordInputModel.dirty(value);
-    final confirmedPassword = ConfirmedPasswordInputModel.dirty(
-      password: password.value,
-      value: state.confirmedPassword.value,
+    final passwordInput = PasswordInputModel.dirty(value);
+    final confirmedPasswordInput = ConfirmedPasswordInputModel.dirty(
+      password: passwordInput.value,
+      value: state.confirmedPasswordInput.value,
     );
     emit(state.copyWith(
-      password: password,
-      confirmedPassword: confirmedPassword,
+      passwordInput: passwordInput,
+      confirmedPasswordInput: confirmedPasswordInput,
       status: Formz.validate([
-        state.email,
-        password,
-        state.confirmedPassword,
+        state.emailInput,
+        passwordInput,
+        state.confirmedPasswordInput,
       ]),
     ));
   }
 
   void confirmedPasswordChanged(String value) {
-    final confirmedPassword = ConfirmedPasswordInputModel.dirty(
-      password: state.password.value,
+    final confirmedPasswordInput = ConfirmedPasswordInputModel.dirty(
+      password: state.passwordInput.value,
       value: value,
     );
     emit(state.copyWith(
-      confirmedPassword: confirmedPassword,
+      confirmedPasswordInput: confirmedPasswordInput,
       status: Formz.validate([
-        state.email,
-        state.password,
-        confirmedPassword,
+        state.emailInput,
+        state.passwordInput,
+        confirmedPasswordInput,
       ]),
     ));
   }
@@ -62,8 +62,8 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
       await authenticationRepository.signUp(
-        email: state.email.value,
-        password: state.password.value,
+        email: state.emailInput.value,
+        password: state.passwordInput.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {
@@ -75,18 +75,19 @@ class SignUpCubit extends Cubit<SignUpState> {
 @CopyWith()
 class SignUpState extends Equatable {
   const SignUpState({
-    this.email = const EmailInputModel.pure(),
-    this.password = const PasswordInputModel.pure(),
-    this.confirmedPassword = const ConfirmedPasswordInputModel.pure(),
+    this.emailInput = const EmailInputModel.pure(),
+    this.passwordInput = const PasswordInputModel.pure(),
+    this.confirmedPasswordInput = const ConfirmedPasswordInputModel.pure(),
     this.status = FormzStatus.pure,
   });
 
-  final EmailInputModel email;
-  final PasswordInputModel password;
-  final ConfirmedPasswordInputModel confirmedPassword;
+  final EmailInputModel emailInput;
+  final PasswordInputModel passwordInput;
+  final ConfirmedPasswordInputModel confirmedPasswordInput;
   // TODO: @CopyWithField(required: true)
   final FormzStatus status;
 
   @override
-  List<Object> get props => [email, password, confirmedPassword, status];
+  List<Object> get props =>
+      [emailInput, passwordInput, confirmedPasswordInput, status];
 }

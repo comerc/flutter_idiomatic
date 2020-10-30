@@ -12,11 +12,11 @@ class MockAuthenticationRepository extends Mock
 
 class MockSignUpCubit extends MockBloc<SignUpState> implements SignUpCubit {}
 
-class MockEmailModel extends Mock implements EmailInputModel {}
+class MockEmailInputModel extends Mock implements EmailInputModel {}
 
-class MockPasswordModel extends Mock implements PasswordInputModel {}
+class MockPasswordInputModel extends Mock implements PasswordInputModel {}
 
-class MockConfirmedPasswordModel extends Mock
+class MockConfirmedPasswordInputModel extends Mock
     implements ConfirmedPasswordInputModel {}
 
 void main() {
@@ -149,9 +149,9 @@ void main() {
 
       testWidgets('invalid email error text when email is invalid',
           (tester) async {
-        final email = MockEmailModel();
-        when(email.invalid).thenReturn(true);
-        when(signUpCubit.state).thenReturn(SignUpState(email: email));
+        final emailInput = MockEmailInputModel();
+        when(emailInput.invalid).thenReturn(true);
+        when(signUpCubit.state).thenReturn(SignUpState(emailInput: emailInput));
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -167,9 +167,10 @@ void main() {
 
       testWidgets('invalid password error text when password is invalid',
           (tester) async {
-        final password = MockPasswordModel();
-        when(password.invalid).thenReturn(true);
-        when(signUpCubit.state).thenReturn(SignUpState(password: password));
+        final passwordInput = MockPasswordInputModel();
+        when(passwordInput.invalid).thenReturn(true);
+        when(signUpCubit.state)
+            .thenReturn(SignUpState(passwordInput: passwordInput));
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -186,10 +187,10 @@ void main() {
       testWidgets(
           'invalid confirmedPassword error text'
           ' when confirmedPassword is invalid', (tester) async {
-        final confirmedPassword = MockConfirmedPasswordModel();
-        when(confirmedPassword.invalid).thenReturn(true);
-        when(signUpCubit.state)
-            .thenReturn(SignUpState(confirmedPassword: confirmedPassword));
+        final confirmedPasswordInput = MockConfirmedPasswordInputModel();
+        when(confirmedPasswordInput.invalid).thenReturn(true);
+        when(signUpCubit.state).thenReturn(
+            SignUpState(confirmedPasswordInput: confirmedPasswordInput));
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(

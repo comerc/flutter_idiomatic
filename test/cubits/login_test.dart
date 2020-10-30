@@ -10,8 +10,8 @@ class MockAuthenticationRepository extends Mock
 
 void main() {
   group('LoginState', () {
-    const email = EmailInputModel.dirty('email');
-    const password = PasswordInputModel.dirty('password');
+    const emailInput = EmailInputModel.dirty('email');
+    const passwordInput = PasswordInputModel.dirty('password');
 
     test('supports value comparisons', () {
       expect(LoginState(), LoginState());
@@ -30,15 +30,15 @@ void main() {
 
     test('returns object with updated email when email is passed', () {
       expect(
-        LoginState().copyWith(email: email),
-        LoginState(email: email),
+        LoginState().copyWith(emailInput: emailInput),
+        LoginState(emailInput: emailInput),
       );
     });
 
     test('returns object with updated password when password is passed', () {
       expect(
-        LoginState().copyWith(password: password),
-        LoginState(password: password),
+        LoginState().copyWith(passwordInput: passwordInput),
+        LoginState(passwordInput: passwordInput),
       );
     });
   });
@@ -78,19 +78,19 @@ void main() {
         build: () => LoginCubit(authenticationRepository),
         act: (cubit) => cubit.emailChanged(invalidEmailString),
         expect: const <LoginState>[
-          LoginState(email: invalidEmail, status: FormzStatus.invalid),
+          LoginState(emailInput: invalidEmail, status: FormzStatus.invalid),
         ],
       );
 
       blocTest<LoginCubit, LoginState>(
         'emits [valid] when email/password are valid',
         build: () => LoginCubit(authenticationRepository)
-          ..emit(LoginState(password: validPassword)),
+          ..emit(LoginState(passwordInput: validPassword)),
         act: (cubit) => cubit.emailChanged(validEmailString),
         expect: const <LoginState>[
           LoginState(
-            email: validEmail,
-            password: validPassword,
+            emailInput: validEmail,
+            passwordInput: validPassword,
             status: FormzStatus.valid,
           ),
         ],
@@ -104,7 +104,7 @@ void main() {
         act: (cubit) => cubit.passwordChanged(invalidPasswordString),
         expect: const <LoginState>[
           LoginState(
-            password: invalidPassword,
+            passwordInput: invalidPassword,
             status: FormzStatus.invalid,
           ),
         ],
@@ -113,12 +113,12 @@ void main() {
       blocTest<LoginCubit, LoginState>(
         'emits [valid] when email/password are valid',
         build: () => LoginCubit(authenticationRepository)
-          ..emit(LoginState(email: validEmail)),
+          ..emit(LoginState(emailInput: validEmail)),
         act: (cubit) => cubit.passwordChanged(validPasswordString),
         expect: const <LoginState>[
           LoginState(
-            email: validEmail,
-            password: validPassword,
+            emailInput: validEmail,
+            passwordInput: validPassword,
             status: FormzStatus.valid,
           ),
         ],
@@ -139,8 +139,8 @@ void main() {
           ..emit(
             LoginState(
               status: FormzStatus.valid,
-              email: validEmail,
-              password: validPassword,
+              emailInput: validEmail,
+              passwordInput: validPassword,
             ),
           ),
         act: (cubit) => cubit.logInWithCredentials(),
@@ -161,21 +161,21 @@ void main() {
           ..emit(
             LoginState(
               status: FormzStatus.valid,
-              email: validEmail,
-              password: validPassword,
+              emailInput: validEmail,
+              passwordInput: validPassword,
             ),
           ),
         act: (cubit) => cubit.logInWithCredentials(),
         expect: const <LoginState>[
           LoginState(
             status: FormzStatus.submissionInProgress,
-            email: validEmail,
-            password: validPassword,
+            emailInput: validEmail,
+            passwordInput: validPassword,
           ),
           LoginState(
             status: FormzStatus.submissionSuccess,
-            email: validEmail,
-            password: validPassword,
+            emailInput: validEmail,
+            passwordInput: validPassword,
           )
         ],
       );
@@ -192,8 +192,8 @@ void main() {
             ..emit(
               LoginState(
                 status: FormzStatus.valid,
-                email: validEmail,
-                password: validPassword,
+                emailInput: validEmail,
+                passwordInput: validPassword,
               ),
             );
         },
@@ -201,13 +201,13 @@ void main() {
         expect: const <LoginState>[
           LoginState(
             status: FormzStatus.submissionInProgress,
-            email: validEmail,
-            password: validPassword,
+            emailInput: validEmail,
+            passwordInput: validPassword,
           ),
           LoginState(
             status: FormzStatus.submissionFailure,
-            email: validEmail,
-            password: validPassword,
+            emailInput: validEmail,
+            passwordInput: validPassword,
           )
         ],
       );
