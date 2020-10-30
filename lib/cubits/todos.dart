@@ -62,6 +62,8 @@ class TodosCubit extends Cubit<TodosState> {
       ));
     } catch (error) {
       result = false;
+    } finally {
+      emit(state.copyWith(status: TodosStatus.ready));
     }
     return result;
   }
