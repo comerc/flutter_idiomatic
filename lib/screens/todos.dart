@@ -62,8 +62,7 @@ class TodosBody extends StatelessWidget {
       },
       child: BlocConsumer<TodosCubit, TodosState>(
         listenWhen: (TodosState previous, TodosState current) {
-          return previous.isSubmitMode != current.isSubmitMode &&
-              (previous.isSubmitMode || current.isSubmitMode);
+          return previous.isSubmitMode != current.isSubmitMode;
         },
         listener: (BuildContext context, TodosState state) {
           if (state.isSubmitMode) {
@@ -80,9 +79,9 @@ class TodosBody extends StatelessWidget {
                 ),
               ),
             );
-            return;
+          } else {
+            navigator.pop();
           }
-          navigator.pop();
         },
         // buildWhen: (TodosState previous, TodosState current) {
         //   return !current.isSubmitMode; // TODO: newId ?
