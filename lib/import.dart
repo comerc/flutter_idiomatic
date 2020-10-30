@@ -13,6 +13,7 @@ export 'models/confirmed_password.dart';
 export 'models/email.dart';
 export 'models/password.dart';
 export 'models/repository.dart';
+export 'models/todo_input.dart';
 export 'models/todo.dart';
 export 'models/user.dart';
 export 'repositories/authentication.dart';

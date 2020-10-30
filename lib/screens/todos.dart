@@ -97,18 +97,7 @@ class TodosBody extends StatelessWidget {
                     child: _Input(
                       key: _inputKey,
                       onSubmitted: (String value) {
-                        final title = value.trim();
-                        if (title.characters.length < 4) {
-                          BotToast.showNotification(
-                            title: (_) => const Text(
-                              'Invalid Todo < 4 characters',
-                              overflow: TextOverflow.fade,
-                              softWrap: false,
-                            ),
-                          );
-                          return;
-                        }
-                        _add(getBloc<TodosCubit>(context), title: title);
+                        _add(getBloc<TodosCubit>(context), title: value);
                       },
                     ),
                   ),
@@ -200,7 +189,7 @@ class TodosBody extends StatelessWidget {
     );
   }
 
-  void _remove(TodosCubit cubit, {int id}) async {
+  Future<void> _remove(TodosCubit cubit, {int id}) async {
     final result = await cubit.remove(id);
     if (result) return; // TODO: undo
     BotToast.showNotification(
@@ -220,8 +209,17 @@ class TodosBody extends StatelessWidget {
     );
   }
 
-  void _add(TodosCubit cubit, {String title}) async {
-    final result = await cubit.add(title);
+  Future<void> _add(TodosCubit cubit, {String title}) async {
+    final result = await cubit.add(title).catchError((error) {
+      BotToast.showNotification(
+        title: (_) => Text(
+          '$error',
+          overflow: TextOverflow.fade,
+          softWrap: false,
+        ),
+      );
+      return false;
+    });
     if (result) {
       _inputKey.currentState?.controller?.clear();
       return;
