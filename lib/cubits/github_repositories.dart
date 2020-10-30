@@ -25,6 +25,8 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
       ));
     } catch (error) {
       result = false;
+    } finally {
+      emit(state.copyWith(status: GitHubStatus.ready));
     }
     return result;
   }
