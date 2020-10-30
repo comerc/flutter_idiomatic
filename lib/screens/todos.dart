@@ -53,43 +53,43 @@ class TodosBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        return TodosScreen._load(
-          getBloc<TodosCubit>(context),
-          isRefresh: true,
-        );
+    return BlocConsumer<TodosCubit, TodosState>(
+      listenWhen: (TodosState previous, TodosState current) {
+        return previous.isSubmitMode != current.isSubmitMode;
       },
-      child: BlocConsumer<TodosCubit, TodosState>(
-        listenWhen: (TodosState previous, TodosState current) {
-          return previous.isSubmitMode != current.isSubmitMode;
-        },
-        listener: (BuildContext context, TodosState state) {
-          if (state.isSubmitMode) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              child: AlertDialog(
-                content: Row(
-                  children: <Widget>[
-                    const CircularProgressIndicator(),
-                    const SizedBox(width: 16),
-                    const Text('Loading...'),
-                  ],
-                ),
+      listener: (BuildContext context, TodosState state) {
+        if (state.isSubmitMode) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            child: AlertDialog(
+              content: Row(
+                children: <Widget>[
+                  const CircularProgressIndicator(),
+                  const SizedBox(width: 16),
+                  const Text('Loading...'),
+                ],
               ),
-            );
-          } else {
-            navigator.pop();
-          }
-        },
-        // buildWhen: (TodosState previous, TodosState current) {
-        //   return !current.isSubmitMode; // TODO: newId ?
-        // },
-        builder: (BuildContext context, TodosState state) {
-          return Stack(
-            children: <Widget>[
-              Column(
+            ),
+          );
+        } else {
+          navigator.pop();
+        }
+      },
+      // buildWhen: (TodosState previous, TodosState current) {
+      //   return !current.isSubmitMode; // TODO: how about newId ?
+      // },
+      builder: (BuildContext context, TodosState state) {
+        return Stack(
+          children: <Widget>[
+            RefreshIndicator(
+              onRefresh: () async {
+                return TodosScreen._load(
+                  getBloc<TodosCubit>(context),
+                  isRefresh: true,
+                );
+              },
+              child: Column(
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8),
@@ -114,7 +114,7 @@ class TodosBody extends StatelessWidget {
                               return Center(
                                 child: FlatButton(
                                     child: Text(
-                                      'LOAD MORE',
+                                      'Load More'.toUpperCase(),
                                       style:
                                           TextStyle(color: theme.primaryColor),
                                     ),
@@ -130,8 +130,8 @@ class TodosBody extends StatelessWidget {
                             return Column(
                               children: [
                                 Text(state.items.isEmpty
-                                    ? 'NO DATA'
-                                    : 'NO MORE'),
+                                    ? 'No Data'.toUpperCase()
+                                    : 'No More'.toUpperCase()),
                                 const SizedBox(height: 8),
                               ],
                             );
@@ -162,29 +162,29 @@ class TodosBody extends StatelessWidget {
                   ),
                 ],
               ),
-              if (state.hasReallyNewId)
-                Positioned(
-                  top: 56,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: RaisedButton(
-                      shape: const StadiumBorder(),
-                      color: theme.accentColor,
-                      onPressed: () {
-                        getBloc<TodosCubit>(context).load(isRefresh: true);
-                      },
-                      child: Text(
-                        'LOAD NEW',
-                        style: TextStyle(color: Colors.white),
-                      ),
+            ),
+            if (state.hasReallyNewId)
+              Positioned(
+                top: 56,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: RaisedButton(
+                    shape: const StadiumBorder(),
+                    color: theme.accentColor,
+                    onPressed: () {
+                      getBloc<TodosCubit>(context).load(isRefresh: true);
+                    },
+                    child: Text(
+                      'Load New'.toUpperCase(),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
-            ],
-          );
-        },
-      ),
+              ),
+          ],
+        );
+      },
     );
   }
 
