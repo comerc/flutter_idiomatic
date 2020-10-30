@@ -28,7 +28,7 @@ class GitHubRepositoriesScreen extends StatelessWidget {
     );
   }
 
-  static void _loadRepositories(GitHubRepositoriesCubit cubit) async {
+  static Future<void> _loadRepositories(GitHubRepositoriesCubit cubit) async {
     final result = await cubit.load();
     if (result) return;
     BotToast.showNotification(
@@ -131,7 +131,7 @@ class GitHubRepositoriesItem extends StatelessWidget {
     );
   }
 
-  void _toggleStar(GitHubRepositoriesCubit cubit) async {
+  Future<void> _toggleStar(GitHubRepositoriesCubit cubit) async {
     final value = !item.viewerHasStarred;
     final result = await cubit.toggleStar(
       id: item.id,
