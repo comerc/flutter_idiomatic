@@ -42,7 +42,7 @@ class TodosScreen extends StatelessWidget {
           close();
           _load(cubit, isRefresh: isRefresh);
         },
-        child: const Text('REPEAT'),
+        child: Text('Repeat'.toUpperCase()),
       ),
     );
   }
@@ -92,7 +92,7 @@ class TodosBody extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: _Input(
                       key: _inputKey,
                       onSubmitted: (String value) {
@@ -118,7 +118,7 @@ class TodosBody extends StatelessWidget {
                                       style:
                                           TextStyle(color: theme.primaryColor),
                                     ),
-                                    shape: StadiumBorder(),
+                                    shape: const StadiumBorder(),
                                     onPressed: () {
                                       // TODO: load new items in AnimatedList
                                       TodosScreen._load(
@@ -169,7 +169,7 @@ class TodosBody extends StatelessWidget {
                   right: 0,
                   child: Center(
                     child: RaisedButton(
-                      shape: StadiumBorder(),
+                      shape: const StadiumBorder(),
                       color: theme.accentColor,
                       onPressed: () {
                         getBloc<TodosCubit>(context).load(isRefresh: true);
@@ -203,7 +203,7 @@ class TodosBody extends StatelessWidget {
           close();
           _remove(cubit, id: id);
         },
-        child: const Text('REPEAT'),
+        child: Text('Repeat'.toUpperCase()),
       ),
     );
   }
@@ -235,7 +235,7 @@ class TodosBody extends StatelessWidget {
           close();
           _add(cubit, title: title);
         },
-        child: const Text('REPEAT'),
+        child: Text('Repeat'.toUpperCase()),
       ),
     );
   }

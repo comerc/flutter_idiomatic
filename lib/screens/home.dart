@@ -31,11 +31,11 @@ class HomeScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Avatar(photo: user.photo),
-            const SizedBox(height: 4.0),
+            const SizedBox(height: 4),
             Text(user.email, style: textTheme.headline6),
-            const SizedBox(height: 4.0),
+            const SizedBox(height: 4),
             Text(user.name ?? '', style: textTheme.headline5),
-            const SizedBox(height: 4.0),
+            const SizedBox(height: 4),
             _CommonRaisedButton(
               title: 'GitHub Repositories',
               buttonKey:
@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () =>
                   navigator.push<void>(GitHubRepositoriesScreen().getRoute()),
             ),
-            const SizedBox(height: 4.0),
+            const SizedBox(height: 4),
             _CommonRaisedButton(
               title: 'Todos',
               buttonKey: const Key('homeScreen_todos_raisedButton'),
@@ -70,9 +70,9 @@ class _CommonRaisedButton extends StatelessWidget {
       key: buttonKey,
       child: Text(
         title,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
-      shape: StadiumBorder(),
+      shape: const StadiumBorder(),
       color: theme.accentColor,
       onPressed: onPressed,
     );
