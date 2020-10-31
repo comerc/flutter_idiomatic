@@ -199,8 +199,10 @@ class TodosBody extends StatelessWidget {
         key: Key('${item.id}'),
         direction: DismissDirection.endToStart,
         onDismissed: (DismissDirection direction) {
-          _listKey.currentState.removeItem(index,
-              (BuildContext context, Animation<double> animation) => null,
+          _listKey.currentState.removeItem(
+              index,
+              (BuildContext context, Animation<double> animation) =>
+                  Container(),
               duration: const Duration());
           _remove(getBloc<TodosCubit>(context), id: item.id);
         },
@@ -386,6 +388,6 @@ class _Footer extends StatelessWidget {
         ],
       );
     }
-    return null;
+    return Container();
   }
 }
