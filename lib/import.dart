@@ -19,6 +19,7 @@ export 'models/user.dart';
 export 'repositories/authentication.dart';
 export 'repositories/database.dart';
 export 'repositories/github.dart';
+export 'screens/animated_list.dart';
 export 'screens/github_repositories.dart';
 export 'screens/home.dart';
 export 'screens/login.dart';

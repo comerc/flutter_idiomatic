@@ -49,6 +49,13 @@ class HomeScreen extends StatelessWidget {
               buttonKey: const Key('homeScreen_todos_raisedButton'),
               onPressed: () => navigator.push<void>(TodosScreen().getRoute()),
             ),
+            const SizedBox(height: 4),
+            _CommonRaisedButton(
+              title: 'Animated List',
+              buttonKey: const Key('homeScreen_animatedList_raisedButton'),
+              onPressed: () =>
+                  navigator.push<void>(AnimatedListScreen().getRoute()),
+            ),
           ],
         ),
       ),
