@@ -225,7 +225,7 @@ class TodosBody extends StatelessWidget {
                 );
               },
               animation: animation,
-              child: TodosItem(
+              child: _Item(
                 item: item,
               ),
             ),
@@ -330,6 +330,22 @@ class _InputState extends State<_Input> {
   }
 }
 
+class _Item extends StatelessWidget {
+  const _Item({
+    Key key,
+    this.item,
+  }) : super(key: key);
+
+  final TodoModel item;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text('${item.title}'),
+    );
+  }
+}
+
 class _Footer extends StatelessWidget {
   const _Footer({
     Key key,
@@ -371,21 +387,5 @@ class _Footer extends StatelessWidget {
       );
     }
     return null;
-  }
-}
-
-class TodosItem extends StatelessWidget {
-  const TodosItem({
-    Key key,
-    this.item,
-  }) : super(key: key);
-
-  final TodoModel item;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('${item.title}'),
-    );
   }
 }
