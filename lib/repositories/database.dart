@@ -139,6 +139,7 @@ class _API {
       todos(
         where: {
           user_id: {_eq: $user_id},
+          # is_public: {_eq: true},
         }, 
         order_by: {created_at: desc},
         limit: 1, 
@@ -147,7 +148,6 @@ class _API {
       }
     }
   ''');
-  //where: {is_public: {_eq: true}},
 
   static final readTodos = gql(r'''
     query ReadTodos($user_id: String!, $created_at: timestamptz!, $limit: Int!) {
@@ -172,43 +172,4 @@ class _API {
       created_at
     }
   ''');
-
-  //   mutation {
-  //     insert_todos_one(object: {title: "1111"}) {
-  //       id
-  //     }
-  //   }
-
-  // static String addPublicTodo = """mutation (\$title: String!){
-  //   insert_todos (
-  //     objects: [{
-  //       title: \$title,
-  //       is_public: true
-  //     }]
-  //   ){
-  //     returning {
-  //       id
-  //     }
-  //   }
-  // }""";
-
-  // static final addStar = gql(r'''
-  //   mutation AddStar($starrableId: ID!) {
-  //     action: addStar(input: {starrableId: $starrableId}) {
-  //       starrable {
-  //         viewerHasStarred
-  //       }
-  //     }
-  //   }
-  // ''');
-
-  // static final removeStar = gql(r'''
-  //   mutation RemoveStar($starrableId: ID!) {
-  //     action: removeStar(input: {starrableId: $starrableId}) {
-  //       starrable {
-  //         viewerHasStarred
-  //       }
-  //     }
-  //   }
-  // ''');
 }
