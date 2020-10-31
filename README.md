@@ -40,7 +40,7 @@ module.exports = {
   client: {
     includes: ['./lib/**/*.dart'],
     service: {
-      name: 'minsk8',
+      name: '<project name>',
       url: '<graphql endpoint>',
       // optional headers
       headers: {
