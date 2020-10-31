@@ -130,84 +130,7 @@ class TodosBody extends StatelessWidget {
                             state.indicator == TodosIndicator.loadMore
                                 ? state.items.length + 1
                                 : state.items.length,
-                        itemBuilder: (
-                          BuildContext context,
-                          int index,
-                          Animation<double> animation,
-                        ) {
-                          if (index == state.items.length) {
-                            if (state.status == TodosStatus.busy &&
-                                state.indicator == TodosIndicator.loadMore) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            if (state.status == TodosStatus.ready) {
-                              if (state.hasMore) {
-                                return Center(
-                                  child: FlatButton(
-                                      child: Text(
-                                        'Load More'.toUpperCase(),
-                                        style: TextStyle(
-                                            color: theme.primaryColor),
-                                      ),
-                                      shape: const StadiumBorder(),
-                                      onPressed: () {
-                                        TodosScreen._load(
-                                          getBloc<TodosCubit>(context),
-                                          indicator: TodosIndicator.loadMore,
-                                        );
-                                      }),
-                                );
-                              }
-                              return Column(
-                                children: [
-                                  Text(state.items.isEmpty
-                                      ? 'No Data'.toUpperCase()
-                                      : 'No More'.toUpperCase()),
-                                  const SizedBox(height: 8),
-                                ],
-                              );
-                            }
-                            return null;
-                          }
-                          final item = state.items[index];
-                          return Dismissible(
-                            key: Key('${item.id}'),
-                            direction: DismissDirection.endToStart,
-                            onDismissed: (DismissDirection direction) {
-                              _remove(getBloc<TodosCubit>(context),
-                                  id: item.id);
-                            },
-                            background: Container(
-                              color: Colors.red,
-                              child: Row(children: <Widget>[
-                                const Spacer(),
-                                const Icon(Icons.delete_outline),
-                                const SizedBox(width: 8),
-                              ]),
-                            ),
-                            child: Column(
-                              children: [
-                                AnimatedBuilder(
-                                  builder:
-                                      (BuildContext context, Widget child) {
-                                    return ClipRect(
-                                      child: Align(
-                                        alignment: Alignment.topCenter,
-                                        heightFactor: animation.value,
-                                        child: TodosItem(
-                                          item: item,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  animation: animation,
-                                ),
-                                const Divider(height: 1),
-                              ],
-                            ),
-                          );
-                        },
+                        itemBuilder: _buildItem(state),
                       ),
                     ),
                 ],
@@ -222,13 +145,14 @@ class TodosBody extends StatelessWidget {
                   child: RaisedButton(
                     shape: const StadiumBorder(),
                     color: theme.accentColor,
-                    onPressed: () {
-                      // TODO: load new items in AnimatedList
-                      getBloc<TodosCubit>(context).load(
-                        isRefresh: true,
-                        indicator: TodosIndicator.loadNew,
-                      );
-                    },
+                    onPressed: (state.status == TodosStatus.busy)
+                        ? null
+                        : () {
+                            getBloc<TodosCubit>(context).load(
+                              isRefresh: true,
+                              indicator: TodosIndicator.loadNew,
+                            );
+                          },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -261,9 +185,91 @@ class TodosBody extends StatelessWidget {
     );
   }
 
+  AnimatedListItemBuilder _buildItem(TodosState state) {
+    return (
+      BuildContext context,
+      int index,
+      Animation<double> animation,
+    ) {
+      if (index == state.items.length) {
+        if (state.status == TodosStatus.busy &&
+            state.indicator == TodosIndicator.loadMore) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state.status == TodosStatus.ready) {
+          if (state.hasMore) {
+            return Center(
+              child: FlatButton(
+                  child: Text(
+                    'Load More'.toUpperCase(),
+                    style: TextStyle(color: theme.primaryColor),
+                  ),
+                  shape: const StadiumBorder(),
+                  onPressed: () {
+                    TodosScreen._load(
+                      getBloc<TodosCubit>(context),
+                      indicator: TodosIndicator.loadMore,
+                    );
+                  }),
+            );
+          }
+          return Column(
+            children: [
+              Text(state.items.isEmpty
+                  ? 'No Data'.toUpperCase()
+                  : 'No More'.toUpperCase()),
+              const SizedBox(height: 8),
+            ],
+          );
+        }
+        return null;
+      }
+      final item = state.items[index];
+      return Dismissible(
+        key: Key('${item.id}'),
+        direction: DismissDirection.endToStart,
+        onDismissed: (DismissDirection direction) {
+          _listKey.currentState.removeItem(index,
+              (BuildContext context, Animation<double> animation) => null,
+              duration: const Duration());
+          _remove(getBloc<TodosCubit>(context), id: item.id);
+        },
+        background: Container(
+          color: Colors.red,
+          child: Row(children: <Widget>[
+            const Spacer(),
+            const Icon(Icons.delete_outline),
+            const SizedBox(width: 8),
+          ]),
+        ),
+        child: Column(
+          children: [
+            AnimatedBuilder(
+              builder: (BuildContext context, Widget child) {
+                return ClipRect(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    heightFactor: animation.value,
+                    child: child,
+                  ),
+                );
+              },
+              animation: animation,
+              child: TodosItem(
+                item: item,
+              ),
+            ),
+            const Divider(height: 1),
+          ],
+        ),
+      );
+    };
+  }
+
   Future<void> _remove(TodosCubit cubit, {int id}) async {
     final result = await cubit.remove(id);
-    if (result) return; // TODO: undo
+    if (result) return;
+    // TODO: undo https://stackoverflow.com/questions/53175605/flutter-dismissible-undo-animation-using-animatedlist
     BotToast.showNotification(
       title: (_) => Text(
         'Can not remove todo $id',
