@@ -192,37 +192,7 @@ class TodosBody extends StatelessWidget {
       Animation<double> animation,
     ) {
       if (index == state.items.length) {
-        if (state.status == TodosStatus.busy &&
-            state.indicator == TodosIndicator.loadMore) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state.status == TodosStatus.ready) {
-          if (state.hasMore) {
-            return Center(
-              child: FlatButton(
-                  child: Text(
-                    'Load More'.toUpperCase(),
-                    style: TextStyle(color: theme.primaryColor),
-                  ),
-                  shape: const StadiumBorder(),
-                  onPressed: () {
-                    TodosScreen._load(
-                      getBloc<TodosCubit>(context),
-                      indicator: TodosIndicator.loadMore,
-                    );
-                  }),
-            );
-          }
-          return Column(
-            children: [
-              Text(state.items.isEmpty
-                  ? 'No Data'.toUpperCase()
-                  : 'No More'.toUpperCase()),
-              const SizedBox(height: 8),
-            ],
-          );
-        }
-        return null;
+        return _Footer(state: state);
       }
       final item = state.items[index];
       return Dismissible(
@@ -288,6 +258,7 @@ class TodosBody extends StatelessWidget {
   }
 
   Future<void> _add(TodosCubit cubit, {String title}) async {
+    var hasError = false;
     final result = await cubit.add(title).catchError((error) {
       BotToast.showNotification(
         title: (_) => Text(
@@ -296,8 +267,11 @@ class TodosBody extends StatelessWidget {
           softWrap: false,
         ),
       );
-      return false;
+      hasError = true;
     });
+    if (hasError) {
+      return;
+    }
     if (result) {
       _listKey.currentState?.insertItem(0);
       _inputKey.currentState?.controller?.clear();
@@ -353,6 +327,50 @@ class _InputState extends State<_Input> {
       ),
       onSubmitted: widget.onSubmitted,
     );
+  }
+}
+
+class _Footer extends StatelessWidget {
+  const _Footer({
+    Key key,
+    @required this.state,
+  }) : super(key: key);
+
+  final TodosState state;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state.status == TodosStatus.busy &&
+        state.indicator == TodosIndicator.loadMore) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.status == TodosStatus.ready) {
+      if (state.hasMore) {
+        return Center(
+          child: FlatButton(
+              child: Text(
+                'Load More'.toUpperCase(),
+                style: TextStyle(color: theme.primaryColor),
+              ),
+              shape: const StadiumBorder(),
+              onPressed: () {
+                TodosScreen._load(
+                  getBloc<TodosCubit>(context),
+                  indicator: TodosIndicator.loadMore,
+                );
+              }),
+        );
+      }
+      return Column(
+        children: [
+          Text(state.items.isEmpty
+              ? 'No Data'.toUpperCase()
+              : 'No More'.toUpperCase()),
+          const SizedBox(height: 8),
+        ],
+      );
+    }
+    return null;
   }
 }
 
