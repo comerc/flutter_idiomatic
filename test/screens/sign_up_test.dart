@@ -55,7 +55,7 @@ void main() {
     });
 
     group('calls', () {
-      testWidgets('emailChanged when email changes', (tester) async {
+      testWidgets('doEmailChanged when email changes', (tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -67,10 +67,10 @@ void main() {
           ),
         );
         await tester.enterText(find.byKey(emailInputKey), testEmail);
-        verify(signUpCubit.emailChanged(testEmail)).called(1);
+        verify(signUpCubit.doEmailChanged(testEmail)).called(1);
       });
 
-      testWidgets('passwordChanged when password changes', (tester) async {
+      testWidgets('doPasswordChanged when password changes', (tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -82,10 +82,10 @@ void main() {
           ),
         );
         await tester.enterText(find.byKey(passwordInputKey), testPassword);
-        verify(signUpCubit.passwordChanged(testPassword)).called(1);
+        verify(signUpCubit.doPasswordChanged(testPassword)).called(1);
       });
 
-      testWidgets('confirmedPasswordChanged when confirmedPassword changes',
+      testWidgets('doConfirmedPasswordChanged when confirmedPassword changes',
           (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -99,7 +99,7 @@ void main() {
         );
         await tester.enterText(
             find.byKey(confirmedPasswordInputKey), testConfirmedPassword);
-        verify(signUpCubit.confirmedPasswordChanged(testConfirmedPassword))
+        verify(signUpCubit.doConfirmedPasswordChanged(testConfirmedPassword))
             .called(1);
       });
 

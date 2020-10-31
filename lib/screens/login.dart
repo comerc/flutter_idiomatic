@@ -77,7 +77,7 @@ class _EmailInput extends StatelessWidget {
         return TextField(
           key: const Key('loginForm_emailInput_textField'),
           onChanged: (String value) =>
-              getBloc<LoginCubit>(context).emailChanged(value),
+              getBloc<LoginCubit>(context).doEmailChanged(value),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'email',
@@ -100,7 +100,7 @@ class _PasswordInput extends StatelessWidget {
         return TextField(
           key: const Key('loginForm_passwordInput_textField'),
           onChanged: (String value) =>
-              getBloc<LoginCubit>(context).passwordChanged(value),
+              getBloc<LoginCubit>(context).doPasswordChanged(value),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',

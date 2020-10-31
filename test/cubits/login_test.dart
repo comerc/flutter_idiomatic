@@ -72,11 +72,11 @@ void main() {
       loginCubit.close();
     });
 
-    group('emailChanged', () {
+    group('doEmailChanged', () {
       blocTest<LoginCubit, LoginState>(
         'emits [invalid] when email/password are invalid',
         build: () => LoginCubit(authenticationRepository),
-        act: (cubit) => cubit.emailChanged(invalidEmailString),
+        act: (cubit) => cubit.doEmailChanged(invalidEmailString),
         expect: const <LoginState>[
           LoginState(emailInput: invalidEmail, status: FormzStatus.invalid),
         ],
@@ -86,7 +86,7 @@ void main() {
         'emits [valid] when email/password are valid',
         build: () => LoginCubit(authenticationRepository)
           ..emit(LoginState(passwordInput: validPassword)),
-        act: (cubit) => cubit.emailChanged(validEmailString),
+        act: (cubit) => cubit.doEmailChanged(validEmailString),
         expect: const <LoginState>[
           LoginState(
             emailInput: validEmail,
@@ -97,11 +97,11 @@ void main() {
       );
     });
 
-    group('passwordChanged', () {
+    group('doPasswordChanged', () {
       blocTest<LoginCubit, LoginState>(
         'emits [invalid] when email/password are invalid',
         build: () => LoginCubit(authenticationRepository),
-        act: (cubit) => cubit.passwordChanged(invalidPasswordString),
+        act: (cubit) => cubit.doPasswordChanged(invalidPasswordString),
         expect: const <LoginState>[
           LoginState(
             passwordInput: invalidPassword,
@@ -114,7 +114,7 @@ void main() {
         'emits [valid] when email/password are valid',
         build: () => LoginCubit(authenticationRepository)
           ..emit(LoginState(emailInput: validEmail)),
-        act: (cubit) => cubit.passwordChanged(validPasswordString),
+        act: (cubit) => cubit.doPasswordChanged(validPasswordString),
         expect: const <LoginState>[
           LoginState(
             emailInput: validEmail,

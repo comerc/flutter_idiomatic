@@ -98,11 +98,11 @@ void main() {
       signUpCubit.close();
     });
 
-    group('emailChanged', () {
+    group('doEmailChanged', () {
       blocTest<SignUpCubit, SignUpState>(
         'emits [invalid] when email/password/confirmedPassword are invalid',
         build: () => SignUpCubit(authenticationRepository),
-        act: (cubit) => cubit.emailChanged(invalidEmailString),
+        act: (cubit) => cubit.doEmailChanged(invalidEmailString),
         expect: const <SignUpState>[
           SignUpState(emailInput: invalidEmail, status: FormzStatus.invalid),
         ],
@@ -114,7 +114,7 @@ void main() {
           ..emit(SignUpState(
               passwordInput: validPassword,
               confirmedPasswordInput: validConfirmedPassword)),
-        act: (cubit) => cubit.emailChanged(validEmailString),
+        act: (cubit) => cubit.doEmailChanged(validEmailString),
         expect: const <SignUpState>[
           SignUpState(
             emailInput: validEmail,
@@ -126,11 +126,11 @@ void main() {
       );
     });
 
-    group('passwordChanged', () {
+    group('doPasswordChanged', () {
       blocTest<SignUpCubit, SignUpState>(
         'emits [invalid] when email/password/confirmedPassword are invalid',
         build: () => SignUpCubit(authenticationRepository),
-        act: (cubit) => cubit.passwordChanged(invalidPasswordString),
+        act: (cubit) => cubit.doPasswordChanged(invalidPasswordString),
         expect: const <SignUpState>[
           SignUpState(
             confirmedPasswordInput: ConfirmedPasswordInputModel.dirty(
@@ -149,7 +149,7 @@ void main() {
           ..emit(SignUpState(
               emailInput: validEmail,
               confirmedPasswordInput: validConfirmedPassword)),
-        act: (cubit) => cubit.passwordChanged(validPasswordString),
+        act: (cubit) => cubit.doPasswordChanged(validPasswordString),
         expect: const <SignUpState>[
           SignUpState(
             emailInput: validEmail,
@@ -161,12 +161,12 @@ void main() {
       );
     });
 
-    group('confirmedPasswordChanged', () {
+    group('doConfirmedPasswordChanged', () {
       blocTest<SignUpCubit, SignUpState>(
         'emits [invalid] when email/password/confirmedPassword are invalid',
         build: () => SignUpCubit(authenticationRepository),
         act: (cubit) =>
-            cubit.confirmedPasswordChanged(invalidConfirmedPasswordString),
+            cubit.doConfirmedPasswordChanged(invalidConfirmedPasswordString),
         expect: const <SignUpState>[
           SignUpState(
             confirmedPasswordInput: invalidConfirmedPassword,
@@ -181,7 +181,7 @@ void main() {
           ..emit(SignUpState(
               emailInput: validEmail, passwordInput: validPassword)),
         act: (cubit) =>
-            cubit.confirmedPasswordChanged(validConfirmedPasswordString),
+            cubit.doConfirmedPasswordChanged(validConfirmedPasswordString),
         expect: const <SignUpState>[
           SignUpState(
             emailInput: validEmail,
