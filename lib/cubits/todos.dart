@@ -61,7 +61,6 @@ class TodosCubit extends Cubit<TodosState> {
       }
       emit(state.copyWith(
         items: [...state.items, ...items],
-        status: TodosStatus.ready,
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
