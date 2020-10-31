@@ -61,6 +61,7 @@ class TodosScreen extends StatelessWidget {
 
 class TodosBody extends StatelessWidget {
   final _inputKey = GlobalKey<_InputState>();
+  final _listKey = GlobalKey<AnimatedListState>();
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +113,7 @@ class TodosBody extends StatelessWidget {
                       },
                     ),
                   ),
+                  const Divider(height: 1),
                   if (state.indicator == TodosIndicator.initial)
                     const Spacer()
                   else if (state.indicator == TodosIndicator.start)
@@ -122,13 +124,20 @@ class TodosBody extends StatelessWidget {
                     )
                   else
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: state.indicator == TodosIndicator.loadMore
-                            ? state.items.length + 1
-                            : state.items.length,
-                        itemBuilder: (BuildContext context, int index) {
+                      child: AnimatedList(
+                        key: _listKey,
+                        initialItemCount:
+                            state.indicator == TodosIndicator.loadMore
+                                ? state.items.length + 1
+                                : state.items.length,
+                        itemBuilder: (
+                          BuildContext context,
+                          int index,
+                          Animation<double> animation,
+                        ) {
                           if (index == state.items.length) {
-                            if (state.status == TodosStatus.busy) {
+                            if (state.status == TodosStatus.busy &&
+                                state.indicator == TodosIndicator.loadMore) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
@@ -159,7 +168,7 @@ class TodosBody extends StatelessWidget {
                                 ],
                               );
                             }
-                            return Container();
+                            return null;
                           }
                           final item = state.items[index];
                           return Dismissible(
@@ -177,8 +186,25 @@ class TodosBody extends StatelessWidget {
                                 const SizedBox(width: 8),
                               ]),
                             ),
-                            child: TodosItem(
-                              item: item,
+                            child: Column(
+                              children: [
+                                AnimatedBuilder(
+                                  builder:
+                                      (BuildContext context, Widget child) {
+                                    return ClipRect(
+                                      child: Align(
+                                        alignment: Alignment.topCenter,
+                                        heightFactor: animation.value,
+                                        child: TodosItem(
+                                          item: item,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  animation: animation,
+                                ),
+                                const Divider(height: 1),
+                              ],
                             ),
                           );
                         },
@@ -267,6 +293,7 @@ class TodosBody extends StatelessWidget {
       return false;
     });
     if (result) {
+      _listKey.currentState?.insertItem(0);
       _inputKey.currentState?.controller?.clear();
       return;
     }
