@@ -19,7 +19,7 @@ class TodosScreen extends StatelessWidget {
       body: BlocProvider(
         create: (BuildContext context) {
           final cubit = TodosCubit(getRepository<DatabaseRepository>(context));
-          _load(cubit);
+          _load(cubit, indicator: TodosIndicator.start);
           return cubit;
         },
         child: TodosBody(),
@@ -27,8 +27,15 @@ class TodosScreen extends StatelessWidget {
     );
   }
 
-  static Future<void> _load(TodosCubit cubit, {bool isRefresh = false}) async {
-    final result = await cubit.load(isRefresh: isRefresh);
+  static Future<void> _load(
+    TodosCubit cubit, {
+    bool isRefresh = false,
+    TodosIndicator indicator,
+  }) async {
+    final result = await cubit.load(
+      isRefresh: isRefresh,
+      indicator: indicator,
+    );
     if (result) return;
     BotToast.showNotification(
       title: (_) => const Text(
@@ -40,7 +47,11 @@ class TodosScreen extends StatelessWidget {
         onLongPress: () {}, // чтобы сократить время для splashColor
         onPressed: () {
           close();
-          _load(cubit, isRefresh: isRefresh);
+          _load(
+            cubit,
+            isRefresh: isRefresh,
+            indicator: indicator,
+          );
         },
         child: Text('Repeat'.toUpperCase()),
       ),
@@ -87,6 +98,7 @@ class TodosBody extends StatelessWidget {
                 return TodosScreen._load(
                   getBloc<TodosCubit>(context),
                   isRefresh: true,
+                  indicator: TodosIndicator.refreshIndicator,
                 );
               },
               child: Column(
@@ -100,66 +112,78 @@ class TodosBody extends StatelessWidget {
                       },
                     ),
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: state.items.length + 1,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index == state.items.length) {
-                          if (state.status == TodosStatus.busy) {
-                            return Center(
-                                child: const CircularProgressIndicator());
-                          }
-                          if (state.status == TodosStatus.ready) {
-                            if (state.hasMore) {
-                              return Center(
-                                child: FlatButton(
-                                    child: Text(
-                                      'Load More'.toUpperCase(),
-                                      style:
-                                          TextStyle(color: theme.primaryColor),
-                                    ),
-                                    shape: const StadiumBorder(),
-                                    onPressed: () {
-                                      // TODO: load new items in AnimatedList
-                                      TodosScreen._load(
-                                        getBloc<TodosCubit>(context),
-                                      );
-                                    }),
+                  if (state.indicator == TodosIndicator.initial)
+                    const Spacer()
+                  else if (state.indicator == TodosIndicator.start)
+                    const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: state.indicator == TodosIndicator.loadMore
+                            ? state.items.length + 1
+                            : state.items.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index == state.items.length) {
+                            if (state.status == TodosStatus.busy) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (state.status == TodosStatus.ready) {
+                              if (state.hasMore) {
+                                return Center(
+                                  child: FlatButton(
+                                      child: Text(
+                                        'Load More'.toUpperCase(),
+                                        style: TextStyle(
+                                            color: theme.primaryColor),
+                                      ),
+                                      shape: const StadiumBorder(),
+                                      onPressed: () {
+                                        TodosScreen._load(
+                                          getBloc<TodosCubit>(context),
+                                          indicator: TodosIndicator.loadMore,
+                                        );
+                                      }),
+                                );
+                              }
+                              return Column(
+                                children: [
+                                  Text(state.items.isEmpty
+                                      ? 'No Data'.toUpperCase()
+                                      : 'No More'.toUpperCase()),
+                                  const SizedBox(height: 8),
+                                ],
                               );
                             }
-                            return Column(
-                              children: [
-                                Text(state.items.isEmpty
-                                    ? 'No Data'.toUpperCase()
-                                    : 'No More'.toUpperCase()),
-                                const SizedBox(height: 8),
-                              ],
-                            );
+                            return Container();
                           }
-                          return Container();
-                        }
-                        final item = state.items[index];
-                        return Dismissible(
-                          key: Key('${item.id}'),
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (DismissDirection direction) {
-                            _remove(getBloc<TodosCubit>(context), id: item.id);
-                          },
-                          background: Container(
-                            color: Colors.red,
-                            child: Row(children: <Widget>[
-                              const Spacer(),
-                              const Icon(Icons.delete_outline),
-                              const SizedBox(width: 8),
-                            ]),
-                          ),
-                          child: TodosItem(
-                            item: item,
-                          ),
-                        );
-                      },
+                          final item = state.items[index];
+                          return Dismissible(
+                            key: Key('${item.id}'),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (DismissDirection direction) {
+                              _remove(getBloc<TodosCubit>(context),
+                                  id: item.id);
+                            },
+                            background: Container(
+                              color: Colors.red,
+                              child: Row(children: <Widget>[
+                                const Spacer(),
+                                const Icon(Icons.delete_outline),
+                                const SizedBox(width: 8),
+                              ]),
+                            ),
+                            child: TodosItem(
+                              item: item,
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -173,11 +197,34 @@ class TodosBody extends StatelessWidget {
                     shape: const StadiumBorder(),
                     color: theme.accentColor,
                     onPressed: () {
-                      getBloc<TodosCubit>(context).load(isRefresh: true);
+                      // TODO: load new items in AnimatedList
+                      getBloc<TodosCubit>(context).load(
+                        isRefresh: true,
+                        indicator: TodosIndicator.loadNew,
+                      );
                     },
-                    child: Text(
-                      'Load New'.toUpperCase(),
-                      style: TextStyle(color: Colors.white),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (state.indicator == TodosIndicator.loadNew) ...[
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            width: 20,
+                            height: 20,
+                            child:
+                                const CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          SizedBox(width: 8),
+                        ],
+                        Text(
+                          'Load New'.toUpperCase(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -193,7 +240,7 @@ class TodosBody extends StatelessWidget {
     if (result) return; // TODO: undo
     BotToast.showNotification(
       title: (_) => Text(
-        'Can not remove Todo $id',
+        'Can not remove todo $id',
         overflow: TextOverflow.fade,
         softWrap: false,
       ),
@@ -225,7 +272,7 @@ class TodosBody extends StatelessWidget {
     }
     BotToast.showNotification(
       title: (_) => Text(
-        'Can not add Todo "$title"',
+        'Can not add todo "$title"',
         overflow: TextOverflow.fade,
         softWrap: false,
       ),
@@ -287,7 +334,7 @@ class TodosItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('${item.id} ${item.title}'),
+      title: Text('${item.title}'),
     );
   }
 }

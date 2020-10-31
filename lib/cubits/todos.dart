@@ -34,10 +34,16 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(newId: id));
   }
 
-  Future<bool> load({bool isRefresh = false}) async {
+  Future<bool> load({
+    bool isRefresh = false,
+    TodosIndicator indicator,
+  }) async {
     const kLimit = 10;
     var result = true;
-    emit(state.copyWith(status: TodosStatus.busy));
+    emit(state.copyWith(
+      status: TodosStatus.busy,
+      indicator: indicator,
+    ));
     try {
       final items = await databaseRepository.readTodos(
         createdAt: isRefresh ? null : state.nextDateTime,
@@ -63,7 +69,10 @@ class TodosCubit extends Cubit<TodosState> {
     } catch (error) {
       result = false;
     } finally {
-      emit(state.copyWith(status: TodosStatus.ready));
+      emit(state.copyWith(
+        status: TodosStatus.ready,
+        indicator: TodosIndicator.loadMore,
+      ));
     }
     return result;
   }
@@ -76,7 +85,7 @@ class TodosCubit extends Cubit<TodosState> {
     try {
       final deletedId = await databaseRepository.deleteTodo(id);
       if (deletedId != id) {
-        throw 'Can not remove Todo $id';
+        throw 'Can not remove todo $id';
       }
     } catch (error) {
       result = false;
@@ -107,12 +116,14 @@ class TodosCubit extends Cubit<TodosState> {
 }
 
 enum TodosStatus { initial, busy, ready }
+enum TodosIndicator { initial, start, refreshIndicator, loadNew, loadMore }
 
 @CopyWith()
 class TodosState extends Equatable {
   const TodosState({
     this.items = const [],
     this.status = TodosStatus.initial,
+    this.indicator = TodosIndicator.initial,
     this.hasMore = false,
     this.nextDateTime,
     this.newId,
@@ -121,6 +132,7 @@ class TodosState extends Equatable {
 
   final List<TodoModel> items;
   final TodosStatus status;
+  final TodosIndicator indicator;
   final DateTime nextDateTime;
   final bool hasMore;
   final int newId;
@@ -131,6 +143,13 @@ class TodosState extends Equatable {
       items.indexWhere((TodoModel item) => item.id == newId) == -1;
 
   @override
-  List<Object> get props =>
-      [items, status, hasMore, nextDateTime, newId, isSubmitMode];
+  List<Object> get props => [
+        items,
+        status,
+        indicator,
+        hasMore,
+        nextDateTime,
+        newId,
+        isSubmitMode,
+      ];
 }
