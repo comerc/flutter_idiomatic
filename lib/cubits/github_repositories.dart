@@ -13,7 +13,6 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
   final GitHubRepository gitHubRepository;
 
   Future<bool> load() async {
-    var result = true;
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
       final items = await gitHubRepository.readRepositories();
@@ -24,11 +23,11 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
         status: GitHubStatus.ready,
       ));
     } catch (error) {
-      result = false;
+      return false;
     } finally {
       emit(state.copyWith(status: GitHubStatus.ready));
     }
-    return result;
+    return true;
   }
 
   List<RepositoryModel> _updateStarLocally(String id, bool value) {
@@ -43,7 +42,6 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
   }
 
   Future<bool> toggleStar({String id, bool value}) async {
-    var result = true;
     emit(state.copyWith(
       items: _updateStarLocally(id, value),
       loadingItems: {...state.loadingItems}..add(id),
@@ -54,13 +52,13 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
       emit(state.copyWith(
         items: _updateStarLocally(id, !value),
       ));
-      result = false;
+      return false;
     } finally {
       emit(state.copyWith(
         loadingItems: {...state.loadingItems}..remove(id),
       ));
     }
-    return result;
+    return true;
   }
 }
 

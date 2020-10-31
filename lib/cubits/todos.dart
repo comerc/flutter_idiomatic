@@ -39,7 +39,6 @@ class TodosCubit extends Cubit<TodosState> {
     TodosIndicator indicator,
   }) async {
     const kLimit = 10;
-    var result = true;
     emit(state.copyWith(
       status: TodosStatus.busy,
       indicator: indicator,
@@ -67,18 +66,17 @@ class TodosCubit extends Cubit<TodosState> {
         nextDateTime: nextDateTime,
       ));
     } catch (error) {
-      result = false;
+      return false;
     } finally {
       emit(state.copyWith(
         status: TodosStatus.ready,
         indicator: TodosIndicator.loadMore,
       ));
     }
-    return result;
+    return true;
   }
 
   Future<bool> remove(int id) async {
-    var result = true;
     emit(state.copyWith(
       items: [...state.items..removeWhere((TodoModel item) => item.id == id)],
     ));
@@ -88,9 +86,9 @@ class TodosCubit extends Cubit<TodosState> {
         throw 'Can not remove todo $id';
       }
     } catch (error) {
-      result = false;
+      return false;
     }
-    return result;
+    return true;
   }
 
   Future<bool> add(String title) async {
@@ -99,7 +97,6 @@ class TodosCubit extends Cubit<TodosState> {
     if (status.isInvalid) {
       throw titleInput.error;
     }
-    var result = true;
     emit(state.copyWith(isSubmitMode: true));
     try {
       final item = await databaseRepository.createTodo(titleInput.value);
@@ -107,11 +104,11 @@ class TodosCubit extends Cubit<TodosState> {
         items: [item, ...state.items],
       ));
     } catch (error) {
-      result = false;
+      return false;
     } finally {
       emit(state.copyWith(isSubmitMode: false));
     }
-    return result;
+    return true;
   }
 }
 
