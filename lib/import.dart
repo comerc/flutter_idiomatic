@@ -8,6 +8,7 @@ export 'cubits/github_repositories.dart';
 export 'cubits/login.dart';
 export 'cubits/sign_up.dart';
 export 'cubits/todos.dart';
+export 'local.dart';
 export 'main.dart';
 export 'models/confirmed_password_input.dart';
 export 'models/email_input.dart';
