@@ -91,10 +91,9 @@ class _AnimatedListScreenState extends State<AnimatedListScreen>
       onAccept: (item) {
         setState(() {
           final currentIndex = _list.indexOf(item);
-          const kZeroDuration = Duration();
-          _list.removeAt(currentIndex, duration: kZeroDuration);
+          _list.removeAt(currentIndex, duration: Duration.zero);
           _list.insert(currentIndex > index ? index : index - 1, item,
-              duration: kZeroDuration);
+              duration: Duration.zero);
         });
       },
       builder: (BuildContext context, List<int> candidateData,
