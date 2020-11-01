@@ -4,13 +4,13 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
-  AuthenticationCubit(this._repository)
-      : assert(_repository != null),
+  AuthenticationCubit(this.repository)
+      : assert(repository != null),
         super(const AuthenticationState.unknown()) {
-    _userSubscription = _repository.user.listen(changeUser);
+    _userSubscription = repository.user.listen(changeUser);
   }
 
-  final AuthenticationRepository _repository;
+  final AuthenticationRepository repository;
   StreamSubscription<UserModel> _userSubscription;
 
   @override
@@ -27,7 +27,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   void requestLogout() {
-    _repository.logOut();
+    repository.logOut();
   }
 }
 
