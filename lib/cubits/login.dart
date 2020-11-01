@@ -7,11 +7,11 @@ import 'package:flutter_firebase_login/import.dart';
 part 'login.g.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit(this.authenticationRepository)
-      : assert(authenticationRepository != null),
+  LoginCubit(this._repository)
+      : assert(_repository != null),
         super(const LoginState());
 
-  final AuthenticationRepository authenticationRepository;
+  final AuthenticationRepository _repository;
 
   void doEmailChanged(String value) {
     final emailInput = EmailInputModel.dirty(value);
@@ -33,7 +33,7 @@ class LoginCubit extends Cubit<LoginState> {
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await authenticationRepository.logInWithEmailAndPassword(
+      await _repository.logInWithEmailAndPassword(
         email: state.emailInput.value,
         password: state.passwordInput.value,
       );
@@ -46,7 +46,7 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> logInWithGoogle() async {
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await authenticationRepository.logInWithGoogle();
+      await _repository.logInWithGoogle();
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));

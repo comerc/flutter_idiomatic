@@ -7,11 +7,11 @@ import 'package:flutter_firebase_login/import.dart';
 part 'sign_up.g.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit(this.authenticationRepository)
-      : assert(authenticationRepository != null),
+  SignUpCubit(this._repository)
+      : assert(_repository != null),
         super(const SignUpState());
 
-  final AuthenticationRepository authenticationRepository;
+  final AuthenticationRepository _repository;
 
   void doEmailChanged(String value) {
     final emailInput = EmailInputModel.dirty(value);
@@ -61,7 +61,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await authenticationRepository.signUp(
+      await _repository.signUp(
         email: state.emailInput.value,
         password: state.passwordInput.value,
       );

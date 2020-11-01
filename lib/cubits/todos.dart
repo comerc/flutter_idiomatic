@@ -8,15 +8,14 @@ import 'package:flutter_firebase_login/import.dart';
 part 'todos.g.dart';
 
 class TodosCubit extends Cubit<TodosState> {
-  TodosCubit(this.databaseRepository)
-      : assert(databaseRepository != null),
+  TodosCubit(this._repository)
+      : assert(_repository != null),
         super(const TodosState()) {
-    _fetchNewNotificationSubscription = databaseRepository
-        .fetchNewTodoNotification
-        .listen(fetchNewNotification);
+    _fetchNewNotificationSubscription =
+        _repository.fetchNewTodoNotification.listen(fetchNewNotification);
   }
 
-  final DatabaseRepository databaseRepository;
+  final DatabaseRepository _repository;
   StreamSubscription<int> _fetchNewNotificationSubscription;
   bool isStartedSubscription = false;
 
@@ -44,7 +43,7 @@ class TodosCubit extends Cubit<TodosState> {
       indicator: indicator,
     ));
     try {
-      final items = await databaseRepository.readTodos(
+      final items = await _repository.readTodos(
         createdAt: isRefresh ? null : state.nextDateTime,
         limit: kLimit + 1,
       );
@@ -80,7 +79,7 @@ class TodosCubit extends Cubit<TodosState> {
       items: [...state.items..removeWhere((TodoModel item) => item.id == id)],
     ));
     try {
-      final deletedId = await databaseRepository.deleteTodo(id);
+      final deletedId = await _repository.deleteTodo(id);
       if (deletedId != id) {
         throw 'Can not remove todo $id';
       }
@@ -98,7 +97,7 @@ class TodosCubit extends Cubit<TodosState> {
     }
     emit(state.copyWith(isSubmitMode: true));
     try {
-      final item = await databaseRepository.createTodo(titleInput.value);
+      final item = await _repository.createTodo(titleInput.value);
       emit(state.copyWith(
         items: [item, ...state.items],
       ));

@@ -6,16 +6,16 @@ import 'package:flutter_firebase_login/import.dart';
 part 'github_repositories.g.dart';
 
 class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
-  GitHubRepositoriesCubit(this.gitHubRepository)
-      : assert(gitHubRepository != null),
+  GitHubRepositoriesCubit(this._repository)
+      : assert(_repository != null),
         super(const GitHubRepositoriesState());
 
-  final GitHubRepository gitHubRepository;
+  final GitHubRepository _repository;
 
   Future<bool> load() async {
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
-      final items = await gitHubRepository.readRepositories();
+      final items = await _repository.readRepositories();
       emit(const GitHubRepositoriesState());
       await Future.delayed(const Duration(milliseconds: 300));
       emit(state.copyWith(
@@ -47,7 +47,7 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
       loadingItems: {...state.loadingItems}..add(id),
     ));
     try {
-      await gitHubRepository.toggleStar(id: id, value: value);
+      await _repository.toggleStar(id: id, value: value);
     } catch (error) {
       emit(state.copyWith(
         items: _updateStarLocally(id, !value),
