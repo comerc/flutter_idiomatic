@@ -114,6 +114,8 @@ class _TodosBodyState extends State<TodosBody> {
                       child: AnimatedList(
                         key: _listKey,
                         controller: _controller,
+                        // TODO: https://github.com/flutter/flutter/issues/22180#issuecomment-478080997
+                        // physics: const AlwaysScrollableScrollPhysics(),
                         initialItemCount:
                             state.indicator == TodosIndicator.loadMore
                                 ? state.items.length + 1
