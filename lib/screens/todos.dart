@@ -17,51 +17,39 @@ class TodosScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Todos')),
       body: BlocProvider(
-        create: (BuildContext context) {
-          final cubit = TodosCubit(getRepository<DatabaseRepository>(context));
-          _load(cubit, indicator: TodosIndicator.start);
-          return cubit;
-        },
+        create: (BuildContext context) =>
+            TodosCubit(getRepository<DatabaseRepository>(context)),
         child: TodosBody(),
-      ),
-    );
-  }
-
-  static Future<void> _load(
-    TodosCubit cubit, {
-    bool isRefresh = false,
-    TodosIndicator indicator,
-  }) async {
-    final result = await cubit.load(
-      isRefresh: isRefresh,
-      indicator: indicator,
-    );
-    if (result) return;
-    BotToast.showNotification(
-      title: (_) => const Text(
-        'Can not load todos',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _load(
-            cubit,
-            isRefresh: isRefresh,
-            indicator: indicator,
-          );
-        },
-        child: Text('Repeat'.toUpperCase()),
       ),
     );
   }
 }
 
-class TodosBody extends StatelessWidget {
+class TodosBody extends StatefulWidget {
+  @override
+  _TodosBodyState createState() => _TodosBodyState();
+}
+
+class _TodosBodyState extends State<TodosBody> {
   final _inputKey = GlobalKey<_InputState>();
   final _listKey = GlobalKey<AnimatedListState>();
+  final _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _load(getBloc<TodosCubit>(context), indicator: TodosIndicator.start);
+    // TODO: automatic load more
+    _controller.addListener(() {
+      if (_controller.position.pixels == _controller.position.maxScrollExtent) {
+        final cubit = getBloc<TodosCubit>(context);
+        if (cubit.state.hasMore) {
+          _load(getBloc<TodosCubit>(context),
+              indicator: TodosIndicator.loadMore);
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +84,8 @@ class TodosBody extends StatelessWidget {
           children: <Widget>[
             RefreshIndicator(
               onRefresh: () async {
-                return TodosScreen._load(
+                return _load(
                   getBloc<TodosCubit>(context),
-                  isRefresh: true,
                   indicator: TodosIndicator.refreshIndicator,
                 );
               },
@@ -126,6 +113,7 @@ class TodosBody extends StatelessWidget {
                     Expanded(
                       child: AnimatedList(
                         key: _listKey,
+                        controller: _controller,
                         initialItemCount:
                             state.indicator == TodosIndicator.loadMore
                                 ? state.items.length + 1
@@ -133,14 +121,6 @@ class TodosBody extends StatelessWidget {
                         itemBuilder: _buildItem(state),
                       ),
                     ),
-                  // Expanded(
-                  //   child: ListView.builder(
-                  //     itemCount: state.indicator == TodosIndicator.loadMore
-                  //         ? state.items.length + 1
-                  //         : state.items.length,
-                  //     itemBuilder: _buildItem(state),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -166,7 +146,15 @@ class TodosBody extends StatelessWidget {
       Animation<double> animation,
     ) {
       if (index == state.items.length) {
-        return _Footer(state: state);
+        return _Footer(
+          state: state,
+          onPressed: () {
+            _load(
+              getBloc<TodosCubit>(context),
+              indicator: TodosIndicator.loadMore,
+            );
+          },
+        );
       }
       final item = state.items[index];
       return Dismissible(
@@ -177,7 +165,7 @@ class TodosBody extends StatelessWidget {
               index,
               (BuildContext context, Animation<double> animation) =>
                   Container(),
-              duration: const Duration());
+              duration: Duration.zero);
           _remove(getBloc<TodosCubit>(context), id: item.id);
         },
         background: Container(
@@ -215,41 +203,42 @@ class TodosBody extends StatelessWidget {
     };
   }
 
-  // IndexedWidgetBuilder _buildItem(TodosState state) {
-  //   return (
-  //     BuildContext context,
-  //     int index,
-  //   ) {
-  //     if (index == state.items.length) {
-  //       return _Footer(state: state);
-  //     }
-  //     final item = state.items[index];
-  //     return Dismissible(
-  //       key: Key('${item.id}'),
-  //       direction: DismissDirection.endToStart,
-  //       onDismissed: (DismissDirection direction) {
-  //         _remove(getBloc<TodosCubit>(context), id: item.id);
-  //       },
-  //       background: Container(
-  //         color: Colors.redAccent,
-  //         child: Row(children: const <Widget>[
-  //           Spacer(),
-  //           Icon(
-  //             Icons.delete_outline,
-  //             color: Colors.white,
-  //           ),
-  //           SizedBox(width: 8),
-  //         ]),
-  //       ),
-  //       child: Column(
-  //         children: [
-  //           _Item(item: item),
-  //           const Divider(height: 1),
-  //         ],
-  //       ),
-  //     );
-  //   };
-  // }
+  Future<void> _load(
+    TodosCubit cubit, {
+    TodosIndicator indicator,
+  }) async {
+    final result = await cubit.load(
+      indicator: indicator,
+    );
+    if (result != null) {
+      // TODO: move to BuildListener?
+      if (indicator == TodosIndicator.loadMore) {
+        final insertIndex = cubit.state.items.length - result;
+        for (int offset = 0; offset < result; offset++) {
+          _listKey.currentState.insertItem(insertIndex + offset);
+        }
+      }
+      return;
+    }
+    BotToast.showNotification(
+      title: (_) => const Text(
+        'Can not load todos',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _load(
+            cubit,
+            indicator: indicator,
+          );
+        },
+        child: Text('Repeat'.toUpperCase()),
+      ),
+    );
+  }
 
   Future<void> _remove(TodosCubit cubit, {int id}) async {
     final result = await cubit.remove(id);
@@ -284,13 +273,17 @@ class TodosBody extends StatelessWidget {
       );
       hasError = true;
     });
-    if (hasError) {
-      return;
-    }
+    if (hasError) return;
     if (result) {
-      // _controller.jumpTo(_controller.position.minScrollExtent);
-      _listKey.currentState?.insertItem(0);
-      // TODO: insert multiple items https://medium.com/flutter-community/updating-data-in-an-animatedlist-in-flutter-9dbfb136e515
+      const Duration kDuration = Duration(milliseconds: 300);
+      // ignore: unawaited_futures
+      _controller.animateTo(
+        0,
+        duration: kDuration,
+        curve: Curves.easeOut,
+      );
+      // ignore: avoid_redundant_argument_values
+      _listKey.currentState?.insertItem(0, duration: kDuration);
       _inputKey.currentState?.controller?.clear();
       return;
     }
@@ -329,7 +322,6 @@ class _LoadNewButton extends StatelessWidget {
           ? null
           : () {
               getBloc<TodosCubit>(context).load(
-                isRefresh: true,
                 indicator: TodosIndicator.loadNew,
               );
             },
@@ -414,9 +406,11 @@ class _Footer extends StatelessWidget {
   const _Footer({
     Key key,
     this.state,
+    this.onPressed,
   }) : super(key: key);
 
   final TodosState state;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -434,34 +428,13 @@ class _Footer extends StatelessWidget {
         return Center(
           child: FlatButton(
             shape: const StadiumBorder(),
-            onPressed: () {
-              TodosScreen._load(
-                getBloc<TodosCubit>(context),
-                isRefresh: true,
-                indicator: TodosIndicator.loadMore,
-              );
-            },
+            onPressed: onPressed,
             child: Text(
-              'Refresh'.toUpperCase(),
+              'Load More'.toUpperCase(),
               style: TextStyle(color: theme.primaryColor),
             ),
           ),
         );
-        // return Center(
-        //   child: FlatButton(
-        //     shape: const StadiumBorder(),
-        //     onPressed: () {
-        //       TodosScreen._load(
-        //         getBloc<TodosCubit>(context),
-        //         indicator: TodosIndicator.loadMore,
-        //       );
-        //     },
-        //     child: Text(
-        //       'Load More'.toUpperCase(),
-        //       style: TextStyle(color: theme.primaryColor),
-        //     ),
-        //   ),
-        // );
       }
       return Column(
         children: [

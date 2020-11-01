@@ -33,8 +33,7 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(newId: id));
   }
 
-  Future<bool> load({
-    bool isRefresh = false,
+  Future<int> load({
     TodosIndicator indicator,
   }) async {
     const kLimit = 10;
@@ -44,7 +43,8 @@ class TodosCubit extends Cubit<TodosState> {
     ));
     try {
       final items = await repository.readTodos(
-        createdAt: isRefresh ? null : state.nextDateTime,
+        createdAt:
+            indicator == TodosIndicator.loadMore ? state.nextDateTime : null,
         limit: kLimit + 1,
       );
       var hasMore = false;
@@ -54,7 +54,7 @@ class TodosCubit extends Cubit<TodosState> {
         final lastItem = items.removeLast();
         nextDateTime = lastItem.createdAt;
       }
-      if (isRefresh) {
+      if (indicator != TodosIndicator.loadMore) {
         emit(const TodosState());
         await Future.delayed(const Duration(milliseconds: 300));
       }
@@ -63,15 +63,15 @@ class TodosCubit extends Cubit<TodosState> {
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
+      return items.length;
     } catch (error) {
-      return false;
+      return null;
     } finally {
       emit(state.copyWith(
         status: TodosStatus.ready,
         indicator: TodosIndicator.loadMore,
       ));
     }
-    return true;
   }
 
   Future<bool> remove(int id) async {
