@@ -1,27 +1,28 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_firebase_login/import.dart';
 
 class SimpleBlocObserver extends BlocObserver {
   @override
   void onEvent(Bloc bloc, Object event) {
-    print(event);
+    out(event);
     super.onEvent(bloc, event);
   }
 
   @override
   void onError(Cubit cubit, Object error, StackTrace stackTrace) {
-    print(error);
+    out(error);
     super.onError(cubit, error, stackTrace);
   }
 
   @override
   void onChange(Cubit cubit, Change change) {
-    print(change);
+    out(change);
     super.onChange(cubit, change);
   }
 
   @override
   void onTransition(Bloc bloc, Transition transition) {
-    print(transition);
+    out(transition);
     super.onTransition(bloc, transition);
   }
 }

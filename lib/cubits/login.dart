@@ -50,6 +50,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
+      // ignore: avoid_catching_errors
     } on NoSuchMethodError {
       emit(state.copyWith(status: FormzStatus.pure));
     }

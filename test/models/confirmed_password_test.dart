@@ -28,8 +28,7 @@ void main() {
     group('validator', () {
       test('returns invalid error when confirmedPassword is empty', () {
         expect(
-          ConfirmedPasswordInputModel.dirty(password: password.value, value: '')
-              .error,
+          ConfirmedPasswordInputModel.dirty(password: password.value).error,
           ConfirmedPasswordInputValidationError.invalid,
         );
       });

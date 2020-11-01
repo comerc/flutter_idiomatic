@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_firebase_login/import.dart';
 
-// ignore: must_be_immutable
+// ignore: must_be_immutable, avoid_implementing_value_types
 class MockUser extends Mock implements UserModel {
   @override
   String get id => 'id';

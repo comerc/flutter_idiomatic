@@ -12,8 +12,10 @@ class MockAuthenticationRepository extends Mock
 
 class MockLoginCubit extends MockBloc<LoginState> implements LoginCubit {}
 
+// ignore: avoid_implementing_value_types
 class MockEmailInputModel extends Mock implements EmailInputModel {}
 
+// ignore: avoid_implementing_value_types
 class MockPasswordInputModel extends Mock implements PasswordInputModel {}
 
 void main() {

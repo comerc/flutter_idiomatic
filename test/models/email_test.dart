@@ -22,7 +22,7 @@ void main() {
     group('validator', () {
       test('returns invalid error when email is empty', () {
         expect(
-          EmailInputModel.dirty('').error,
+          EmailInputModel.dirty().error,
           EmailInputValidationError.invalid,
         );
       });

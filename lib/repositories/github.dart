@@ -62,9 +62,8 @@ GraphQLClient _getClient() {
   if (_kEnableWebsockets) {
     final websocketLink = WebSocketLink(
       url: 'ws://localhost:8080/ws/graphql',
-      config: SocketClientConfig(
-        autoReconnect: true,
-        inactivityTimeout: const Duration(seconds: 15),
+      config: const SocketClientConfig(
+        inactivityTimeout: Duration(seconds: 15),
         // initPayload: () async => {
         //   'headers': {'Authorization': 'Bearer ' + token}
         // },
@@ -84,7 +83,7 @@ GraphQLClient _getClient() {
   );
 }
 
-class _API {
+mixin _API {
   static final fragments = gql(r'''
     fragment RepositoryFields on Repository {
       # __typename

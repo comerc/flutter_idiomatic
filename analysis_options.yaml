@@ -1,16 +1,18 @@
-include: package:pedantic/analysis_options.yaml
-# include: package:effective_dart/analysis_options.yaml
+include: package:lint/analysis_options.yaml
+# include: package:pedantic/analysis_options.yaml
 
-# TODO: выключить implicit-casts
+linter:
+  rules:
+    - unawaited_futures
+
 analyzer:
-  # exclude: [build/**]
   strong-mode:
     # https://github.com/dart-lang/sdk/issues/25368
     implicit-casts: false
     # implicit-dynamic: false
   errors:
     todo: ignore
-  # TODO: проработать папки
+    unnecessary_raw_strings: false
   exclude:
     - .dart_tool/**
     - .editorconfig
@@ -29,7 +31,9 @@ analyzer:
     - build/**
     - go/**
     - ios/**
+    - lib/_**/**
     - lib/**.g.dart
+    - lib/**.freezed.dart
     - application_bundle/**
     - linux/**
     - macos/**
@@ -38,3 +42,4 @@ analyzer:
     - pubspec.yaml
     - test_driver/**
     - web/**
+    - packages/**

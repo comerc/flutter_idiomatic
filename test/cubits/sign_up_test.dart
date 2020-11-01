@@ -29,6 +29,7 @@ void main() {
     test('returns object with updated status when status is passed', () {
       expect(
         SignUpState().copyWith(status: FormzStatus.pure),
+        // ignore: avoid_redundant_argument_values
         SignUpState(status: FormzStatus.pure),
       );
     });
@@ -135,7 +136,6 @@ void main() {
           SignUpState(
             confirmedPasswordInput: ConfirmedPasswordInputModel.dirty(
               password: invalidPasswordString,
-              value: '',
             ),
             passwordInput: invalidPassword,
             status: FormzStatus.invalid,

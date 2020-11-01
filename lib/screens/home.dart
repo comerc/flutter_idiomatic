@@ -64,7 +64,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _CommonRaisedButton extends StatelessWidget {
-  _CommonRaisedButton({this.title, this.buttonKey, this.onPressed});
+  const _CommonRaisedButton({this.title, this.buttonKey, this.onPressed});
 
   final String title;
   final Key buttonKey;
@@ -75,13 +75,13 @@ class _CommonRaisedButton extends StatelessWidget {
     final theme = Theme.of(context);
     return RaisedButton(
       key: buttonKey,
+      shape: const StadiumBorder(),
+      color: theme.accentColor,
+      onPressed: onPressed,
       child: Text(
         title,
         style: const TextStyle(color: Colors.white),
       ),
-      shape: const StadiumBorder(),
-      color: theme.accentColor,
-      onPressed: onPressed,
     );
   }
 }

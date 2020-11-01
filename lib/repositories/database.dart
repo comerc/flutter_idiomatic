@@ -93,10 +93,9 @@ GraphQLClient _getClient() {
     final websocketLink = WebSocketLink(
       url: 'wss://hasura.io/learn/graphql',
       config: SocketClientConfig(
-        autoReconnect: true,
         inactivityTimeout: const Duration(seconds: 15),
         initPayload: () async {
-          print('initPayload');
+          out('initPayload');
           return {
             'headers': {'Authorization': 'Bearer $kDatabaseToken'},
           };
@@ -117,7 +116,7 @@ GraphQLClient _getClient() {
   );
 }
 
-class _API {
+mixin _API {
   static final createTodo = gql(r'''
     mutation CreateTodo($title: String) {
       insert_todos_one(object: {title: $title}) {

@@ -142,12 +142,12 @@ class _SignUpButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : RaisedButton(
                 key: const Key('signUpForm_continue_raisedButton'),
-                child: Text('Sign Up'.toUpperCase()),
                 shape: const StadiumBorder(),
                 color: Colors.orangeAccent,
                 onPressed: state.status.isValidated
                     ? () => getBloc<SignUpCubit>(context).signUpFormSubmitted()
                     : null,
+                child: Text('Sign Up'.toUpperCase()),
               );
       },
     );

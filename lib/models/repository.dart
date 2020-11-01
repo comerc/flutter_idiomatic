@@ -7,7 +7,7 @@ part 'repository.g.dart';
 @CopyWith()
 @JsonSerializable(fieldRename: FieldRename.none)
 class RepositoryModel extends Equatable {
-  RepositoryModel({
+  const RepositoryModel({
     this.id,
     this.name,
     this.viewerHasStarred,

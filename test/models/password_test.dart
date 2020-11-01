@@ -23,7 +23,7 @@ void main() {
     group('validator', () {
       test('returns invalid error when password is empty', () {
         expect(
-          PasswordInputModel.dirty('').error,
+          PasswordInputModel.dirty().error,
           PasswordInputValidationError.invalid,
         );
       });

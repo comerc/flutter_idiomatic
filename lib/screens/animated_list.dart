@@ -70,19 +70,19 @@ class _AnimatedListScreenState extends State<AnimatedListScreen>
       data: item,
       axis: Axis.vertical,
       maxSimultaneousDrags: 1,
-      child: tile,
       childWhenDragging: Opacity(
         opacity: 0.5,
         child: tile,
       ),
       feedback: Material(
+        elevation: 4.0,
         child: ConstrainedBox(
           constraints:
               BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 32),
           child: tile,
         ),
-        elevation: 4.0,
       ),
+      child: tile,
     );
     return DragTarget<int>(
       onWillAccept: (item) {
@@ -91,7 +91,7 @@ class _AnimatedListScreenState extends State<AnimatedListScreen>
       onAccept: (item) {
         setState(() {
           final currentIndex = _list.indexOf(item);
-          const kZeroDuration = Duration(seconds: 0);
+          const kZeroDuration = Duration();
           _list.removeAt(currentIndex, duration: kZeroDuration);
           _list.insert(currentIndex > index ? index : index - 1, item,
               duration: kZeroDuration);
@@ -111,7 +111,7 @@ class _AnimatedListScreenState extends State<AnimatedListScreen>
                       child: tile,
                     ),
             ),
-            candidateData.isEmpty ? draggable : tile,
+            if (candidateData.isEmpty) draggable else tile,
           ],
         );
       },
@@ -129,7 +129,6 @@ class _AnimatedListScreenState extends State<AnimatedListScreen>
     return CardItem(
       animation: animation,
       item: item,
-      selected: false,
       // No gesture detector here: we don't want removed items to be interactive.
     );
   }
@@ -268,7 +267,6 @@ class CardItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: SizeTransition(
-        axis: Axis.vertical,
         sizeFactor: animation,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,

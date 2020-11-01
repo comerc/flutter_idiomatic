@@ -124,12 +124,12 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : RaisedButton(
                 key: const Key('loginForm_continue_raisedButton'),
-                child: Text('Login'.toUpperCase()),
                 shape: const StadiumBorder(),
                 color: const Color(0xFFFFD600),
                 onPressed: state.status.isValidated
                     ? () => getBloc<LoginCubit>(context).logInWithCredentials()
                     : null,
+                child: Text('Login'.toUpperCase()),
               );
       },
     );
@@ -144,7 +144,7 @@ class _GoogleLoginButton extends StatelessWidget {
       key: const Key('loginForm_googleLogin_raisedButton'),
       label: Text(
         'Sign In with Google'.toUpperCase(),
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
       shape: const StadiumBorder(),
       icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
@@ -160,12 +160,12 @@ class _SignUpButton extends StatelessWidget {
     final theme = Theme.of(context);
     return FlatButton(
       key: const Key('loginForm_createAccount_flatButton'),
+      shape: const StadiumBorder(),
+      onPressed: () => navigator.push<void>(SignUpScreen().getRoute()),
       child: Text(
         'Create Account'.toUpperCase(),
         style: TextStyle(color: theme.primaryColor),
       ),
-      shape: const StadiumBorder(),
-      onPressed: () => navigator.push<void>(SignUpScreen().getRoute()),
     );
   }
 }

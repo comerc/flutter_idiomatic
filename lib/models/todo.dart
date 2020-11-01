@@ -7,7 +7,7 @@ part 'todo.g.dart';
 @CopyWith()
 @JsonSerializable()
 class TodoModel extends Equatable {
-  TodoModel({
+  const TodoModel({
     this.id,
     this.title,
     this.createdAt,

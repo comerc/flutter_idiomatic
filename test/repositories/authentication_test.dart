@@ -22,12 +22,13 @@ class MockFirebaseUser extends Mock implements firebase_auth.User {
 
 class MockGoogleSignIn extends Mock implements GoogleSignIn {}
 
+// ignore: avoid_implementing_value_types
 class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
 
 class MockGoogleSignInAuthentication extends Mock
     implements GoogleSignInAuthentication {}
 
-void main() async {
+Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   MethodChannelFirebase.channel.setMockMethodCallHandler((call) async {

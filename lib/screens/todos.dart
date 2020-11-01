@@ -76,10 +76,10 @@ class TodosBody extends StatelessWidget {
             barrierDismissible: false,
             child: AlertDialog(
               content: Row(
-                children: <Widget>[
-                  const CircularProgressIndicator(),
-                  const SizedBox(width: 16),
-                  const Text('Loading...'),
+                children: const <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(width: 16),
+                  Text('Loading...'),
                 ],
               ),
             ),
@@ -168,11 +168,11 @@ class TodosBody extends StatelessWidget {
                             child:
                                 const CircularProgressIndicator(strokeWidth: 2),
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                         ],
                         Text(
                           'Load New'.toUpperCase(),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
@@ -208,10 +208,10 @@ class TodosBody extends StatelessWidget {
         },
         background: Container(
           color: Colors.red,
-          child: Row(children: <Widget>[
-            const Spacer(),
-            const Icon(Icons.delete_outline),
-            const SizedBox(width: 8),
+          child: Row(children: const <Widget>[
+            Spacer(),
+            Icon(Icons.delete_outline),
+            SizedBox(width: 8),
           ]),
         ),
         child: Column(
@@ -343,7 +343,7 @@ class _Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('${item.title}'),
+      title: Text(item.title),
     );
   }
 }
@@ -366,17 +366,18 @@ class _Footer extends StatelessWidget {
       if (state.hasMore) {
         return Center(
           child: FlatButton(
-              child: Text(
-                'Load More'.toUpperCase(),
-                style: TextStyle(color: theme.primaryColor),
-              ),
-              shape: const StadiumBorder(),
-              onPressed: () {
-                TodosScreen._load(
-                  getBloc<TodosCubit>(context),
-                  indicator: TodosIndicator.loadMore,
-                );
-              }),
+            shape: const StadiumBorder(),
+            onPressed: () {
+              TodosScreen._load(
+                getBloc<TodosCubit>(context),
+                indicator: TodosIndicator.loadMore,
+              );
+            },
+            child: Text(
+              'Load More'.toUpperCase(),
+              style: TextStyle(color: theme.primaryColor),
+            ),
+          ),
         );
       }
       return Column(

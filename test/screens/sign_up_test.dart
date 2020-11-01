@@ -12,12 +12,16 @@ class MockAuthenticationRepository extends Mock
 
 class MockSignUpCubit extends MockBloc<SignUpState> implements SignUpCubit {}
 
+// ignore: avoid_implementing_value_types
 class MockEmailInputModel extends Mock implements EmailInputModel {}
 
+// ignore: avoid_implementing_value_types
 class MockPasswordInputModel extends Mock implements PasswordInputModel {}
 
 class MockConfirmedPasswordInputModel extends Mock
-    implements ConfirmedPasswordInputModel {}
+    implements
+        // ignore: avoid_implementing_value_types
+        ConfirmedPasswordInputModel {}
 
 void main() {
   group('SignUpScreen', () {

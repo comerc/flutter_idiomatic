@@ -9,7 +9,7 @@ import 'package:flutter_firebase_login/import.dart';
 class MockAuthenticationBloc extends MockBloc<AuthenticationState>
     implements AuthenticationCubit {}
 
-// ignore: must_be_immutable
+// ignore: must_be_immutable, avoid_implementing_value_types
 class MockUserModel extends Mock implements UserModel {
   @override
   String get email => 'test@gmail.com';

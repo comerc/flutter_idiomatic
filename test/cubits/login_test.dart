@@ -24,6 +24,7 @@ void main() {
     test('returns object with updated status when status is passed', () {
       expect(
         LoginState().copyWith(status: FormzStatus.pure),
+        // ignore: avoid_redundant_argument_values
         LoginState(status: FormzStatus.pure),
       );
     });
@@ -262,6 +263,7 @@ void main() {
         act: (cubit) => cubit.logInWithGoogle(),
         expect: const <LoginState>[
           LoginState(status: FormzStatus.submissionInProgress),
+          // ignore: avoid_redundant_argument_values
           LoginState(status: FormzStatus.pure)
         ],
       );

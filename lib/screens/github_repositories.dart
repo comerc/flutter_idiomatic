@@ -55,7 +55,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
     return BlocBuilder<GitHubRepositoriesCubit, GitHubRepositoriesState>(
       builder: (BuildContext context, GitHubRepositoriesState state) {
         if (state.status == GitHubStatus.busy && state.items.isEmpty) {
-          return Center(child: const CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         return Column(
           children: <Widget>[
@@ -65,21 +65,22 @@ class GitHubRepositoriesBody extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   if (index == state.items.length) {
                     if (state.status == GitHubStatus.busy) {
-                      return Center(child: const CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                     if (state.status == GitHubStatus.ready) {
                       return Center(
                         child: FlatButton(
-                            child: Text(
-                              'Refresh'.toUpperCase(),
-                              style: TextStyle(color: theme.primaryColor),
-                            ),
-                            shape: const StadiumBorder(),
-                            onPressed: () {
-                              GitHubRepositoriesScreen._loadRepositories(
-                                getBloc<GitHubRepositoriesCubit>(context),
-                              );
-                            }),
+                          shape: const StadiumBorder(),
+                          onPressed: () {
+                            GitHubRepositoriesScreen._loadRepositories(
+                              getBloc<GitHubRepositoriesCubit>(context),
+                            );
+                          },
+                          child: Text(
+                            'Refresh'.toUpperCase(),
+                            style: TextStyle(color: theme.primaryColor),
+                          ),
+                        ),
                       );
                     }
                     return Container();

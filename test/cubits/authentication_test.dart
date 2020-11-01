@@ -7,7 +7,7 @@ import 'package:flutter_firebase_login/import.dart';
 class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
-// ignore: must_be_immutable
+// ignore: must_be_immutable, avoid_implementing_value_types
 class MockUserModel extends Mock implements UserModel {}
 
 void main() {
