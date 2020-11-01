@@ -142,41 +142,7 @@ class TodosBody extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Center(
-                  child: RaisedButton(
-                    shape: const StadiumBorder(),
-                    color: theme.accentColor,
-                    onPressed: (state.status == TodosStatus.busy)
-                        ? null
-                        : () {
-                            getBloc<TodosCubit>(context).load(
-                              isRefresh: true,
-                              indicator: TodosIndicator.loadNew,
-                            );
-                          },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (state.indicator == TodosIndicator.loadNew) ...[
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            width: 20,
-                            height: 20,
-                            child:
-                                const CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                        Text(
-                          'Load New'.toUpperCase(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: _LoadNewButton(state: state),
                 ),
               ),
           ],
@@ -292,6 +258,53 @@ class TodosBody extends StatelessWidget {
           _add(cubit, title: title);
         },
         child: Text('Repeat'.toUpperCase()),
+      ),
+    );
+  }
+}
+
+class _LoadNewButton extends StatelessWidget {
+  const _LoadNewButton({
+    Key key,
+    this.state,
+  }) : super(key: key);
+
+  final TodosState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      shape: const StadiumBorder(),
+      color: theme.accentColor,
+      onPressed: (state.status == TodosStatus.busy)
+          ? null
+          : () {
+              getBloc<TodosCubit>(context).load(
+                isRefresh: true,
+                indicator: TodosIndicator.loadNew,
+              );
+            },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (state.indicator == TodosIndicator.loadNew) ...[
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              width: 20,
+              height: 20,
+              child: const CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            'Load New'.toUpperCase(),
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
       ),
     );
   }
