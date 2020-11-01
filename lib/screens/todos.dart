@@ -89,7 +89,7 @@ class TodosBody extends StatelessWidget {
         }
       },
       // buildWhen: (TodosState previous, TodosState current) {
-      //   return !current.isSubmitMode; // TODO: how about newId ?
+      //   return !current.isSubmitMode; // TODO: how about hasReallyNewId ?
       // },
       builder: (BuildContext context, TodosState state) {
         return Stack(
@@ -133,12 +133,20 @@ class TodosBody extends StatelessWidget {
                         itemBuilder: _buildItem(state),
                       ),
                     ),
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //     itemCount: state.indicator == TodosIndicator.loadMore
+                  //         ? state.items.length + 1
+                  //         : state.items.length,
+                  //     itemBuilder: _buildItem(state),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
             if (state.hasReallyNewId)
               Positioned(
-                top: 56,
+                top: 56, // TODO: calculate
                 left: 0,
                 right: 0,
                 child: Center(
@@ -173,10 +181,13 @@ class TodosBody extends StatelessWidget {
           _remove(getBloc<TodosCubit>(context), id: item.id);
         },
         background: Container(
-          color: Colors.red,
+          color: Colors.redAccent,
           child: Row(children: const <Widget>[
             Spacer(),
-            Icon(Icons.delete_outline),
+            Icon(
+              Icons.delete_outline,
+              color: Colors.white,
+            ),
             SizedBox(width: 8),
           ]),
         ),
@@ -203,6 +214,42 @@ class TodosBody extends StatelessWidget {
       );
     };
   }
+
+  // IndexedWidgetBuilder _buildItem(TodosState state) {
+  //   return (
+  //     BuildContext context,
+  //     int index,
+  //   ) {
+  //     if (index == state.items.length) {
+  //       return _Footer(state: state);
+  //     }
+  //     final item = state.items[index];
+  //     return Dismissible(
+  //       key: Key('${item.id}'),
+  //       direction: DismissDirection.endToStart,
+  //       onDismissed: (DismissDirection direction) {
+  //         _remove(getBloc<TodosCubit>(context), id: item.id);
+  //       },
+  //       background: Container(
+  //         color: Colors.redAccent,
+  //         child: Row(children: const <Widget>[
+  //           Spacer(),
+  //           Icon(
+  //             Icons.delete_outline,
+  //             color: Colors.white,
+  //           ),
+  //           SizedBox(width: 8),
+  //         ]),
+  //       ),
+  //       child: Column(
+  //         children: [
+  //           _Item(item: item),
+  //           const Divider(height: 1),
+  //         ],
+  //       ),
+  //     );
+  //   };
+  // }
 
   Future<void> _remove(TodosCubit cubit, {int id}) async {
     final result = await cubit.remove(id);
@@ -241,7 +288,9 @@ class TodosBody extends StatelessWidget {
       return;
     }
     if (result) {
+      // _controller.jumpTo(_controller.position.minScrollExtent);
       _listKey.currentState?.insertItem(0);
+      // TODO: insert multiple items https://medium.com/flutter-community/updating-data-in-an-animatedlist-in-flutter-9dbfb136e515
       _inputKey.currentState?.controller?.clear();
       return;
     }
@@ -364,7 +413,7 @@ class _Item extends StatelessWidget {
 class _Footer extends StatelessWidget {
   const _Footer({
     Key key,
-    @required this.state,
+    this.state,
   }) : super(key: key);
 
   final TodosState state;
@@ -373,7 +422,12 @@ class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.status == TodosStatus.busy &&
         state.indicator == TodosIndicator.loadMore) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
     if (state.status == TodosStatus.ready) {
       if (state.hasMore) {
@@ -383,22 +437,39 @@ class _Footer extends StatelessWidget {
             onPressed: () {
               TodosScreen._load(
                 getBloc<TodosCubit>(context),
+                isRefresh: true,
                 indicator: TodosIndicator.loadMore,
               );
             },
             child: Text(
-              'Load More'.toUpperCase(),
+              'Refresh'.toUpperCase(),
               style: TextStyle(color: theme.primaryColor),
             ),
           ),
         );
+        // return Center(
+        //   child: FlatButton(
+        //     shape: const StadiumBorder(),
+        //     onPressed: () {
+        //       TodosScreen._load(
+        //         getBloc<TodosCubit>(context),
+        //         indicator: TodosIndicator.loadMore,
+        //       );
+        //     },
+        //     child: Text(
+        //       'Load More'.toUpperCase(),
+        //       style: TextStyle(color: theme.primaryColor),
+        //     ),
+        //   ),
+        // );
       }
       return Column(
         children: [
+          const SizedBox(height: 16),
           Text(state.items.isEmpty
               ? 'No Data'.toUpperCase()
               : 'No More'.toUpperCase()),
-          const SizedBox(height: 8),
+          const SizedBox(height: 32),
         ],
       );
     }
