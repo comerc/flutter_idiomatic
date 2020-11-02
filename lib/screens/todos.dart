@@ -1,5 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
@@ -34,18 +35,18 @@ class _TodosBodyState extends State<TodosBody> {
   final _inputKey = GlobalKey<_InputState>();
   final _listKey = GlobalKey<AnimatedListState>();
   final _controller = ScrollController();
+  int _loadMoreItemsLength;
 
   @override
   void initState() {
     super.initState();
-    _load(getBloc<TodosCubit>(context), indicator: TodosIndicator.start);
-    // TODO: automatic load more
+    // timeDilation = 10.0; // Will slow down animations by a factor of two
+    _load(getBloc<TodosCubit>(context), origin: TodosOrigin.start);
     _controller.addListener(() {
       if (_controller.position.pixels == _controller.position.maxScrollExtent) {
         final cubit = getBloc<TodosCubit>(context);
         if (cubit.state.hasMore) {
-          _load(getBloc<TodosCubit>(context),
-              indicator: TodosIndicator.loadMore);
+          _load(getBloc<TodosCubit>(context), origin: TodosOrigin.loadMore);
         }
       }
     });
@@ -59,91 +60,115 @@ class _TodosBodyState extends State<TodosBody> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TodosCubit, TodosState>(
-      listenWhen: (TodosState previous, TodosState current) {
-        return previous.isSubmitMode != current.isSubmitMode;
-      },
-      listener: (BuildContext context, TodosState state) {
-        if (state.isSubmitMode) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            child: AlertDialog(
-              content: Row(
-                children: const <Widget>[
-                  CircularProgressIndicator(),
-                  SizedBox(width: 16),
-                  Text('Loading...'),
-                ],
-              ),
-            ),
-          );
-        } else {
-          navigator.pop();
-        }
-      },
-      // buildWhen: (TodosState previous, TodosState current) {
-      //   return !current.isSubmitMode; // TODO: how about hasReallyNewId ?
-      // },
-      builder: (BuildContext context, TodosState state) {
-        return Stack(
-          children: <Widget>[
-            RefreshIndicator(
-              onRefresh: () async {
-                return _load(
-                  getBloc<TodosCubit>(context),
-                  indicator: TodosIndicator.refreshIndicator,
-                );
-              },
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: _Input(
-                      key: _inputKey,
-                      onSubmitted: (String value) {
-                        _add(getBloc<TodosCubit>(context), title: value);
-                      },
-                    ),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TodosCubit, TodosState>(
+          listenWhen: (TodosState previous, TodosState current) {
+            return previous.isSubmitMode != current.isSubmitMode;
+          },
+          listener: (BuildContext context, TodosState state) {
+            if (state.isSubmitMode) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                child: AlertDialog(
+                  content: Row(
+                    children: const <Widget>[
+                      CircularProgressIndicator(),
+                      SizedBox(width: 16),
+                      Text('Loading...'),
+                    ],
                   ),
-                  const Divider(height: 1),
-                  if (state.indicator == TodosIndicator.initial)
-                    const Spacer()
-                  else if (state.indicator == TodosIndicator.start)
-                    const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  else
-                    Expanded(
-                      child: AnimatedList(
-                        key: _listKey,
-                        controller: _controller,
-                        // TODO: https://github.com/flutter/flutter/issues/22180#issuecomment-478080997
-                        // physics: const AlwaysScrollableScrollPhysics(),
-                        initialItemCount:
-                            state.indicator == TodosIndicator.loadMore
-                                ? state.items.length + 1
-                                : state.items.length,
-                        itemBuilder: _buildItem(state),
+                ),
+              );
+            } else {
+              navigator.pop();
+            }
+          },
+        ),
+        BlocListener<TodosCubit, TodosState>(
+          listenWhen: (TodosState previous, TodosState current) {
+            if (current.isSubmitMode) {
+              return false;
+            }
+            if (current.origin == TodosOrigin.loadMore &&
+                previous.items.length < current.items.length) {
+              _loadMoreItemsLength =
+                  current.items.length - previous.items.length;
+              return true;
+            }
+            return false;
+          },
+          listener: (BuildContext context, TodosState state) {
+            final insertIndex = state.items.length - _loadMoreItemsLength;
+            for (int offset = 0; offset < _loadMoreItemsLength; offset++) {
+              _listKey.currentState
+                  .insertItem(insertIndex + offset, duration: Duration.zero);
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<TodosCubit, TodosState>(
+        // buildWhen: (TodosState previous, TodosState current) {
+        //   return !current.isSubmitMode; // TODO: how about hasReallyNewId ?
+        // },
+        builder: (BuildContext context, TodosState state) {
+          return Stack(
+            children: <Widget>[
+              RefreshIndicator(
+                onRefresh: () async {
+                  return _load(
+                    getBloc<TodosCubit>(context),
+                    origin: TodosOrigin.refreshIndicator,
+                  );
+                },
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: _Input(
+                        key: _inputKey,
+                        onSubmitted: (String value) {
+                          _add(getBloc<TodosCubit>(context), title: value);
+                        },
                       ),
                     ),
-                ],
-              ),
-            ),
-            if (state.hasReallyNewId)
-              Positioned(
-                top: 56, // TODO: calculate
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: _LoadNewButton(state: state),
+                    const Divider(height: 1),
+                    if (state.status == TodosStatus.initial)
+                      const Spacer()
+                    else if (state.origin == TodosOrigin.start)
+                      const Expanded(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: AnimatedList(
+                          key: _listKey,
+                          controller: _controller,
+                          // HACK: https://github.com/flutter/flutter/issues/22180#issuecomment-478080997
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          initialItemCount: state.items.length + 1,
+                          itemBuilder: _buildItem(state),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-          ],
-        );
-      },
+              if (state.hasReallyNewId)
+                Positioned(
+                  top: 56, // TODO: calculate
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: _LoadNewButton(state: state),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -159,7 +184,7 @@ class _TodosBodyState extends State<TodosBody> {
           onPressed: () {
             _load(
               getBloc<TodosCubit>(context),
-              indicator: TodosIndicator.loadMore,
+              origin: TodosOrigin.loadMore,
             );
           },
         );
@@ -213,21 +238,12 @@ class _TodosBodyState extends State<TodosBody> {
 
   Future<void> _load(
     TodosCubit cubit, {
-    TodosIndicator indicator,
+    TodosOrigin origin,
   }) async {
     final result = await cubit.load(
-      indicator: indicator,
+      origin: origin,
     );
-    if (result != null) {
-      // TODO: move to BuildListener?
-      if (indicator == TodosIndicator.loadMore) {
-        final insertIndex = cubit.state.items.length - result;
-        for (int offset = 0; offset < result; offset++) {
-          _listKey.currentState.insertItem(insertIndex + offset);
-        }
-      }
-      return;
-    }
+    if (result || !mounted) return;
     BotToast.showNotification(
       title: (_) => const Text(
         'Can not load todos',
@@ -240,7 +256,7 @@ class _TodosBodyState extends State<TodosBody> {
           close();
           _load(
             cubit,
-            indicator: indicator,
+            origin: origin,
           );
         },
         child: Text('Repeat'.toUpperCase()),
@@ -330,13 +346,13 @@ class _LoadNewButton extends StatelessWidget {
           ? null
           : () {
               getBloc<TodosCubit>(context).load(
-                indicator: TodosIndicator.loadNew,
+                origin: TodosOrigin.loadNew,
               );
             },
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (state.indicator == TodosIndicator.loadNew) ...[
+          if (state.origin == TodosOrigin.loadNew) ...[
             Container(
               padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(
@@ -423,7 +439,7 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.status == TodosStatus.busy &&
-        state.indicator == TodosIndicator.loadMore) {
+        state.origin == TodosOrigin.loadMore) {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(8.0),

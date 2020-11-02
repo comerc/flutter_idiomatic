@@ -33,18 +33,15 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(newId: id));
   }
 
-  Future<int> load({
-    TodosIndicator indicator,
-  }) async {
+  Future<bool> load({TodosOrigin origin}) async {
     const kLimit = 10;
     emit(state.copyWith(
       status: TodosStatus.busy,
-      indicator: indicator,
+      origin: origin,
     ));
     try {
       final items = await repository.readTodos(
-        createdAt:
-            indicator == TodosIndicator.loadMore ? state.nextDateTime : null,
+        createdAt: origin == TodosOrigin.loadMore ? state.nextDateTime : null,
         limit: kLimit + 1,
       );
       var hasMore = false;
@@ -54,7 +51,7 @@ class TodosCubit extends Cubit<TodosState> {
         final lastItem = items.removeLast();
         nextDateTime = lastItem.createdAt;
       }
-      if (indicator != TodosIndicator.loadMore) {
+      if (origin != TodosOrigin.loadMore) {
         emit(const TodosState());
         await Future.delayed(const Duration(milliseconds: 300));
       }
@@ -63,13 +60,12 @@ class TodosCubit extends Cubit<TodosState> {
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
-      return items.length;
+      return true;
     } catch (error) {
-      return null;
+      return false;
     } finally {
       emit(state.copyWith(
         status: TodosStatus.ready,
-        indicator: TodosIndicator.loadMore,
       ));
     }
   }
@@ -111,14 +107,14 @@ class TodosCubit extends Cubit<TodosState> {
 }
 
 enum TodosStatus { initial, busy, ready }
-enum TodosIndicator { initial, start, refreshIndicator, loadNew, loadMore }
+enum TodosOrigin { initial, start, refreshIndicator, loadNew, loadMore }
 
 @CopyWith()
 class TodosState extends Equatable {
   const TodosState({
     this.items = const [],
     this.status = TodosStatus.initial,
-    this.indicator = TodosIndicator.initial,
+    this.origin = TodosOrigin.initial,
     this.hasMore = false,
     this.nextDateTime,
     this.newId,
@@ -127,7 +123,7 @@ class TodosState extends Equatable {
 
   final List<TodoModel> items;
   final TodosStatus status;
-  final TodosIndicator indicator;
+  final TodosOrigin origin;
   final DateTime nextDateTime;
   final bool hasMore;
   final int newId;
@@ -141,7 +137,7 @@ class TodosState extends Equatable {
   List<Object> get props => [
         items,
         status,
-        indicator,
+        origin,
         hasMore,
         nextDateTime,
         newId,
