@@ -84,6 +84,7 @@ class SignUpState extends Equatable {
   final EmailInputModel emailInput;
   final PasswordInputModel passwordInput;
   final ConfirmedPasswordInputModel confirmedPasswordInput;
+  // https://github.com/numen31337/copy_with_extension/pull/23
   // TODO: @CopyWithField(required: true)
   final FormzStatus status;
 
