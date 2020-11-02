@@ -17,7 +17,7 @@ class TodosCubit extends Cubit<TodosState> {
 
   final DatabaseRepository repository;
   StreamSubscription<int> _fetchNewNotificationSubscription;
-  bool isStartedSubscription = false;
+  bool _isStartedSubscription = false;
 
   @override
   Future<void> close() {
@@ -26,18 +26,20 @@ class TodosCubit extends Cubit<TodosState> {
   }
 
   void fetchNewNotification(int id) {
-    if (!isStartedSubscription) {
-      isStartedSubscription = true;
+    if (!_isStartedSubscription) {
+      _isStartedSubscription = true;
       return;
     }
     emit(state.copyWith(newId: id));
   }
 
-  Future<bool> load({TodosOrigin origin}) async {
+  Future<void> load({TodosOrigin origin = TodosOrigin.start}) async {
     const kLimit = 10;
+    if (state.status == TodosStatus.loading) return;
     emit(state.copyWith(
-      status: TodosStatus.busy,
+      status: TodosStatus.loading,
       origin: origin,
+      loadingError: '',
     ));
     try {
       final items = await repository.readTodos(
@@ -60,12 +62,12 @@ class TodosCubit extends Cubit<TodosState> {
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
-      return true;
     } catch (error) {
-      return false;
+      emit(state.copyWith(loadingError: 'Can not load todos'));
     } finally {
       emit(state.copyWith(
         status: TodosStatus.ready,
+        origin: TodosOrigin.initial,
       ));
     }
   }
@@ -106,7 +108,7 @@ class TodosCubit extends Cubit<TodosState> {
   }
 }
 
-enum TodosStatus { initial, busy, ready }
+enum TodosStatus { initial, loading, ready }
 enum TodosOrigin { initial, start, refreshIndicator, loadNew, loadMore }
 
 @CopyWith()
@@ -115,6 +117,7 @@ class TodosState extends Equatable {
     this.items = const [],
     this.status = TodosStatus.initial,
     this.origin = TodosOrigin.initial,
+    this.loadingError = '',
     this.hasMore = false,
     this.nextDateTime,
     this.newId,
@@ -124,6 +127,7 @@ class TodosState extends Equatable {
   final List<TodoModel> items;
   final TodosStatus status;
   final TodosOrigin origin;
+  final String loadingError;
   final DateTime nextDateTime;
   final bool hasMore;
   final int newId;
@@ -138,6 +142,7 @@ class TodosState extends Equatable {
         items,
         status,
         origin,
+        loadingError,
         hasMore,
         nextDateTime,
         newId,

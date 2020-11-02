@@ -19,7 +19,7 @@ class TodosScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Todos')),
       body: BlocProvider(
         create: (BuildContext context) =>
-            TodosCubit(getRepository<DatabaseRepository>(context)),
+            TodosCubit(getRepository<DatabaseRepository>(context))..load(),
         child: TodosBody(),
       ),
     );
@@ -35,18 +35,17 @@ class _TodosBodyState extends State<TodosBody> {
   final _inputKey = GlobalKey<_InputState>();
   final _listKey = GlobalKey<AnimatedListState>();
   final _controller = ScrollController();
-  int _loadMoreItemsLength;
+  int _loadMoreItemsLength = 0;
 
   @override
   void initState() {
     super.initState();
     // timeDilation = 10.0; // Will slow down animations by a factor of two
-    _load(getBloc<TodosCubit>(context), origin: TodosOrigin.start);
     _controller.addListener(() {
       if (_controller.position.pixels == _controller.position.maxScrollExtent) {
         final cubit = getBloc<TodosCubit>(context);
         if (cubit.state.hasMore) {
-          _load(getBloc<TodosCubit>(context), origin: TodosOrigin.loadMore);
+          cubit.load(origin: TodosOrigin.loadMore);
         }
       }
     });
@@ -64,25 +63,38 @@ class _TodosBodyState extends State<TodosBody> {
       listeners: [
         BlocListener<TodosCubit, TodosState>(
           listenWhen: (TodosState previous, TodosState current) {
+            return previous.loadingError != current.loadingError &&
+                current.loadingError.isNotEmpty;
+          },
+          listener: (BuildContext context, TodosState state) {
+            BotToast.showNotification(
+              title: (_) => Text(
+                state.loadingError,
+                overflow: TextOverflow.fade,
+                softWrap: false,
+              ),
+              trailing: (Function close) => FlatButton(
+                onLongPress: () {}, // чтобы сократить время для splashColor
+                onPressed: () {
+                  close();
+                  getBloc<TodosCubit>(context).load(
+                    origin: state.origin,
+                  );
+                },
+                child: Text('Repeat'.toUpperCase()),
+              ),
+            );
+          },
+        ),
+        BlocListener<TodosCubit, TodosState>(
+          listenWhen: (TodosState previous, TodosState current) {
             return previous.isSubmitMode != current.isSubmitMode;
           },
           listener: (BuildContext context, TodosState state) {
             if (state.isSubmitMode) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                child: AlertDialog(
-                  content: Row(
-                    children: const <Widget>[
-                      CircularProgressIndicator(),
-                      SizedBox(width: 16),
-                      Text('Loading...'),
-                    ],
-                  ),
-                ),
-              );
+              BotToast.showLoading();
             } else {
-              navigator.pop();
+              BotToast.closeAllLoading();
             }
           },
         ),
@@ -117,8 +129,7 @@ class _TodosBodyState extends State<TodosBody> {
             children: <Widget>[
               RefreshIndicator(
                 onRefresh: () async {
-                  return _load(
-                    getBloc<TodosCubit>(context),
+                  return getBloc<TodosCubit>(context).load(
                     origin: TodosOrigin.refreshIndicator,
                   );
                 },
@@ -182,8 +193,7 @@ class _TodosBodyState extends State<TodosBody> {
         return _Footer(
           state: state,
           onPressed: () {
-            _load(
-              getBloc<TodosCubit>(context),
+            getBloc<TodosCubit>(context).load(
               origin: TodosOrigin.loadMore,
             );
           },
@@ -225,43 +235,18 @@ class _TodosBodyState extends State<TodosBody> {
                 );
               },
               animation: animation,
-              child: _Item(
-                item: item,
+              child: ListTile(
+                title: Text('$index of ${state.items.length} - ${item.title}'),
               ),
+              // _Item(
+              //   item: item,
+              // ),
             ),
             const Divider(height: 1),
           ],
         ),
       );
     };
-  }
-
-  Future<void> _load(
-    TodosCubit cubit, {
-    TodosOrigin origin,
-  }) async {
-    final result = await cubit.load(
-      origin: origin,
-    );
-    if (result || !mounted) return;
-    BotToast.showNotification(
-      title: (_) => const Text(
-        'Can not load todos',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _load(
-            cubit,
-            origin: origin,
-          );
-        },
-        child: Text('Repeat'.toUpperCase()),
-      ),
-    );
   }
 
   Future<void> _remove(TodosCubit cubit, {int id}) async {
@@ -342,7 +327,7 @@ class _LoadNewButton extends StatelessWidget {
     return RaisedButton(
       shape: const StadiumBorder(),
       color: theme.accentColor,
-      onPressed: (state.status == TodosStatus.busy)
+      onPressed: (state.status == TodosStatus.loading)
           ? null
           : () {
               getBloc<TodosCubit>(context).load(
@@ -410,21 +395,21 @@ class _InputState extends State<_Input> {
   }
 }
 
-class _Item extends StatelessWidget {
-  const _Item({
-    Key key,
-    this.item,
-  }) : super(key: key);
+// class _Item extends StatelessWidget {
+//   const _Item({
+//     Key key,
+//     this.item,
+//   }) : super(key: key);
 
-  final TodoModel item;
+//   final TodoModel item;
 
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(item.title),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListTile(
+//       title: Text(item.title),
+//     );
+//   }
+// }
 
 class _Footer extends StatelessWidget {
   const _Footer({
@@ -438,7 +423,7 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.status == TodosStatus.busy &&
+    if (state.status == TodosStatus.loading &&
         state.origin == TodosOrigin.loadMore) {
       return const Center(
         child: Padding(
