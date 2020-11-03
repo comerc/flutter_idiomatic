@@ -1,23 +1,26 @@
-import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 part 'github_repositories.g.dart';
 
-class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
+class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState> {
   GitHubRepositoriesCubit(this.repository)
       : assert(repository != null),
         super(GitHubRepositoriesState());
 
   final GitHubRepository repository;
 
+  Future<void> reset() async {
+    emit(GitHubRepositoriesState());
+  }
+
   Future<bool> load() async {
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
       final items = await repository.readRepositories();
-      emit(GitHubRepositoriesState());
-      await Future.delayed(Duration(milliseconds: 300));
       emit(state.copyWith(
         items: items,
         status: GitHubStatus.ready,
@@ -60,11 +63,19 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
     }
     return true;
   }
+
+  @override
+  GitHubRepositoriesState fromJson(Map<String, dynamic> json) =>
+      GitHubRepositoriesState.fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson(GitHubRepositoriesState state) => state.toJson();
 }
 
 enum GitHubStatus { initial, busy, ready }
 
 @CopyWith()
+@JsonSerializable()
 class GitHubRepositoriesState extends Equatable {
   GitHubRepositoriesState({
     this.items = const [],
@@ -78,4 +89,9 @@ class GitHubRepositoriesState extends Equatable {
 
   @override
   List<Object> get props => [items, status, loadingItems];
+
+  factory GitHubRepositoriesState.fromJson(Map<String, dynamic> json) =>
+      _$GitHubRepositoriesStateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GitHubRepositoriesStateToJson(this);
 }

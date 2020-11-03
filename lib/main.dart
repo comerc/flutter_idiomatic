@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 void main() {
@@ -25,6 +25,7 @@ void main() {
     await Firebase.initializeApp();
     EquatableConfig.stringify = kDebugMode;
     // Bloc.observer = SimpleBlocObserver();
+    HydratedBloc.storage = await HydratedStorage.build();
     runApp(
       App(
         authenticationRepository: AuthenticationRepository(),
