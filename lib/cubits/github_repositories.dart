@@ -22,7 +22,7 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
         items: items,
         status: GitHubStatus.ready,
       ));
-    } catch (error) {
+    } on Exception {
       return false;
     } finally {
       emit(state.copyWith(status: GitHubStatus.ready));
@@ -48,7 +48,7 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
     ));
     try {
       await repository.toggleStar(id: id, value: value);
-    } catch (error) {
+    } on Exception {
       emit(state.copyWith(
         items: _updateStarLocally(id, !value),
       ));

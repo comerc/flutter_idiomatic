@@ -62,7 +62,7 @@ class TodosCubit extends Cubit<TodosState> {
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
-    } catch (error) {
+    } on Exception {
       emit(state.copyWith(loadingError: 'Can not load todos'));
     } finally {
       emit(state.copyWith(
@@ -79,9 +79,9 @@ class TodosCubit extends Cubit<TodosState> {
     try {
       final deletedId = await repository.deleteTodo(id);
       if (deletedId != id) {
-        throw 'Can not remove todo $id';
+        throw Exception('Can not remove todo $id');
       }
-    } catch (error) {
+    } on Exception {
       return false;
     }
     return true;
@@ -99,7 +99,7 @@ class TodosCubit extends Cubit<TodosState> {
       emit(state.copyWith(
         items: [item, ...state.items],
       ));
-    } catch (error) {
+    } on Exception {
       return false;
     } finally {
       emit(state.copyWith(isSubmitMode: false));
