@@ -22,6 +22,4 @@ class RepositoryModel extends Equatable {
 
   factory RepositoryModel.fromJson(Map<String, dynamic> json) =>
       _$RepositoryModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$RepositoryModelToJson(this);
 }
