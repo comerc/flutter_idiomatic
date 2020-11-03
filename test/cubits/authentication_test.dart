@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -16,7 +15,7 @@ void main() {
 
   setUp(() {
     authenticationRepository = MockAuthenticationRepository();
-    when(authenticationRepository.user).thenAnswer((_) => const Stream.empty());
+    when(authenticationRepository.user).thenAnswer((_) => Stream.empty());
   });
 
   group('AuthenticationState', () {
@@ -59,7 +58,7 @@ void main() {
 
     test('initial state is AuthenticationState.unknown', () {
       final authenticationCubit = AuthenticationCubit(authenticationRepository);
-      expect(authenticationCubit.state, const AuthenticationState.unknown());
+      expect(authenticationCubit.state, AuthenticationState.unknown());
       authenticationCubit.close();
     });
 
@@ -90,7 +89,7 @@ void main() {
         'emits [unauthenticated] when user is empty',
         build: () => AuthenticationCubit(authenticationRepository),
         act: (bloc) => bloc.changeUser(UserModel.empty),
-        expect: const <AuthenticationState>[
+        expect: <AuthenticationState>[
           AuthenticationState.unauthenticated(),
         ],
       );

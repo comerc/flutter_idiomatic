@@ -15,7 +15,7 @@ class GitHubRepositoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('GitHub Repositories')),
+      appBar: AppBar(title: Text('GitHub Repositories')),
       body: BlocProvider(
         create: (BuildContext context) {
           final cubit =
@@ -32,7 +32,7 @@ class GitHubRepositoriesScreen extends StatelessWidget {
     final result = await cubit.load();
     if (result) return;
     BotToast.showNotification(
-      title: (_) => const Text(
+      title: (_) => Text(
         'Can not load repositories',
         overflow: TextOverflow.fade,
         softWrap: false,
@@ -55,7 +55,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
     return BlocBuilder<GitHubRepositoriesCubit, GitHubRepositoriesState>(
       builder: (BuildContext context, GitHubRepositoriesState state) {
         if (state.status == GitHubStatus.busy && state.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         }
         return Column(
           children: <Widget>[
@@ -65,12 +65,12 @@ class GitHubRepositoriesBody extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   if (index == state.items.length) {
                     if (state.status == GitHubStatus.busy) {
-                      return const Center(child: CircularProgressIndicator());
+                      return Center(child: CircularProgressIndicator());
                     }
                     if (state.status == GitHubStatus.ready) {
                       return Center(
                         child: FlatButton(
-                          shape: const StadiumBorder(),
+                          shape: StadiumBorder(),
                           onPressed: () {
                             GitHubRepositoriesScreen._loadRepositories(
                               getBloc<GitHubRepositoriesCubit>(context),
@@ -102,7 +102,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
 }
 
 class GitHubRepositoriesItem extends StatelessWidget {
-  const GitHubRepositoriesItem({
+  GitHubRepositoriesItem({
     Key key,
     this.item,
     this.isLoading,
@@ -118,12 +118,12 @@ class GitHubRepositoriesItem extends StatelessWidget {
       message: 'Toggle Star',
       child: ListTile(
         leading: item.viewerHasStarred
-            ? const Icon(
+            ? Icon(
                 Icons.star,
                 color: Colors.amber,
               )
-            : const Icon(Icons.star_border),
-        trailing: isLoading ? const CircularProgressIndicator() : null,
+            : Icon(Icons.star_border),
+        trailing: isLoading ? CircularProgressIndicator() : null,
         title: Text(item.name),
         onTap: () {
           _toggleStar(getBloc<GitHubRepositoriesCubit>(context));

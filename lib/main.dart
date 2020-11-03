@@ -40,7 +40,7 @@ void main() {
 }
 
 class App extends StatelessWidget {
-  const App({
+  App({
     Key key,
     @required this.authenticationRepository,
     @required this.gitHubRepository,

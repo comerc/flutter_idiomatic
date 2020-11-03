@@ -2,7 +2,7 @@ import 'package:formz/formz.dart';
 import 'package:characters/characters.dart';
 
 class TitleInputModel extends FormzInput<String, String> {
-  const TitleInputModel.pure() : super.pure('');
+  TitleInputModel.pure() : super.pure('');
   TitleInputModel.dirty([String value = '']) : super.dirty(value.trim());
 
   @override

@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +48,7 @@ void main() {
 
     setUp(() {
       loginCubit = MockLoginCubit();
-      when(loginCubit.state).thenReturn(const LoginState());
+      when(loginCubit.state).thenReturn(LoginState());
     });
 
     group('calls', () {
@@ -86,7 +85,7 @@ void main() {
       testWidgets('logInWithCredentials when login button is pressed',
           (tester) async {
         when(loginCubit.state).thenReturn(
-          const LoginState(status: FormzStatus.valid),
+          LoginState(status: FormzStatus.valid),
         );
         await tester.pumpWidget(
           MaterialApp(
@@ -124,7 +123,7 @@ void main() {
           (tester) async {
         whenListen(
           loginCubit,
-          Stream.fromIterable(const <LoginState>[
+          Stream.fromIterable(<LoginState>[
             LoginState(status: FormzStatus.submissionInProgress),
             LoginState(status: FormzStatus.submissionFailure),
           ]),
@@ -183,7 +182,7 @@ void main() {
       testWidgets('disabled login button when status is not validated',
           (tester) async {
         when(loginCubit.state).thenReturn(
-          const LoginState(status: FormzStatus.invalid),
+          LoginState(status: FormzStatus.invalid),
         );
         await tester.pumpWidget(
           MaterialApp(
@@ -204,7 +203,7 @@ void main() {
       testWidgets('enabled login button when status is validated',
           (tester) async {
         when(loginCubit.state).thenReturn(
-          const LoginState(status: FormzStatus.valid),
+          LoginState(status: FormzStatus.valid),
         );
         await tester.pumpWidget(
           MaterialApp(

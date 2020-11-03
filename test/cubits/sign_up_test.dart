@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:formz/formz.dart';
@@ -104,7 +103,7 @@ void main() {
         'emits [invalid] when email/password/confirmedPassword are invalid',
         build: () => SignUpCubit(authenticationRepository),
         act: (cubit) => cubit.doEmailChanged(invalidEmailString),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(emailInput: invalidEmail, status: FormzStatus.invalid),
         ],
       );
@@ -116,7 +115,7 @@ void main() {
               passwordInput: validPassword,
               confirmedPasswordInput: validConfirmedPassword)),
         act: (cubit) => cubit.doEmailChanged(validEmailString),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(
             emailInput: validEmail,
             passwordInput: validPassword,
@@ -132,7 +131,7 @@ void main() {
         'emits [invalid] when email/password/confirmedPassword are invalid',
         build: () => SignUpCubit(authenticationRepository),
         act: (cubit) => cubit.doPasswordChanged(invalidPasswordString),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(
             confirmedPasswordInput: ConfirmedPasswordInputModel.dirty(
               password: invalidPasswordString,
@@ -150,7 +149,7 @@ void main() {
               emailInput: validEmail,
               confirmedPasswordInput: validConfirmedPassword)),
         act: (cubit) => cubit.doPasswordChanged(validPasswordString),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(
             emailInput: validEmail,
             passwordInput: validPassword,
@@ -167,7 +166,7 @@ void main() {
         build: () => SignUpCubit(authenticationRepository),
         act: (cubit) =>
             cubit.doConfirmedPasswordChanged(invalidConfirmedPasswordString),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(
             confirmedPasswordInput: invalidConfirmedPassword,
             status: FormzStatus.invalid,
@@ -182,7 +181,7 @@ void main() {
               emailInput: validEmail, passwordInput: validPassword)),
         act: (cubit) =>
             cubit.doConfirmedPasswordChanged(validConfirmedPasswordString),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(
             emailInput: validEmail,
             passwordInput: validPassword,
@@ -198,7 +197,7 @@ void main() {
         'does nothing when status is not validated',
         build: () => SignUpCubit(authenticationRepository),
         act: (cubit) => cubit.signUpFormSubmitted(),
-        expect: const <SignUpState>[],
+        expect: <SignUpState>[],
       );
 
       blocTest<SignUpCubit, SignUpState>(
@@ -236,7 +235,7 @@ void main() {
             ),
           ),
         act: (cubit) => cubit.signUpFormSubmitted(),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(
             status: FormzStatus.submissionInProgress,
             emailInput: validEmail,
@@ -271,7 +270,7 @@ void main() {
             );
         },
         act: (cubit) => cubit.signUpFormSubmitted(),
-        expect: const <SignUpState>[
+        expect: <SignUpState>[
           SignUpState(
             status: FormzStatus.submissionInProgress,
             emailInput: validEmail,

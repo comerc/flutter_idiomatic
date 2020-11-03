@@ -1,4 +1,3 @@
-// // ignore_for_file: prefer_const_constructors
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +37,7 @@ void main() {
       gitHubRepository = MockGitHubRepository();
       databaseRepository = MockDatabaseRepository();
       when(authenticationRepository.user).thenAnswer(
-        (_) => const Stream.empty(),
+        (_) => Stream.empty(),
       );
     });
 
@@ -86,7 +85,7 @@ void main() {
         (tester) async {
       whenListen(
         authenticationCubit,
-        Stream.value(const AuthenticationState.unauthenticated()),
+        Stream.value(AuthenticationState.unauthenticated()),
       );
       await tester.pumpWidget(
         RepositoryProvider.value(
