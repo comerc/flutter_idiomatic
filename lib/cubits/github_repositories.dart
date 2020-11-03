@@ -2,11 +2,13 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:replay_bloc/replay_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 part 'github_repositories.g.dart';
 
-class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState> {
+class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
+    with ReplayCubitMixin {
   GitHubRepositoriesCubit(this.repository)
       : assert(repository != null),
         super(GitHubRepositoriesState());

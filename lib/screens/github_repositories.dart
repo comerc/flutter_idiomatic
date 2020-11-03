@@ -14,13 +14,62 @@ class GitHubRepositoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('GitHub Repositories')),
-      body: BlocProvider(
-        create: (BuildContext context) =>
-            GitHubRepositoriesCubit(getRepository<GitHubRepository>(context)),
-        child: GitHubRepositoriesBody(),
+    return BlocProvider(
+      create: (BuildContext context) =>
+          GitHubRepositoriesCubit(getRepository<GitHubRepository>(context)),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('GitHub Repositories'),
+          actions: [
+            _ActionButton(
+              title: 'Undo'.toUpperCase(),
+              buildOnPressed: (GitHubRepositoriesCubit cubit) =>
+                  cubit.canUndo ? cubit.undo : null,
+            ),
+            _ActionButton(
+              title: 'Reset'.toUpperCase(),
+              buildOnPressed: (GitHubRepositoriesCubit cubit) => cubit.reset,
+            ),
+            _ActionButton(
+              title: 'Redo'.toUpperCase(),
+              buildOnPressed: (GitHubRepositoriesCubit cubit) =>
+                  cubit.canRedo ? cubit.redo : null,
+            ),
+          ],
+        ),
+        body: GitHubRepositoriesBody(),
       ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    Key key,
+    this.title,
+    this.buildOnPressed,
+  }) : super(key: key);
+
+  final String title;
+  final VoidCallback Function(GitHubRepositoriesCubit cubit) buildOnPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GitHubRepositoriesCubit, GitHubRepositoriesState>(
+      builder: (BuildContext context, GitHubRepositoriesState state) {
+        final cubit = getBloc<GitHubRepositoriesCubit>(context);
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: RaisedButton(
+            elevation: 0,
+            onPressed: buildOnPressed(cubit),
+            child: Text(
+              title,
+              style: TextStyle(color: theme.primaryColor),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -59,14 +108,12 @@ class GitHubRepositoriesBody extends StatelessWidget {
                         child: FlatButton(
                           shape: StadiumBorder(),
                           onPressed: () {
-                            // _loadRepositories(
-                            //   getBloc<GitHubRepositoriesCubit>(context),
-                            // );
-                            getBloc<GitHubRepositoriesCubit>(context).reset();
+                            _loadRepositories(
+                              getBloc<GitHubRepositoriesCubit>(context),
+                            );
                           },
                           child: Text(
-                            // 'Refresh'.toUpperCase(),
-                            'Reset'.toUpperCase(),
+                            'Refresh'.toUpperCase(),
                             style: TextStyle(color: theme.primaryColor),
                           ),
                         ),
