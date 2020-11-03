@@ -22,4 +22,6 @@ class TodoModel extends Equatable {
 
   factory TodoModel.fromJson(Map<String, dynamic> json) =>
       _$TodoModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TodoModelToJson(this);
 }
