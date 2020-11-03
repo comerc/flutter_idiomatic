@@ -41,14 +41,7 @@ class _TodosBodyState extends State<TodosBody> {
   void initState() {
     super.initState();
     // timeDilation = 10.0; // Will slow down animations by a factor of two
-    _controller.addListener(() {
-      if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-        final cubit = getBloc<TodosCubit>(context);
-        if (cubit.state.hasMore) {
-          cubit.load(origin: TodosOrigin.loadMore);
-        }
-      }
-    });
+    _controller.addListener(_onScroll);
   }
 
   @override
@@ -311,6 +304,22 @@ class _TodosBodyState extends State<TodosBody> {
         child: Text('Repeat'.toUpperCase()),
       ),
     );
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      final cubit = getBloc<TodosCubit>(context);
+      if (cubit.state.hasMore) {
+        cubit.load(origin: TodosOrigin.loadMore);
+      }
+    }
+  }
+
+  bool get _isBottom {
+    if (!_controller.hasClients) return false;
+    final maxScroll = _controller.position.maxScrollExtent;
+    final currentScroll = _controller.offset;
+    return currentScroll >= (maxScroll * 0.9);
   }
 }
 
