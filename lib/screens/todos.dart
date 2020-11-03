@@ -15,6 +15,7 @@ class TodosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // timeDilation = 2.0; // Will slow down animations by a factor of two
     return Scaffold(
       appBar: AppBar(title: Text('Todos')),
       body: BlocProvider(
@@ -40,7 +41,6 @@ class _TodosBodyState extends State<TodosBody> {
   @override
   void initState() {
     super.initState();
-    // timeDilation = 10.0; // Will slow down animations by a factor of two
     _controller.addListener(_onScroll);
   }
 
