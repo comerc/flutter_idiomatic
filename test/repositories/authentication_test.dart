@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_core/firebase_core.dart';
@@ -42,7 +41,7 @@ Future<void> main() async {
             'messagingSenderId': '123',
             'projectId': '123',
           },
-          'pluginConstants': const <String, String>{},
+          'pluginConstants': <String, String>{},
         }
       ];
     }
@@ -50,7 +49,7 @@ Future<void> main() async {
       return <String, dynamic>{
         'name': call.arguments['appName'],
         'options': call.arguments['options'],
-        'pluginConstants': const <String, String>{},
+        'pluginConstants': <String, String>{},
       };
     }
     return null;
@@ -254,7 +253,7 @@ Future<void> main() async {
         );
         await expectLater(
           authenticationRepository.user,
-          emitsInOrder(const <UserModel>[UserModel.empty]),
+          emitsInOrder(<UserModel>[UserModel.empty]),
         );
       });
 
@@ -264,7 +263,7 @@ Future<void> main() async {
         );
         await expectLater(
           authenticationRepository.user,
-          emitsInOrder(const <UserModel>[user]),
+          emitsInOrder(<UserModel>[user]),
         );
       });
     });

@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:formz/formz.dart';
@@ -78,7 +77,7 @@ void main() {
         'emits [invalid] when email/password are invalid',
         build: () => LoginCubit(authenticationRepository),
         act: (cubit) => cubit.doEmailChanged(invalidEmailString),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(emailInput: invalidEmail, status: FormzStatus.invalid),
         ],
       );
@@ -88,7 +87,7 @@ void main() {
         build: () => LoginCubit(authenticationRepository)
           ..emit(LoginState(passwordInput: validPassword)),
         act: (cubit) => cubit.doEmailChanged(validEmailString),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(
             emailInput: validEmail,
             passwordInput: validPassword,
@@ -103,7 +102,7 @@ void main() {
         'emits [invalid] when email/password are invalid',
         build: () => LoginCubit(authenticationRepository),
         act: (cubit) => cubit.doPasswordChanged(invalidPasswordString),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(
             passwordInput: invalidPassword,
             status: FormzStatus.invalid,
@@ -116,7 +115,7 @@ void main() {
         build: () => LoginCubit(authenticationRepository)
           ..emit(LoginState(emailInput: validEmail)),
         act: (cubit) => cubit.doPasswordChanged(validPasswordString),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(
             emailInput: validEmail,
             passwordInput: validPassword,
@@ -131,7 +130,7 @@ void main() {
         'does nothing when status is not validated',
         build: () => LoginCubit(authenticationRepository),
         act: (cubit) => cubit.logInWithCredentials(),
-        expect: const <LoginState>[],
+        expect: <LoginState>[],
       );
 
       blocTest<LoginCubit, LoginState>(
@@ -167,7 +166,7 @@ void main() {
             ),
           ),
         act: (cubit) => cubit.logInWithCredentials(),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(
             status: FormzStatus.submissionInProgress,
             emailInput: validEmail,
@@ -199,7 +198,7 @@ void main() {
             );
         },
         act: (cubit) => cubit.logInWithCredentials(),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(
             status: FormzStatus.submissionInProgress,
             emailInput: validEmail,
@@ -229,7 +228,7 @@ void main() {
         'when logInWithGoogle succeeds',
         build: () => LoginCubit(authenticationRepository),
         act: (cubit) => cubit.logInWithGoogle(),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(status: FormzStatus.submissionInProgress),
           LoginState(status: FormzStatus.submissionSuccess)
         ],
@@ -245,7 +244,7 @@ void main() {
           return LoginCubit(authenticationRepository);
         },
         act: (cubit) => cubit.logInWithGoogle(),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(status: FormzStatus.submissionInProgress),
           LoginState(status: FormzStatus.submissionFailure)
         ],
@@ -261,7 +260,7 @@ void main() {
           return LoginCubit(authenticationRepository);
         },
         act: (cubit) => cubit.logInWithGoogle(),
-        expect: const <LoginState>[
+        expect: <LoginState>[
           LoginState(status: FormzStatus.submissionInProgress),
           // ignore: avoid_redundant_argument_values
           LoginState(status: FormzStatus.pure)

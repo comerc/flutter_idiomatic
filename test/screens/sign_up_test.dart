@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,7 +54,7 @@ void main() {
 
     setUp(() {
       signUpCubit = MockSignUpCubit();
-      when(signUpCubit.state).thenReturn(const SignUpState());
+      when(signUpCubit.state).thenReturn(SignUpState());
     });
 
     group('calls', () {
@@ -110,7 +109,7 @@ void main() {
       testWidgets('signUpFormSubmitted when sign up button is pressed',
           (tester) async {
         when(signUpCubit.state).thenReturn(
-          const SignUpState(status: FormzStatus.valid),
+          SignUpState(status: FormzStatus.valid),
         );
         await tester.pumpWidget(
           MaterialApp(
@@ -132,7 +131,7 @@ void main() {
           (tester) async {
         whenListen(
           signUpCubit,
-          Stream.fromIterable(const <SignUpState>[
+          Stream.fromIterable(<SignUpState>[
             SignUpState(status: FormzStatus.submissionInProgress),
             SignUpState(status: FormzStatus.submissionFailure),
           ]),
@@ -211,7 +210,7 @@ void main() {
       testWidgets('disabled sign up button when status is not validated',
           (tester) async {
         when(signUpCubit.state).thenReturn(
-          const SignUpState(status: FormzStatus.invalid),
+          SignUpState(status: FormzStatus.invalid),
         );
         await tester.pumpWidget(
           MaterialApp(
@@ -232,7 +231,7 @@ void main() {
       testWidgets('enabled sign up button when status is validated',
           (tester) async {
         when(signUpCubit.state).thenReturn(
-          const SignUpState(status: FormzStatus.valid),
+          SignUpState(status: FormzStatus.valid),
         );
         await tester.pumpWidget(
           MaterialApp(

@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: Text('Login')),
       body: BlocProvider(
         create: (BuildContext context) =>
             LoginCubit(getRepository<AuthenticationRepository>(context)),
@@ -34,14 +34,14 @@ class LoginForm extends StatelessWidget {
           Scaffold.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text('Authentication Failure')),
+              SnackBar(content: Text('Authentication Failure')),
             );
         }
       },
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
         child: Align(
-          alignment: const Alignment(0, -1 / 3),
+          alignment: Alignment(0, -1 / 3),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -49,15 +49,15 @@ class LoginForm extends StatelessWidget {
                 'assets/bloc_logo_small.png',
                 height: 120,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _EmailInput(),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _PasswordInput(),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _LoginButton(),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _GoogleLoginButton(),
-              const SizedBox(height: 4),
+              SizedBox(height: 4),
               _SignUpButton(),
             ],
           ),
@@ -75,7 +75,7 @@ class _EmailInput extends StatelessWidget {
           previous.emailInput != current.emailInput,
       builder: (BuildContext context, LoginState state) {
         return TextField(
-          key: const Key('loginForm_emailInput_textField'),
+          key: Key('loginForm_emailInput_textField'),
           onChanged: (String value) =>
               getBloc<LoginCubit>(context).doEmailChanged(value),
           keyboardType: TextInputType.emailAddress,
@@ -98,7 +98,7 @@ class _PasswordInput extends StatelessWidget {
           previous.passwordInput != current.passwordInput,
       builder: (BuildContext context, LoginState state) {
         return TextField(
-          key: const Key('loginForm_passwordInput_textField'),
+          key: Key('loginForm_passwordInput_textField'),
           onChanged: (String value) =>
               getBloc<LoginCubit>(context).doPasswordChanged(value),
           obscureText: true,
@@ -121,11 +121,11 @@ class _LoginButton extends StatelessWidget {
           previous.status != current.status,
       builder: (BuildContext context, LoginState state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
+            ? CircularProgressIndicator()
             : RaisedButton(
-                key: const Key('loginForm_continue_raisedButton'),
-                shape: const StadiumBorder(),
-                color: const Color(0xFFFFD600),
+                key: Key('loginForm_continue_raisedButton'),
+                shape: StadiumBorder(),
+                color: Color(0xFFFFD600),
                 onPressed: state.status.isValidated
                     ? () => getBloc<LoginCubit>(context).logInWithCredentials()
                     : null,
@@ -141,13 +141,13 @@ class _GoogleLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return RaisedButton.icon(
-      key: const Key('loginForm_googleLogin_raisedButton'),
+      key: Key('loginForm_googleLogin_raisedButton'),
       label: Text(
         'Sign In with Google'.toUpperCase(),
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white),
       ),
-      shape: const StadiumBorder(),
-      icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
+      shape: StadiumBorder(),
+      icon: Icon(FontAwesomeIcons.google, color: Colors.white),
       color: theme.accentColor,
       onPressed: () => getBloc<LoginCubit>(context).logInWithGoogle(),
     );
@@ -159,8 +159,8 @@ class _SignUpButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return FlatButton(
-      key: const Key('loginForm_createAccount_flatButton'),
-      shape: const StadiumBorder(),
+      key: Key('loginForm_createAccount_flatButton'),
+      shape: StadiumBorder(),
       onPressed: () => navigator.push<void>(SignUpScreen().getRoute()),
       child: Text(
         'Create Account'.toUpperCase(),

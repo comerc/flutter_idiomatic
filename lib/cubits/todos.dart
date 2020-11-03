@@ -10,7 +10,7 @@ part 'todos.g.dart';
 class TodosCubit extends Cubit<TodosState> {
   TodosCubit(this.repository)
       : assert(repository != null),
-        super(const TodosState()) {
+        super(TodosState()) {
     _fetchNewNotificationSubscription =
         repository.fetchNewTodoNotification.listen(fetchNewNotification);
   }
@@ -54,8 +54,8 @@ class TodosCubit extends Cubit<TodosState> {
         nextDateTime = lastItem.createdAt;
       }
       if (origin != TodosOrigin.loadMore) {
-        emit(const TodosState());
-        await Future.delayed(const Duration(milliseconds: 300));
+        emit(TodosState());
+        await Future.delayed(Duration(milliseconds: 300));
       }
       emit(state.copyWith(
         items: [...state.items, ...items],
@@ -113,7 +113,7 @@ enum TodosOrigin { initial, start, refreshIndicator, loadNew, loadMore }
 
 @CopyWith()
 class TodosState extends Equatable {
-  const TodosState({
+  TodosState({
     this.items = const [],
     this.status = TodosStatus.initial,
     this.origin = TodosOrigin.initial,

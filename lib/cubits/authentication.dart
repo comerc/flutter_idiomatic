@@ -6,7 +6,7 @@ import 'package:flutter_firebase_login/import.dart';
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit(this.repository)
       : assert(repository != null),
-        super(const AuthenticationState.unknown()) {
+        super(AuthenticationState.unknown()) {
     _userSubscription = repository.user.listen(changeUser);
   }
 
@@ -21,7 +21,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   void changeUser(UserModel user) {
     final result = user == UserModel.empty
-        ? const AuthenticationState.unauthenticated()
+        ? AuthenticationState.unauthenticated()
         : AuthenticationState.authenticated(user);
     emit(result);
   }
@@ -37,7 +37,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 //     @required AuthenticationRepository authenticationRepository,
 //   })  : assert(authenticationRepository != null),
 //         _authenticationRepository = authenticationRepository,
-//         super(const AuthenticationState.unknown()) {
+//         super(AuthenticationState.unknown()) {
 //     _userSubscription = _authenticationRepository.user.listen(
 //       (user) => add(AuthenticationUserChanged(user)),
 //     );
@@ -68,19 +68,19 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 //   ) {
 //     return event.user != UserModel.empty
 //         ? AuthenticationState.authenticated(event.user)
-//         : const AuthenticationState.unauthenticated();
+//         : AuthenticationState.unauthenticated();
 //   }
 // }
 
 // abstract class AuthenticationEvent extends Equatable {
-//   const AuthenticationEvent();
+//   AuthenticationEvent();
 
 //   @override
 //   List<Object> get props => [];
 // }
 
 // class AuthenticationUserChanged extends AuthenticationEvent {
-//   const AuthenticationUserChanged(this.user);
+//   AuthenticationUserChanged(this.user);
 
 //   final UserModel user;
 

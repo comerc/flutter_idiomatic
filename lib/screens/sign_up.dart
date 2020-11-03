@@ -14,7 +14,7 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
+      appBar: AppBar(title: Text('Sign Up')),
       body: BlocProvider(
         create: (BuildContext context) =>
             SignUpCubit(getRepository<AuthenticationRepository>(context)),
@@ -33,23 +33,23 @@ class SignUpForm extends StatelessWidget {
           Scaffold.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text('Sign Up Failure')),
+              SnackBar(content: Text('Sign Up Failure')),
             );
         }
       },
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
         child: Align(
-          alignment: const Alignment(0, -1 / 3),
+          alignment: Alignment(0, -1 / 3),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               _EmailInput(),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _PasswordInput(),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _ConfirmPasswordInput(),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _SignUpButton(),
             ],
           ),
@@ -67,7 +67,7 @@ class _EmailInput extends StatelessWidget {
           previous.emailInput != current.emailInput,
       builder: (BuildContext context, SignUpState state) {
         return TextField(
-          key: const Key('signUpForm_emailInput_textField'),
+          key: Key('signUpForm_emailInput_textField'),
           onChanged: (String value) =>
               getBloc<SignUpCubit>(context).doEmailChanged(value),
           keyboardType: TextInputType.emailAddress,
@@ -90,7 +90,7 @@ class _PasswordInput extends StatelessWidget {
           previous.passwordInput != current.passwordInput,
       builder: (BuildContext context, SignUpState state) {
         return TextField(
-          key: const Key('signUpForm_passwordInput_textField'),
+          key: Key('signUpForm_passwordInput_textField'),
           onChanged: (String value) =>
               getBloc<SignUpCubit>(context).doPasswordChanged(value),
           obscureText: true,
@@ -114,7 +114,7 @@ class _ConfirmPasswordInput extends StatelessWidget {
           previous.confirmedPasswordInput != current.confirmedPasswordInput,
       builder: (context, state) {
         return TextField(
-          key: const Key('signUpForm_confirmedPasswordInput_textField'),
+          key: Key('signUpForm_confirmedPasswordInput_textField'),
           onChanged: (String value) =>
               context.bloc<SignUpCubit>().doConfirmedPasswordChanged(value),
           obscureText: true,
@@ -139,10 +139,10 @@ class _SignUpButton extends StatelessWidget {
           previous.status != current.status,
       builder: (BuildContext context, SignUpState state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
+            ? CircularProgressIndicator()
             : RaisedButton(
-                key: const Key('signUpForm_continue_raisedButton'),
-                shape: const StadiumBorder(),
+                key: Key('signUpForm_continue_raisedButton'),
+                shape: StadiumBorder(),
                 color: Colors.orangeAccent,
                 onPressed: state.status.isValidated
                     ? () => getBloc<SignUpCubit>(context).signUpFormSubmitted()

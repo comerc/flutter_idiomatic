@@ -15,38 +15,37 @@ class HomeScreen extends StatelessWidget {
     final user = getBloc<AuthenticationCubit>(context).state.user;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text('Home'),
         actions: <Widget>[
           IconButton(
-            key: const Key('homeScreen_logout_iconButton'),
-            icon: const Icon(Icons.exit_to_app),
+            key: Key('homeScreen_logout_iconButton'),
+            icon: Icon(Icons.exit_to_app),
             onPressed: () =>
                 getBloc<AuthenticationCubit>(context).requestLogout(),
           )
         ],
       ),
       body: Align(
-        alignment: const Alignment(0, -1 / 3),
+        alignment: Alignment(0, -1 / 3),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Avatar(photo: user.photo),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(user.email, style: textTheme.headline6),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(user.name ?? '', style: textTheme.headline5),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             _CommonRaisedButton(
               title: 'GitHub Repositories',
-              buttonKey:
-                  const Key('homeScreen_gitHubRepositories_raisedButton'),
+              buttonKey: Key('homeScreen_gitHubRepositories_raisedButton'),
               onPressed: () =>
                   navigator.push<void>(GitHubRepositoriesScreen().getRoute()),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             _CommonRaisedButton(
               title: 'Todos',
-              buttonKey: const Key('homeScreen_todos_raisedButton'),
+              buttonKey: Key('homeScreen_todos_raisedButton'),
               onPressed: () => navigator.push<void>(TodosScreen().getRoute()),
             ),
           ],
@@ -57,7 +56,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _CommonRaisedButton extends StatelessWidget {
-  const _CommonRaisedButton({this.title, this.buttonKey, this.onPressed});
+  _CommonRaisedButton({this.title, this.buttonKey, this.onPressed});
 
   final String title;
   final Key buttonKey;
@@ -68,12 +67,12 @@ class _CommonRaisedButton extends StatelessWidget {
     final theme = Theme.of(context);
     return RaisedButton(
       key: buttonKey,
-      shape: const StadiumBorder(),
+      shape: StadiumBorder(),
       color: theme.accentColor,
       onPressed: onPressed,
       child: Text(
         title,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }

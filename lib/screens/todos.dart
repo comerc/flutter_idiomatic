@@ -1,6 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
+// import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
@@ -16,7 +16,7 @@ class TodosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Todos')),
+      appBar: AppBar(title: Text('Todos')),
       body: BlocProvider(
         create: (BuildContext context) =>
             TodosCubit(getRepository<DatabaseRepository>(context))..load(),
@@ -136,7 +136,7 @@ class _TodosBodyState extends State<TodosBody> {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: EdgeInsets.all(8),
                       child: _Input(
                         key: _inputKey,
                         onSubmitted: (String value) {
@@ -144,11 +144,11 @@ class _TodosBodyState extends State<TodosBody> {
                         },
                       ),
                     ),
-                    const Divider(height: 1),
+                    Divider(height: 1),
                     if (state.status == TodosStatus.initial)
-                      const Spacer()
+                      Spacer()
                     else if (state.origin == TodosOrigin.start)
-                      const Expanded(
+                      Expanded(
                         child: Center(
                           child: CircularProgressIndicator(),
                         ),
@@ -159,7 +159,7 @@ class _TodosBodyState extends State<TodosBody> {
                           key: _listKey,
                           controller: _controller,
                           // HACK: https://github.com/flutter/flutter/issues/22180#issuecomment-478080997
-                          physics: const AlwaysScrollableScrollPhysics(),
+                          physics: AlwaysScrollableScrollPhysics(),
                           initialItemCount: state.items.length + 1,
                           itemBuilder: _buildItem(state),
                         ),
@@ -213,7 +213,7 @@ class _TodosBodyState extends State<TodosBody> {
         },
         background: Container(
           color: Colors.redAccent,
-          child: Row(children: const <Widget>[
+          child: Row(children: <Widget>[
             Spacer(),
             Icon(
               Icons.delete_outline,
@@ -242,7 +242,7 @@ class _TodosBodyState extends State<TodosBody> {
               //   item: item,
               // ),
             ),
-            const Divider(height: 1),
+            Divider(height: 1),
           ],
         ),
       );
@@ -284,7 +284,7 @@ class _TodosBodyState extends State<TodosBody> {
     });
     if (hasError) return;
     if (result) {
-      const Duration kDuration = Duration(milliseconds: 300);
+      const kDuration = Duration(milliseconds: 300);
       // ignore: unawaited_futures
       _controller.animateTo(
         0,
@@ -315,7 +315,7 @@ class _TodosBodyState extends State<TodosBody> {
 }
 
 class _LoadNewButton extends StatelessWidget {
-  const _LoadNewButton({
+  _LoadNewButton({
     Key key,
     this.state,
   }) : super(key: key);
@@ -325,7 +325,7 @@ class _LoadNewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      shape: const StadiumBorder(),
+      shape: StadiumBorder(),
       color: theme.accentColor,
       onPressed: (state.status == TodosStatus.loading)
           ? null
@@ -339,20 +339,20 @@ class _LoadNewButton extends StatelessWidget {
         children: [
           if (state.origin == TodosOrigin.loadNew) ...[
             Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
               width: 20,
               height: 20,
-              child: const CircularProgressIndicator(strokeWidth: 2),
+              child: CircularProgressIndicator(strokeWidth: 2),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
           ],
           Text(
             'Load New'.toUpperCase(),
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white),
           ),
         ],
       ),
@@ -361,7 +361,7 @@ class _LoadNewButton extends StatelessWidget {
 }
 
 class _Input extends StatefulWidget {
-  const _Input({
+  _Input({
     Key key,
     this.onSubmitted,
   }) : super(key: key);
@@ -385,7 +385,7 @@ class _InputState extends State<_Input> {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Add new Todo',
         // helperText: '',
         // errorText: null,
@@ -396,7 +396,7 @@ class _InputState extends State<_Input> {
 }
 
 // class _Item extends StatelessWidget {
-//   const _Item({
+//   _Item({
 //     Key key,
 //     this.item,
 //   }) : super(key: key);
@@ -412,7 +412,7 @@ class _InputState extends State<_Input> {
 // }
 
 class _Footer extends StatelessWidget {
-  const _Footer({
+  _Footer({
     Key key,
     this.state,
     this.onPressed,
@@ -425,7 +425,7 @@ class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.status == TodosStatus.loading &&
         state.origin == TodosOrigin.loadMore) {
-      return const Center(
+      return Center(
         child: Padding(
           padding: EdgeInsets.all(8.0),
           child: CircularProgressIndicator(),
@@ -436,7 +436,7 @@ class _Footer extends StatelessWidget {
       if (state.hasMore) {
         return Center(
           child: FlatButton(
-            shape: const StadiumBorder(),
+            shape: StadiumBorder(),
             onPressed: onPressed,
             child: Text(
               'Load More'.toUpperCase(),
@@ -447,11 +447,11 @@ class _Footer extends StatelessWidget {
       }
       return Column(
         children: [
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(state.items.isEmpty
               ? 'No Data'.toUpperCase()
               : 'No More'.toUpperCase()),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
         ],
       );
     }

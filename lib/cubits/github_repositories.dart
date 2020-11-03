@@ -8,7 +8,7 @@ part 'github_repositories.g.dart';
 class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
   GitHubRepositoriesCubit(this.repository)
       : assert(repository != null),
-        super(const GitHubRepositoriesState());
+        super(GitHubRepositoriesState());
 
   final GitHubRepository repository;
 
@@ -16,8 +16,8 @@ class GitHubRepositoriesCubit extends Cubit<GitHubRepositoriesState> {
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
       final items = await repository.readRepositories();
-      emit(const GitHubRepositoriesState());
-      await Future.delayed(const Duration(milliseconds: 300));
+      emit(GitHubRepositoriesState());
+      await Future.delayed(Duration(milliseconds: 300));
       emit(state.copyWith(
         items: items,
         status: GitHubStatus.ready,
@@ -66,7 +66,7 @@ enum GitHubStatus { initial, busy, ready }
 
 @CopyWith()
 class GitHubRepositoriesState extends Equatable {
-  const GitHubRepositoriesState({
+  GitHubRepositoriesState({
     this.items = const [],
     this.status = GitHubStatus.initial,
     this.loadingItems = const {},

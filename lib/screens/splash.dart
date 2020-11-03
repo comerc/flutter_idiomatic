@@ -16,7 +16,7 @@ class SplashScreen extends StatelessWidget {
       body: Center(
         child: Image.asset(
           'assets/bloc_logo_small.png',
-          key: const Key('splash_bloc_image'),
+          key: Key('splash_bloc_image'),
           width: 150,
         ),
       ),

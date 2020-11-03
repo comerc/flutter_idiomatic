@@ -59,7 +59,7 @@ GraphQLClient _getClient() {
   if (_kEnableWebsockets) {
     final websocketLink = WebSocketLink(
       url: 'ws://localhost:8080/ws/graphql',
-      config: const SocketClientConfig(
+      config: SocketClientConfig(
         inactivityTimeout: Duration(seconds: 15),
         // initPayload: () async => {
         //   'headers': {'Authorization': 'Bearer ' + token}

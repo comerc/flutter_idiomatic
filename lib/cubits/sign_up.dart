@@ -9,7 +9,7 @@ part 'sign_up.g.dart';
 class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit(this.repository)
       : assert(repository != null),
-        super(const SignUpState());
+        super(SignUpState());
 
   final AuthenticationRepository repository;
 
