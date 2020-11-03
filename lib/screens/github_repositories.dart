@@ -17,33 +17,9 @@ class GitHubRepositoriesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('GitHub Repositories')),
       body: BlocProvider(
-        create: (BuildContext context) {
-          final cubit =
-              GitHubRepositoriesCubit(getRepository<GitHubRepository>(context));
-          _loadRepositories(cubit);
-          return cubit;
-        },
+        create: (BuildContext context) =>
+            GitHubRepositoriesCubit(getRepository<GitHubRepository>(context)),
         child: GitHubRepositoriesBody(),
-      ),
-    );
-  }
-
-  static Future<void> _loadRepositories(GitHubRepositoriesCubit cubit) async {
-    final result = await cubit.load();
-    if (result) return;
-    BotToast.showNotification(
-      title: (_) => Text(
-        'Can not load repositories',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _loadRepositories(cubit);
-        },
-        child: Text('Repeat'.toUpperCase()),
       ),
     );
   }
@@ -54,6 +30,17 @@ class GitHubRepositoriesBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GitHubRepositoriesCubit, GitHubRepositoriesState>(
       builder: (BuildContext context, GitHubRepositoriesState state) {
+        if (state.status == GitHubStatus.initial && state.items.isEmpty) {
+          return Center(
+              child: FloatingActionButton(
+            onPressed: () {
+              _loadRepositories(
+                getBloc<GitHubRepositoriesCubit>(context),
+              );
+            },
+            child: Icon(Icons.replay),
+          ));
+        }
         if (state.status == GitHubStatus.busy && state.items.isEmpty) {
           return Center(child: CircularProgressIndicator());
         }
@@ -72,12 +59,14 @@ class GitHubRepositoriesBody extends StatelessWidget {
                         child: FlatButton(
                           shape: StadiumBorder(),
                           onPressed: () {
-                            GitHubRepositoriesScreen._loadRepositories(
-                              getBloc<GitHubRepositoriesCubit>(context),
-                            );
+                            // _loadRepositories(
+                            //   getBloc<GitHubRepositoriesCubit>(context),
+                            // );
+                            getBloc<GitHubRepositoriesCubit>(context).reset();
                           },
                           child: Text(
-                            'Refresh'.toUpperCase(),
+                            // 'Refresh'.toUpperCase(),
+                            'Reset'.toUpperCase(),
                             style: TextStyle(color: theme.primaryColor),
                           ),
                         ),
@@ -97,6 +86,27 @@ class GitHubRepositoriesBody extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  void _loadRepositories(GitHubRepositoriesCubit cubit) async {
+    final result = await cubit.load();
+    if (result) return;
+    BotToast.showNotification(
+      crossPage: false,
+      title: (_) => Text(
+        'Can not load repositories',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _loadRepositories(cubit);
+        },
+        child: Text('Repeat'.toUpperCase()),
+      ),
     );
   }
 }
