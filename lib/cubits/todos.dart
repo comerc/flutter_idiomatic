@@ -74,7 +74,7 @@ class TodosCubit extends Cubit<TodosState> {
 
   Future<bool> remove(int id) async {
     emit(state.copyWith(
-      items: [...state.items..removeWhere((TodoModel item) => item.id == id)],
+      items: [...state.items]..removeWhere((TodoModel item) => item.id == id),
     ));
     try {
       final deletedId = await repository.deleteTodo(id);
