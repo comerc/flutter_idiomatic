@@ -43,37 +43,6 @@ class GitHubRepositoriesScreen extends StatelessWidget {
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    Key key,
-    this.title,
-    this.buildOnPressed,
-  }) : super(key: key);
-
-  final String title;
-  final VoidCallback Function(GitHubRepositoriesCubit cubit) buildOnPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<GitHubRepositoriesCubit, GitHubRepositoriesState>(
-      builder: (BuildContext context, GitHubRepositoriesState state) {
-        final cubit = getBloc<GitHubRepositoriesCubit>(context);
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: RaisedButton(
-            elevation: 0,
-            onPressed: buildOnPressed(cubit),
-            child: Text(
-              title,
-              style: TextStyle(color: theme.primaryColor),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class GitHubRepositoriesBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -122,7 +91,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
                     return Container();
                   }
                   final item = state.items[index];
-                  return GitHubRepositoriesItem(
+                  return _Item(
                     key: Key(item.id),
                     item: item,
                     isLoading: state.loadingItems.contains(item.id),
@@ -158,8 +127,8 @@ class GitHubRepositoriesBody extends StatelessWidget {
   }
 }
 
-class GitHubRepositoriesItem extends StatelessWidget {
-  GitHubRepositoriesItem({
+class _Item extends StatelessWidget {
+  _Item({
     Key key,
     this.item,
     this.isLoading,
@@ -212,6 +181,37 @@ class GitHubRepositoriesItem extends StatelessWidget {
         },
         child: Text('Repeat'.toUpperCase()),
       ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    Key key,
+    this.title,
+    this.buildOnPressed,
+  }) : super(key: key);
+
+  final String title;
+  final VoidCallback Function(GitHubRepositoriesCubit cubit) buildOnPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GitHubRepositoriesCubit, GitHubRepositoriesState>(
+      builder: (BuildContext context, GitHubRepositoriesState state) {
+        final cubit = getBloc<GitHubRepositoriesCubit>(context);
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: RaisedButton(
+            elevation: 0,
+            onPressed: buildOnPressed(cubit),
+            child: Text(
+              title,
+              style: TextStyle(color: theme.primaryColor),
+            ),
+          ),
+        );
+      },
     );
   }
 }
