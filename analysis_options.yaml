@@ -17,6 +17,7 @@ analyzer:
     prefer_const_constructors_in_immutables: false
     prefer_const_constructors: false
     prefer_const_declarations: false
+    avoid_void_async: false
   exclude:
     - .dart_tool/**
     - .editorconfig
