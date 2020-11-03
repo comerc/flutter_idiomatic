@@ -1,7 +1,7 @@
-import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
+import 'package:bloc/bloc.dart';
 import 'package:flutter_firebase_login/import.dart';
 
 part 'login.g.dart';
