@@ -101,6 +101,7 @@ GraphQLClient _getClient() {
     );
     link = link.concat(websocketLink);
   }
+  // TODO: применение ValueNotifier и GraphQLProvider - для чего? изучить исходники
   return GraphQLClient(
     cache: InMemoryCache(),
     // cache: NormalizedInMemoryCache(
