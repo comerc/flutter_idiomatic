@@ -70,4 +70,4 @@ $ apollo schema:download --endpoint <graphql endpoint> --header 'X-Hasura-Admin-
 ## Support Me
 
 - [Patreon](https://www.patreon.com/comerc)
-- [QIWI](https://qiwi.com/n/comerc)
+- [QIWI](https://donate.qiwi.com/payin/comerc)
