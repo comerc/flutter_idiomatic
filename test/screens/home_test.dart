@@ -42,7 +42,7 @@ void main() {
             ),
           ),
         );
-        await tester.tap(find.byKey(Key('_LogoutBotton')));
+        await tester.tap(find.byKey(Key('_LogoutButton')));
         verify(authenticationBloc.requestLogout()).called(1);
       });
     });

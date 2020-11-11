@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
-        actions: <Widget>[_LogoutBotton()],
+        actions: <Widget>[_LogoutButton()],
       ),
       body: Align(
         alignment: Alignment(0, -1 / 3),
@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _LogoutBotton extends StatelessWidget {
+class _LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
