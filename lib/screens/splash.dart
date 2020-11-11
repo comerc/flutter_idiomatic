@@ -14,12 +14,19 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset(
-          'assets/bloc_logo_small.png',
-          key: Key('splash_bloc_image'),
-          width: 150,
-        ),
+        child: _Logo(),
       ),
+    );
+  }
+}
+
+class _Logo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/bloc_logo_small.png',
+      key: Key('$runtimeType'),
+      width: 150,
     );
   }
 }

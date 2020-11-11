@@ -15,7 +15,6 @@ class MockUserModel extends Mock implements UserModel {
 }
 
 void main() {
-  const logoutButtonKey = Key('homeScreen_logout_iconButton');
   group('HomeScreen', () {
     AuthenticationCubit authenticationBloc;
     UserModel user;
@@ -43,7 +42,7 @@ void main() {
             ),
           ),
         );
-        await tester.tap(find.byKey(logoutButtonKey));
+        await tester.tap(find.byKey(Key('_LogoutBotton')));
         verify(authenticationBloc.requestLogout()).called(1);
       });
     });

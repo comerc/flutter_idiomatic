@@ -10,7 +10,7 @@ void main() {
 
     testWidgets('renders bloc image', (tester) async {
       await tester.pumpWidget(MaterialApp(home: SplashScreen()));
-      expect(find.byKey(Key('splash_bloc_image')), findsOneWidget);
+      expect(find.byKey(Key('_Logo')), findsOneWidget);
     });
   });
 }

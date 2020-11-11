@@ -34,12 +34,6 @@ void main() {
     });
   });
 
-  const loginButtonKey = Key('loginForm_continue_raisedButton');
-  const signInWithGoogleButtonKey = Key('loginForm_googleLogin_raisedButton');
-  const emailInputKey = Key('loginForm_emailInput_textField');
-  const passwordInputKey = Key('loginForm_passwordInput_textField');
-  const createAccountButtonKey = Key('loginForm_createAccount_flatButton');
-
   const testEmail = 'test@gmail.com';
   const testPassword = 'testP@ssw0rd1';
 
@@ -63,7 +57,7 @@ void main() {
             ),
           ),
         );
-        await tester.enterText(find.byKey(emailInputKey), testEmail);
+        await tester.enterText(find.byKey(Key('_EmailInput')), testEmail);
         verify(loginCubit.doEmailChanged(testEmail)).called(1);
       });
 
@@ -78,7 +72,7 @@ void main() {
             ),
           ),
         );
-        await tester.enterText(find.byKey(passwordInputKey), testPassword);
+        await tester.enterText(find.byKey(Key('_PasswordInput')), testPassword);
         verify(loginCubit.doPasswordChanged(testPassword)).called(1);
       });
 
@@ -97,7 +91,7 @@ void main() {
             ),
           ),
         );
-        await tester.tap(find.byKey(loginButtonKey));
+        await tester.tap(find.byKey(Key('_LoginButton')));
         verify(loginCubit.logInWithCredentials()).called(1);
       });
 
@@ -113,7 +107,7 @@ void main() {
             ),
           ),
         );
-        await tester.tap(find.byKey(signInWithGoogleButtonKey));
+        await tester.tap(find.byKey(Key('_GoogleLoginButton')));
         verify(loginCubit.logInWithGoogle()).called(1);
       });
     });
@@ -195,7 +189,7 @@ void main() {
           ),
         );
         final loginButton = tester.widget<RaisedButton>(
-          find.byKey(loginButtonKey),
+          find.byKey(Key('_LoginButton')),
         );
         expect(loginButton.enabled, isFalse);
       });
@@ -216,7 +210,7 @@ void main() {
           ),
         );
         final loginButton = tester.widget<RaisedButton>(
-          find.byKey(loginButtonKey),
+          find.byKey(Key('_LoginButton')),
         );
         expect(loginButton.enabled, isTrue);
       });
@@ -232,7 +226,7 @@ void main() {
             ),
           ),
         );
-        expect(find.byKey(signInWithGoogleButtonKey), findsOneWidget);
+        expect(find.byKey(Key('_GoogleLoginButton')), findsOneWidget);
       });
     });
 
@@ -253,7 +247,7 @@ void main() {
             ),
           ),
         );
-        await tester.tap(find.byKey(createAccountButtonKey));
+        await tester.tap(find.byKey(Key('_SignUpButton')));
         await tester.pumpAndSettle();
         expect(find.byType(SignUpScreen), findsOneWidget);
       });

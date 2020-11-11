@@ -39,12 +39,6 @@ void main() {
     });
   });
 
-  const signUpButtonKey = Key('signUpForm_continue_raisedButton');
-  const emailInputKey = Key('signUpForm_emailInput_textField');
-  const passwordInputKey = Key('signUpForm_passwordInput_textField');
-  const confirmedPasswordInputKey =
-      Key('signUpForm_confirmedPasswordInput_textField');
-
   const testEmail = 'test@gmail.com';
   const testPassword = 'testP@ssw0rd1';
   const testConfirmedPassword = 'testP@ssw0rd1';
@@ -69,7 +63,7 @@ void main() {
             ),
           ),
         );
-        await tester.enterText(find.byKey(emailInputKey), testEmail);
+        await tester.enterText(find.byKey(Key('_EmailInput')), testEmail);
         verify(signUpCubit.doEmailChanged(testEmail)).called(1);
       });
 
@@ -84,7 +78,7 @@ void main() {
             ),
           ),
         );
-        await tester.enterText(find.byKey(passwordInputKey), testPassword);
+        await tester.enterText(find.byKey(Key('_PasswordInput')), testPassword);
         verify(signUpCubit.doPasswordChanged(testPassword)).called(1);
       });
 
@@ -101,7 +95,7 @@ void main() {
           ),
         );
         await tester.enterText(
-            find.byKey(confirmedPasswordInputKey), testConfirmedPassword);
+            find.byKey(Key('_ConfirmPasswordInput')), testConfirmedPassword);
         verify(signUpCubit.doConfirmedPasswordChanged(testConfirmedPassword))
             .called(1);
       });
@@ -121,7 +115,7 @@ void main() {
             ),
           ),
         );
-        await tester.tap(find.byKey(signUpButtonKey));
+        await tester.tap(find.byKey(Key('_SignUpButton')));
         verify(signUpCubit.signUpFormSubmitted()).called(1);
       });
     });
@@ -223,7 +217,7 @@ void main() {
           ),
         );
         final signUpButton = tester.widget<RaisedButton>(
-          find.byKey(signUpButtonKey),
+          find.byKey(Key('_SignUpButton')),
         );
         expect(signUpButton.enabled, isFalse);
       });
@@ -244,7 +238,7 @@ void main() {
           ),
         );
         final signUpButton = tester.widget<RaisedButton>(
-          find.byKey(signUpButtonKey),
+          find.byKey(Key('_SignUpButton')),
         );
         expect(signUpButton.enabled, isTrue);
       });

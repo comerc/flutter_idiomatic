@@ -16,14 +16,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
-        actions: <Widget>[
-          IconButton(
-            key: Key('homeScreen_logout_iconButton'),
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () =>
-                getBloc<AuthenticationCubit>(context).requestLogout(),
-          )
-        ],
+        actions: <Widget>[_LogoutBotton()],
       ),
       body: Align(
         alignment: Alignment(0, -1 / 3),
@@ -36,18 +29,9 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 4),
             Text(user.name ?? '', style: textTheme.headline5),
             SizedBox(height: 4),
-            _CommonRaisedButton(
-              title: 'GitHub Repositories',
-              buttonKey: Key('homeScreen_gitHubRepositories_raisedButton'),
-              onPressed: () =>
-                  navigator.push<void>(GitHubRepositoriesScreen().getRoute()),
-            ),
+            _GitHubRepositoriesButton(),
             SizedBox(height: 4),
-            _CommonRaisedButton(
-              title: 'Todos',
-              buttonKey: Key('homeScreen_todos_raisedButton'),
-              onPressed: () => navigator.push<void>(TodosScreen().getRoute()),
-            ),
+            _TodosButton(),
           ],
         ),
       ),
@@ -55,23 +39,46 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _CommonRaisedButton extends StatelessWidget {
-  _CommonRaisedButton({this.title, this.buttonKey, this.onPressed});
+class _LogoutBotton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      key: Key('$runtimeType'),
+      icon: Icon(Icons.exit_to_app),
+      onPressed: () => getBloc<AuthenticationCubit>(context).requestLogout(),
+    );
+  }
+}
 
-  final String title;
-  final Key buttonKey;
-  final VoidCallback onPressed;
-
+class _GitHubRepositoriesButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return RaisedButton(
-      key: buttonKey,
+      key: Key('$runtimeType'),
       shape: StadiumBorder(),
       color: theme.accentColor,
-      onPressed: onPressed,
+      onPressed: () =>
+          navigator.push<void>(GitHubRepositoriesScreen().getRoute()),
       child: Text(
-        title,
+        'GitHub Repositories',
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+}
+
+class _TodosButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return RaisedButton(
+      key: Key('$runtimeType'),
+      shape: StadiumBorder(),
+      color: theme.accentColor,
+      onPressed: () => navigator.push<void>(TodosScreen().getRoute()),
+      child: Text(
+        'Todos',
         style: TextStyle(color: Colors.white),
       ),
     );

@@ -67,7 +67,7 @@ class _EmailInput extends StatelessWidget {
           previous.emailInput != current.emailInput,
       builder: (BuildContext context, SignUpState state) {
         return TextField(
-          key: Key('signUpForm_emailInput_textField'),
+          key: Key('$runtimeType'),
           onChanged: (String value) =>
               getBloc<SignUpCubit>(context).doEmailChanged(value),
           keyboardType: TextInputType.emailAddress,
@@ -90,7 +90,7 @@ class _PasswordInput extends StatelessWidget {
           previous.passwordInput != current.passwordInput,
       builder: (BuildContext context, SignUpState state) {
         return TextField(
-          key: Key('signUpForm_passwordInput_textField'),
+          key: Key('$runtimeType'),
           onChanged: (String value) =>
               getBloc<SignUpCubit>(context).doPasswordChanged(value),
           obscureText: true,
@@ -114,9 +114,9 @@ class _ConfirmPasswordInput extends StatelessWidget {
           previous.confirmedPasswordInput != current.confirmedPasswordInput,
       builder: (context, state) {
         return TextField(
-          key: Key('signUpForm_confirmedPasswordInput_textField'),
+          key: Key('$runtimeType'),
           onChanged: (String value) =>
-              context.bloc<SignUpCubit>().doConfirmedPasswordChanged(value),
+              getBloc<SignUpCubit>(context).doConfirmedPasswordChanged(value),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'confirm password',
@@ -141,7 +141,7 @@ class _SignUpButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? CircularProgressIndicator()
             : RaisedButton(
-                key: Key('signUpForm_continue_raisedButton'),
+                key: Key('$runtimeType'),
                 shape: StadiumBorder(),
                 color: Colors.orangeAccent,
                 onPressed: state.status.isValidated

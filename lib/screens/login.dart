@@ -75,7 +75,7 @@ class _EmailInput extends StatelessWidget {
           previous.emailInput != current.emailInput,
       builder: (BuildContext context, LoginState state) {
         return TextField(
-          key: Key('loginForm_emailInput_textField'),
+          key: Key('$runtimeType'),
           onChanged: (String value) =>
               getBloc<LoginCubit>(context).doEmailChanged(value),
           keyboardType: TextInputType.emailAddress,
@@ -98,7 +98,7 @@ class _PasswordInput extends StatelessWidget {
           previous.passwordInput != current.passwordInput,
       builder: (BuildContext context, LoginState state) {
         return TextField(
-          key: Key('loginForm_passwordInput_textField'),
+          key: Key('$runtimeType'),
           onChanged: (String value) =>
               getBloc<LoginCubit>(context).doPasswordChanged(value),
           obscureText: true,
@@ -116,6 +116,7 @@ class _PasswordInput extends StatelessWidget {
 class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // print(runtimeType);
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (LoginState previous, LoginState current) =>
           previous.status != current.status,
@@ -123,7 +124,7 @@ class _LoginButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? CircularProgressIndicator()
             : RaisedButton(
-                key: Key('loginForm_continue_raisedButton'),
+                key: Key('$runtimeType'),
                 shape: StadiumBorder(),
                 color: Color(0xFFFFD600),
                 onPressed: state.status.isValidated
@@ -141,7 +142,7 @@ class _GoogleLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return RaisedButton.icon(
-      key: Key('loginForm_googleLogin_raisedButton'),
+      key: Key('$runtimeType'),
       label: Text(
         'Sign In with Google'.toUpperCase(),
         style: TextStyle(color: Colors.white),
@@ -159,7 +160,7 @@ class _SignUpButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return FlatButton(
-      key: Key('loginForm_createAccount_flatButton'),
+      key: Key('$runtimeType'),
       shape: StadiumBorder(),
       onPressed: () => navigator.push<void>(SignUpScreen().getRoute()),
       child: Text(

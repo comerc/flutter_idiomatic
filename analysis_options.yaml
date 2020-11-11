@@ -18,6 +18,7 @@ analyzer:
     prefer_const_constructors: false
     prefer_const_declarations: false
     avoid_void_async: false
+    no_runtimetype_tostring: false
   exclude:
     - .dart_tool/**
     - .editorconfig
@@ -45,6 +46,5 @@ analyzer:
     - plugins/**
     - pubspec.lock
     - pubspec.yaml
-    - test_driver/**
     - web/**
     - packages/**
