@@ -62,6 +62,41 @@ how to download `schema.json` for `localSchemaFile`
 $ apollo schema:download --endpoint <graphql endpoint> --header 'X-Hasura-Admin-Secret: <secret>' --header 'X-Hasura-Role: user'
 ```
 
+## Execution Test for flutter_test
+
+```
+$ flutter test
+```
+
+## Execution Test for flutter_driver
+
+### Execute target to iOS / Android:
+
+- Use flutter devices to get target device id
+
+```
+# run flutter devices
+$ flutter devices
+```
+
+- Config targetDeviceId in app_test.dart
+
+```
+Ex: (Android), default empty string
+..targetDeviceId = "emulator-5554"
+```
+
+- Execute command line with target devices
+
+```
+# execute command line
+$ dart test_driver/app_test.dart
+
+or
+
+$ flutter drive --target=test_driver/app.dart
+```
+
 ## Contacts
 
 - E-Mail: [andrew.kachanov@gmail.com](mailto:andrew.kachanov@gmail.com)
