@@ -17,10 +17,9 @@ Future<void> main() {
       // HookExample()
     ] // you can include "AttachScreenhotOnFailedStepHook()" to take a screenshot of each step failure and attach it to the world object
     ..stepDefinitions = [
-      check3ByKeys(),
-      tapByKey(),
-      checkByKey(),
-      checkByType(),
+      check3(),
+      tap(),
+      check(),
     ]
     // ..customStepParameterDefinitions = [ColourParameter()]
     ..restartAppBetweenScenarios = true
