@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:replay_bloc/replay_bloc.dart';
-import 'package:flutter_firebase_login/import.dart';
+import 'package:flutter_idiomatic/import.dart';
 
 part 'github_repositories.g.dart';
 

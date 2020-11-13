@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:flutter_firebase_login/import.dart';
+import 'package:flutter_idiomatic/import.dart';
 
 class SignUpScreen extends StatelessWidget {
   Route<T> getRoute<T>() {

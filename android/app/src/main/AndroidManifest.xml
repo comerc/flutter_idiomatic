@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.arisesoft.flutter_firebase_login">
+    package="com.arisesoft.flutter_idiomatic">
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
          In most cases you can leave this as-is, but you if you want to provide
@@ -7,7 +7,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="flutter_firebase_login"
+        android:label="flutter_idiomatic"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

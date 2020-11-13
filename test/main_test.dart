@@ -2,7 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:flutter_firebase_login/import.dart';
+import 'package:flutter_idiomatic/import.dart';
 
 // ignore: must_be_immutable, avoid_implementing_value_types
 class MockUser extends Mock implements UserModel {

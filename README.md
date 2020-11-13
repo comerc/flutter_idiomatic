@@ -1,4 +1,4 @@
-# flutter_firebase_login
+# flutter_idiomatic
 
 It is starter kit with idiomatic code structure :) BLoC & GraphQL CRUD. With Unit- and Functional tests.
 

@@ -1,4 +1,4 @@
-package com.arisesoft.flutter_firebase_login
+package com.arisesoft.flutter_idiomatic
 
 import io.flutter.embedding.android.FlutterActivity
 

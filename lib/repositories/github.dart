@@ -1,5 +1,5 @@
 import 'package:graphql/client.dart';
-import 'package:flutter_firebase_login/import.dart';
+import 'package:flutter_idiomatic/import.dart';
 
 const _kEnableWebsockets = false;
 const _kRepositoriesLimit = 8;
