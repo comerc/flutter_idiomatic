@@ -1,12 +1,12 @@
 # flutter_idiomatic
 
-It is starter kit with idiomatic code structure :) BLoC & GraphQL CRUD. With Unit- and Functional tests.
+It is starter kit with idiomatic code structure :) BLoC & GraphQL CRUD. With Unit tests, Widget tests and Integration tests (Behavior Driven Development).
 
 - https://youtu.be/rViOUxsGs2k
 - https://youtu.be/FndheiFSvPY
 - https://youtu.be/zIdsacU_y-k
 
-Inspired by flutter_bloc example.
+Inspired by [flutter_bloc example](https://github.com/felangel/bloc/tree/master/examples/flutter_firebase_login).
 
 ## How to Start
 
