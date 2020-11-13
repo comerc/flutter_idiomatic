@@ -14,7 +14,7 @@ Future<void> main() {
       // JsonReporter(path: './report/report.json')
     ] // you can include the "StdoutReporter()" without the message level parameter for verbose log information
     ..hooks = [
-      HookExample()
+      // HookExample()
     ] // you can include "AttachScreenhotOnFailedStepHook()" to take a screenshot of each step failure and attach it to the world object
     ..stepDefinitions = [
       check3ByKeys(),

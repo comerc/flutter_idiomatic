@@ -65,6 +65,7 @@ $ apollo schema:download --endpoint <graphql endpoint> --header 'X-Hasura-Admin-
 ## Execution Test for flutter_test
 
 ```
+# execute command line
 $ flutter test
 ```
 
@@ -75,11 +76,10 @@ $ flutter test
 - Use flutter devices to get target device id
 
 ```
-# run flutter devices
 $ flutter devices
 ```
 
-- Config targetDeviceId in app_test.dart
+- Config targetDeviceId in main_test.dart
 
 ```
 Ex: (Android), default empty string
@@ -89,12 +89,7 @@ Ex: (Android), default empty string
 - Execute command line with target devices
 
 ```
-# execute command line
-$ dart test_driver/app_test.dart
-
-or
-
-$ flutter drive --target=test_driver/app.dart
+$ flutter drive
 ```
 
 ## Contacts
