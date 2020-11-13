@@ -47,10 +47,6 @@ dependencies:
   hydrated_bloc: ^6.0.3
   replay_bloc: ^0.0.1-dev.3
 
-  glob: ^1.1.7
-  gherkin: ^1.0.0
-  flutter_gherkin: ^1.0.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -58,7 +54,11 @@ dev_dependencies:
     sdk: flutter
 
   bloc_test: ^7.1.0
-  mockito: ^4.0.0
+  mockito:
+
+  glob: ^1.1.7
+  gherkin: ^1.0.0
+  flutter_gherkin: ^1.0.0
 
   lint: ^1.3.0
   # pedantic: ^1.9.0

@@ -320,7 +320,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_gherkin:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: flutter_gherkin
       url: "https://pub.dartlang.org"
@@ -356,14 +356,14 @@ packages:
     source: sdk
     version: "0.0.0"
   gherkin:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: gherkin
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8+5"
   glob:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: glob
       url: "https://pub.dartlang.org"
