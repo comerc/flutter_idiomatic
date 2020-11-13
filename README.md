@@ -92,6 +92,10 @@ Ex: (Android), default empty string
 $ flutter drive
 ```
 
+## Why?
+
+![Swing Project](./assets/swing_project.jpg)
+
 ## Contacts
 
 - E-Mail: [andrew.kachanov@gmail.com](mailto:andrew.kachanov@gmail.com)
