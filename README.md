@@ -1,6 +1,6 @@
 # flutter_firebase_login
 
-It is starter kit with idiomatic code structure :)
+It is starter kit with idiomatic code structure :) BLoC & GraphQL CRUD. With Unit- and Functional tests.
 
 - https://youtu.be/rViOUxsGs2k
 - https://youtu.be/FndheiFSvPY
