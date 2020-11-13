@@ -92,7 +92,7 @@ Ex: (Android), default empty string
 $ flutter drive
 ```
 
-## Why BDD?
+## Why BDD (Behavior Driven Development)?
 
 ![Swing Project](./assets/swing_project.jpg)
 
