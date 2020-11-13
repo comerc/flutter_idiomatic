@@ -243,8 +243,8 @@ class _TodosBodyState extends State<TodosBody> {
   }
 
   Future<void> _remove(TodosCubit cubit, {int id}) async {
-    final result = await cubit.remove(id);
-    if (result) return;
+    final error = await cubit.remove(id);
+    if (error == null) return;
     // TODO: undo https://stackoverflow.com/questions/53175605/flutter-dismissible-undo-animation-using-animatedlist
     BotToast.showNotification(
       title: (_) => Text(
@@ -264,19 +264,8 @@ class _TodosBodyState extends State<TodosBody> {
   }
 
   Future<void> _add(TodosCubit cubit, {String title}) async {
-    var hasError = false;
-    final result = await cubit.add(title).catchError((error) {
-      BotToast.showNotification(
-        title: (_) => Text(
-          '$error',
-          overflow: TextOverflow.fade,
-          softWrap: false,
-        ),
-      );
-      hasError = true;
-    });
-    if (hasError) return;
-    if (result) {
+    final error = await cubit.add(title);
+    if (error == null) {
       const kDuration = Duration(milliseconds: 300);
       // ignore: unawaited_futures
       _controller.animateTo(
@@ -287,6 +276,16 @@ class _TodosBodyState extends State<TodosBody> {
       // ignore: avoid_redundant_argument_values
       _listKey.currentState?.insertItem(0, duration: kDuration);
       _inputKey.currentState?.controller?.clear();
+      return;
+    }
+    if (error is ValidationException) {
+      BotToast.showNotification(
+        title: (_) => Text(
+          '$error',
+          overflow: TextOverflow.fade,
+          softWrap: false,
+        ),
+      );
       return;
     }
     BotToast.showNotification(

@@ -33,7 +33,7 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(newId: id));
   }
 
-  Future<void> load({TodosOrigin origin = TodosOrigin.start}) async {
+  Future load({TodosOrigin origin = TodosOrigin.start}) async {
     const kLimit = 10;
     if (state.status == TodosStatus.loading) return;
     emit(state.copyWith(
@@ -62,8 +62,9 @@ class TodosCubit extends Cubit<TodosState> {
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
-    } on Exception {
+    } catch (error) {
       emit(state.copyWith(loadingError: 'Can not load todos'));
+      return error;
     } finally {
       emit(state.copyWith(
         status: TodosStatus.ready,
@@ -72,7 +73,7 @@ class TodosCubit extends Cubit<TodosState> {
     }
   }
 
-  Future<bool> remove(int id) async {
+  Future remove(int id) async {
     emit(state.copyWith(
       items: [...state.items]..removeWhere((TodoModel item) => item.id == id),
     ));
@@ -81,17 +82,16 @@ class TodosCubit extends Cubit<TodosState> {
       if (deletedId != id) {
         throw Exception('Can not remove todo $id');
       }
-    } on Exception {
-      return false;
+    } catch (error) {
+      return error;
     }
-    return true;
   }
 
-  Future<bool> add(String title) async {
+  Future add(String title) async {
     final titleInput = TitleInputModel.dirty(title);
     final status = Formz.validate([titleInput]);
     if (status.isInvalid) {
-      throw titleInput.error;
+      return ValidationException(titleInput.error);
     }
     emit(state.copyWith(isSubmitMode: true));
     try {
@@ -99,12 +99,11 @@ class TodosCubit extends Cubit<TodosState> {
       emit(state.copyWith(
         items: [item, ...state.items],
       ));
-    } on Exception {
-      return false;
+    } catch (error) {
+      return error;
     } finally {
       emit(state.copyWith(isSubmitMode: false));
     }
-    return true;
   }
 }
 

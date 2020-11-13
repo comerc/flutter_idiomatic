@@ -106,8 +106,8 @@ class GitHubRepositoriesBody extends StatelessWidget {
   }
 
   void _loadRepositories(GitHubRepositoriesCubit cubit) async {
-    final result = await cubit.load();
-    if (result) return;
+    final error = await cubit.load();
+    if (error == null) return;
     BotToast.showNotification(
       crossPage: false,
       title: (_) => Text(
@@ -160,11 +160,11 @@ class _Item extends StatelessWidget {
 
   Future<void> _toggleStar(GitHubRepositoriesCubit cubit) async {
     final value = !item.viewerHasStarred;
-    final result = await cubit.toggleStar(
+    final error = await cubit.toggleStar(
       id: item.id,
       value: value,
     );
-    if (result) return;
+    if (error == null) return;
     BotToast.showNotification(
       title: (_) => Text(
         value

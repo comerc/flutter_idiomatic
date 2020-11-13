@@ -10,3 +10,12 @@ T getRepository<T>(BuildContext context) => RepositoryProvider.of<T>(context);
 void out(dynamic value) {
   if (kDebugMode) debugPrint('$value');
 }
+
+class ValidationException {
+  final String message;
+
+  ValidationException(this.message);
+
+  @override
+  String toString() => message;
+}
