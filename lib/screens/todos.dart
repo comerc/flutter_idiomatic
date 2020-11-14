@@ -18,7 +18,7 @@ class TodosScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Todos')),
       body: BlocProvider(
         create: (BuildContext context) =>
-            TodosCubit(getRepository<DatabaseRepository>(context))..load(),
+            TodosCubit(getRepository<DatabaseRepository>(context)),
         child: TodosBody(),
       ),
     );
@@ -39,6 +39,7 @@ class _TodosBodyState extends State<TodosBody> {
   @override
   void initState() {
     super.initState();
+    _load(getBloc<TodosCubit>(context), origin: TodosOrigin.start);
     _controller.addListener(_onScroll);
   }
 
@@ -52,31 +53,31 @@ class _TodosBodyState extends State<TodosBody> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<TodosCubit, TodosState>(
-          listenWhen: (TodosState previous, TodosState current) {
-            return previous.loadingError != current.loadingError &&
-                current.loadingError.isNotEmpty;
-          },
-          listener: (BuildContext context, TodosState state) {
-            BotToast.showNotification(
-              title: (_) => Text(
-                state.loadingError,
-                overflow: TextOverflow.fade,
-                softWrap: false,
-              ),
-              trailing: (Function close) => FlatButton(
-                onLongPress: () {}, // чтобы сократить время для splashColor
-                onPressed: () {
-                  close();
-                  getBloc<TodosCubit>(context).load(
-                    origin: state.origin,
-                  );
-                },
-                child: Text('Repeat'.toUpperCase()),
-              ),
-            );
-          },
-        ),
+        // BlocListener<TodosCubit, TodosState>(
+        //   listenWhen: (TodosState previous, TodosState current) {
+        //     return previous.errorMessage != current.errorMessage &&
+        //         current.errorMessage.isNotEmpty;
+        //   },
+        //   listener: (BuildContext context, TodosState state) {
+        //     BotToast.showNotification(
+        //       title: (_) => Text(
+        //         state.errorMessage,
+        //         overflow: TextOverflow.fade,
+        //         softWrap: false,
+        //       ),
+        //       trailing: (Function close) => FlatButton(
+        //         onLongPress: () {}, // чтобы сократить время для splashColor
+        //         onPressed: () {
+        //           close();
+        //           getBloc<TodosCubit>(context).load(
+        //             origin: state.origin,
+        //           );
+        //         },
+        //         child: Text('Repeat'.toUpperCase()),
+        //       ),
+        //     );
+        //   },
+        // ),
         BlocListener<TodosCubit, TodosState>(
           listenWhen: (TodosState previous, TodosState current) {
             return previous.isSubmitMode != current.isSubmitMode;
@@ -119,11 +120,8 @@ class _TodosBodyState extends State<TodosBody> {
           return Stack(
             children: <Widget>[
               RefreshIndicator(
-                onRefresh: () async {
-                  return getBloc<TodosCubit>(context).load(
-                    origin: TodosOrigin.refreshIndicator,
-                  );
-                },
+                onRefresh: () => _load(getBloc<TodosCubit>(context),
+                    origin: TodosOrigin.refreshIndicator),
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -184,9 +182,7 @@ class _TodosBodyState extends State<TodosBody> {
         return _Footer(
           state: state,
           onPressed: () {
-            getBloc<TodosCubit>(context).load(
-              origin: TodosOrigin.loadMore,
-            );
+            _load(getBloc<TodosCubit>(context), origin: TodosOrigin.loadMore);
           },
         );
       }
@@ -241,42 +237,32 @@ class _TodosBodyState extends State<TodosBody> {
   }
 
   Future<void> _remove(TodosCubit cubit, {int id}) async {
-    final error = await cubit.remove(id);
-    if (error == null) return;
-    // TODO: undo https://stackoverflow.com/questions/53175605/flutter-dismissible-undo-animation-using-animatedlist
-    BotToast.showNotification(
-      title: (_) => Text(
-        'Can not remove todo $id',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _remove(cubit, id: id);
-        },
-        child: Text('Repeat'.toUpperCase()),
-      ),
-    );
+    try {
+      await cubit.remove(id);
+    } on Exception {
+      // TODO: undo https://stackoverflow.com/questions/53175605/flutter-dismissible-undo-animation-using-animatedlist
+      BotToast.showNotification(
+        title: (_) => Text(
+          'Can not remove todo $id',
+          overflow: TextOverflow.fade,
+          softWrap: false,
+        ),
+        trailing: (Function close) => FlatButton(
+          onLongPress: () {}, // чтобы сократить время для splashColor
+          onPressed: () {
+            close();
+            _remove(cubit, id: id);
+          },
+          child: Text('Repeat'.toUpperCase()),
+        ),
+      );
+    }
   }
 
   Future<void> _add(TodosCubit cubit, {String title}) async {
-    final error = await cubit.add(title);
-    if (error == null) {
-      const kDuration = Duration(milliseconds: 300);
-      // ignore: unawaited_futures
-      _controller.animateTo(
-        0,
-        duration: kDuration,
-        curve: Curves.easeOut,
-      );
-      // ignore: avoid_redundant_argument_values
-      _listKey.currentState?.insertItem(0, duration: kDuration);
-      _inputKey.currentState?.controller?.clear();
-      return;
-    }
-    if (error is ValidationException) {
+    try {
+      await cubit.add(title);
+    } on ValidationException catch (error) {
       BotToast.showNotification(
         title: (_) => Text(
           '$error',
@@ -284,30 +270,40 @@ class _TodosBodyState extends State<TodosBody> {
           softWrap: false,
         ),
       );
-      return;
+    } on Exception {
+      BotToast.showNotification(
+        title: (_) => Text(
+          'Can not add todo "$title"',
+          overflow: TextOverflow.fade,
+          softWrap: false,
+        ),
+        trailing: (Function close) => FlatButton(
+          onLongPress: () {}, // чтобы сократить время для splashColor
+          onPressed: () {
+            close();
+            _add(cubit, title: title);
+          },
+          child: Text('Repeat'.toUpperCase()),
+        ),
+      );
     }
-    BotToast.showNotification(
-      title: (_) => Text(
-        'Can not add todo "$title"',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _add(cubit, title: title);
-        },
-        child: Text('Repeat'.toUpperCase()),
-      ),
+    const kDuration = Duration(milliseconds: 300);
+    // ignore: unawaited_futures
+    _controller.animateTo(
+      0,
+      duration: kDuration,
+      curve: Curves.easeOut,
     );
+    // ignore: avoid_redundant_argument_values
+    _listKey.currentState?.insertItem(0, duration: kDuration);
+    _inputKey.currentState?.controller?.clear();
   }
 
   void _onScroll() {
     if (_isBottom) {
       final cubit = getBloc<TodosCubit>(context);
       if (cubit.state.hasMore) {
-        cubit.load(origin: TodosOrigin.loadMore);
+        _load(cubit, origin: TodosOrigin.loadMore);
       }
     }
   }
@@ -317,6 +313,30 @@ class _TodosBodyState extends State<TodosBody> {
     final maxScroll = _controller.position.maxScrollExtent;
     final currentScroll = _controller.offset;
     return currentScroll >= (maxScroll * 0.9);
+  }
+}
+
+Future<void> _load(TodosCubit cubit, {TodosOrigin origin}) async {
+  try {
+    await cubit.load(origin: origin);
+  } catch (error) {
+    if (origin == TodosOrigin.refreshIndicator) return;
+    BotToast.showNotification(
+      crossPage: false,
+      title: (_) => Text(
+        '$error',
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: (Function close) => FlatButton(
+        onLongPress: () {}, // чтобы сократить время для splashColor
+        onPressed: () {
+          close();
+          _load(cubit, origin: origin);
+        },
+        child: Text('Repeat'.toUpperCase()),
+      ),
+    );
   }
 }
 
@@ -333,12 +353,10 @@ class _LoadNewButton extends StatelessWidget {
     return RaisedButton(
       shape: StadiumBorder(),
       color: theme.accentColor,
-      onPressed: (state.status == TodosStatus.loading)
+      onPressed: (state.status == TodosStatus.busy)
           ? null
           : () {
-              getBloc<TodosCubit>(context).load(
-                origin: TodosOrigin.loadNew,
-              );
+              _load(getBloc<TodosCubit>(context), origin: TodosOrigin.loadNew);
             },
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -429,7 +447,7 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.status == TodosStatus.loading &&
+    if (state.status == TodosStatus.busy &&
         state.origin == TodosOrigin.loadMore) {
       return Center(
         child: Padding(

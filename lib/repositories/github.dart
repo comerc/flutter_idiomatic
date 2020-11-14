@@ -69,8 +69,7 @@ GraphQLClient _getClient() {
     link = link.concat(websocketLink);
   }
   return GraphQLClient(
-    cache: null,
-    // cache: InMemoryCache(),
+    cache: InMemoryCache(),
     // cache: NormalizedInMemoryCache(
     //   dataIdFromObject: typenameDataIdFromObject,
     // ),

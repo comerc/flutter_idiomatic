@@ -33,13 +33,12 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(newId: id));
   }
 
-  Future load({TodosOrigin origin = TodosOrigin.start}) async {
+  Future<void> load({TodosOrigin origin}) async {
     const kLimit = 10;
-    if (state.status == TodosStatus.loading) return;
+    if (state.status == TodosStatus.busy) return;
     emit(state.copyWith(
-      status: TodosStatus.loading,
+      status: TodosStatus.busy,
       origin: origin,
-      loadingError: '',
     ));
     try {
       final items = await repository.readTodos(
@@ -63,8 +62,7 @@ class TodosCubit extends Cubit<TodosState> {
         nextDateTime: nextDateTime,
       ));
     } catch (error) {
-      emit(state.copyWith(loadingError: 'Can not load todos'));
-      return error;
+      return Future.error(error);
     } finally {
       emit(state.copyWith(
         status: TodosStatus.ready,
@@ -73,7 +71,7 @@ class TodosCubit extends Cubit<TodosState> {
     }
   }
 
-  Future remove(int id) async {
+  Future<void> remove(int id) async {
     emit(state.copyWith(
       items: [...state.items]..removeWhere((TodoModel item) => item.id == id),
     ));
@@ -83,15 +81,15 @@ class TodosCubit extends Cubit<TodosState> {
         throw Exception('Can not remove todo $id');
       }
     } catch (error) {
-      return error;
+      return Future.error(error);
     }
   }
 
-  Future add(String title) async {
+  Future<void> add(String title) async {
     final titleInput = TitleInputModel.dirty(title);
     final status = Formz.validate([titleInput]);
     if (status.isInvalid) {
-      return ValidationException(titleInput.error);
+      return Future.error(ValidationException(titleInput.error));
     }
     emit(state.copyWith(isSubmitMode: true));
     try {
@@ -100,14 +98,14 @@ class TodosCubit extends Cubit<TodosState> {
         items: [item, ...state.items],
       ));
     } catch (error) {
-      return error;
+      return Future.error(error);
     } finally {
       emit(state.copyWith(isSubmitMode: false));
     }
   }
 }
 
-enum TodosStatus { initial, loading, ready }
+enum TodosStatus { initial, busy, ready }
 enum TodosOrigin { initial, start, refreshIndicator, loadNew, loadMore }
 
 @CopyWith()
@@ -116,7 +114,6 @@ class TodosState extends Equatable {
     this.items = const [],
     this.status = TodosStatus.initial,
     this.origin = TodosOrigin.initial,
-    this.loadingError = '',
     this.hasMore = false,
     this.nextDateTime,
     this.newId,
@@ -126,7 +123,6 @@ class TodosState extends Equatable {
   final List<TodoModel> items;
   final TodosStatus status;
   final TodosOrigin origin;
-  final String loadingError;
   final DateTime nextDateTime;
   final bool hasMore;
   final int newId;
@@ -141,7 +137,6 @@ class TodosState extends Equatable {
         items,
         status,
         origin,
-        loadingError,
         hasMore,
         nextDateTime,
         newId,

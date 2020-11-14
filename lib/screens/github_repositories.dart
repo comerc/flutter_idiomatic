@@ -52,7 +52,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
           return Center(
               child: FloatingActionButton(
             onPressed: () {
-              _loadRepositories(
+              _load(
                 getBloc<GitHubRepositoriesCubit>(context),
               );
             },
@@ -77,7 +77,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
                         child: FlatButton(
                           shape: StadiumBorder(),
                           onPressed: () {
-                            _loadRepositories(
+                            _load(
                               getBloc<GitHubRepositoriesCubit>(context),
                             );
                           },
@@ -105,25 +105,27 @@ class GitHubRepositoriesBody extends StatelessWidget {
     );
   }
 
-  void _loadRepositories(GitHubRepositoriesCubit cubit) async {
-    final error = await cubit.load();
-    if (error == null) return;
-    BotToast.showNotification(
-      crossPage: false,
-      title: (_) => Text(
-        'Can not load repositories',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _loadRepositories(cubit);
-        },
-        child: Text('Repeat'.toUpperCase()),
-      ),
-    );
+  Future<void> _load(GitHubRepositoriesCubit cubit) async {
+    try {
+      await cubit.load();
+    } on Exception {
+      BotToast.showNotification(
+        crossPage: false,
+        title: (_) => Text(
+          'Can not load repositories',
+          overflow: TextOverflow.fade,
+          softWrap: false,
+        ),
+        trailing: (Function close) => FlatButton(
+          onLongPress: () {}, // чтобы сократить время для splashColor
+          onPressed: () {
+            close();
+            _load(cubit);
+          },
+          child: Text('Repeat'.toUpperCase()),
+        ),
+      );
+    }
   }
 }
 
@@ -160,28 +162,30 @@ class _Item extends StatelessWidget {
 
   Future<void> _toggleStar(GitHubRepositoriesCubit cubit) async {
     final value = !item.viewerHasStarred;
-    final error = await cubit.toggleStar(
-      id: item.id,
-      value: value,
-    );
-    if (error == null) return;
-    BotToast.showNotification(
-      title: (_) => Text(
-        value
-            ? 'Can not starred "${item.name}"'
-            : 'Can not unstarred "${item.name}"',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _toggleStar(cubit);
-        },
-        child: Text('Repeat'.toUpperCase()),
-      ),
-    );
+    try {
+      await cubit.toggleStar(
+        id: item.id,
+        value: value,
+      );
+    } on Exception {
+      BotToast.showNotification(
+        title: (_) => Text(
+          value
+              ? 'Can not starred "${item.name}"'
+              : 'Can not unstarred "${item.name}"',
+          overflow: TextOverflow.fade,
+          softWrap: false,
+        ),
+        trailing: (Function close) => FlatButton(
+          onLongPress: () {}, // чтобы сократить время для splashColor
+          onPressed: () {
+            close();
+            _toggleStar(cubit);
+          },
+          child: Text('Repeat'.toUpperCase()),
+        ),
+      );
+    }
   }
 }
 

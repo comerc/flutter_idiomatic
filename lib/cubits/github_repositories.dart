@@ -19,16 +19,16 @@ class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
     emit(GitHubRepositoriesState());
   }
 
-  Future load() async {
+  Future<void> load() async {
+    if (state.status == GitHubStatus.busy) return;
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
       final items = await repository.readRepositories();
       emit(state.copyWith(
         items: items,
-        status: GitHubStatus.ready,
       ));
     } catch (error) {
-      return error;
+      return Future.error(error);
     } finally {
       emit(state.copyWith(status: GitHubStatus.ready));
     }
@@ -45,7 +45,7 @@ class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
     return items;
   }
 
-  Future toggleStar({String id, bool value}) async {
+  Future<void> toggleStar({String id, bool value}) async {
     emit(state.copyWith(
       items: _updateStarLocally(id, value),
       loadingItems: {...state.loadingItems}..add(id),
@@ -56,7 +56,7 @@ class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
       emit(state.copyWith(
         items: _updateStarLocally(id, !value),
       ));
-      return error;
+      return Future.error(error);
     } finally {
       emit(state.copyWith(
         loadingItems: {...state.loadingItems}..remove(id),
