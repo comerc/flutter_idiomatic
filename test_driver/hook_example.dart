@@ -1,4 +1,5 @@
 import 'package:gherkin/gherkin.dart';
+import 'package:flutter_idiomatic/import.dart';
 
 class HookExample extends Hook {
   /// The priority to assign to this hook.
@@ -9,13 +10,13 @@ class HookExample extends Hook {
   /// Run before any scenario in a test run have executed
   @override
   Future<void> onBeforeRun(TestConfiguration config) async {
-    print('before run hook');
+    out('before run hook');
   }
 
   /// Run after all scenarios in a test run have completed
   @override
   Future<void> onAfterRun(TestConfiguration config) async {
-    print('after run hook');
+    out('after run hook');
   }
 
   /// Run before a scenario and it steps are executed
@@ -25,7 +26,7 @@ class HookExample extends Hook {
     String scenario,
     Iterable<Tag> tags,
   ) async {
-    print("running hook before scenario '$scenario'");
+    out("running hook before scenario '$scenario'");
   }
 
   /// Run after a scenario has executed
@@ -35,6 +36,6 @@ class HookExample extends Hook {
     String scenario,
     Iterable<Tag> tags,
   ) async {
-    print("running hook after scenario '$scenario'");
+    out("running hook after scenario '$scenario'");
   }
 }
