@@ -5,7 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "flutter_idiomatic",
+      "name": "Integration Tests: Launch App",
+      "request": "launch",
+      "type": "dart",
+      "program": "test_driver/app.dart",
+    },
+    {
+      "name": "Integration Tests: Launch Driver",
+      "request": "launch",
+      "type": "dart",
+      "program": "test_driver/main_test.dart",
+    },
+    {
+      "name": "Flutter",
       "request": "launch",
       "type": "dart"
     }
