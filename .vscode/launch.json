@@ -17,6 +17,12 @@
       "program": "test_driver/main_test.dart",
     },
     {
+      "name": "Dart: Run all Tests",
+      "type": "dart",
+      "request": "launch",
+      "program": "./test/"
+    },
+    {
       "name": "Flutter",
       "request": "launch",
       "type": "dart"
