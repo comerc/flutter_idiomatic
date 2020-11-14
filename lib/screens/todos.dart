@@ -1,6 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_idiomatic/import.dart';
 
@@ -15,7 +14,6 @@ class TodosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // timeDilation = 2.0; // Will slow down animations by a factor of two
     return Scaffold(
       appBar: AppBar(title: Text('Todos')),
       body: BlocProvider(
