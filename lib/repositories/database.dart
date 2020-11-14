@@ -103,7 +103,8 @@ GraphQLClient _getClient() {
   }
   // TODO: применение ValueNotifier и GraphQLProvider - для чего? изучить исходники
   return GraphQLClient(
-    cache: InMemoryCache(),
+    cache: null,
+    // cache: InMemoryCache(),
     // cache: NormalizedInMemoryCache(
     //   dataIdFromObject: typenameDataIdFromObject,
     // ),
