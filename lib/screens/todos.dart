@@ -270,6 +270,7 @@ class _TodosBodyState extends State<TodosBody> {
           softWrap: false,
         ),
       );
+      return;
     } on Exception {
       BotToast.showNotification(
         title: (_) => Text(
@@ -286,6 +287,7 @@ class _TodosBodyState extends State<TodosBody> {
           child: Text('Repeat'.toUpperCase()),
         ),
       );
+      return;
     }
     const kDuration = Duration(milliseconds: 300);
     // ignore: unawaited_futures
