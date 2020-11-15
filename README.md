@@ -2,6 +2,7 @@
 
 It is starter kit with idiomatic code structure :) BLoC & GraphQL CRUD. With Unit tests, Widget tests and Integration tests (Behavior Driven Development).
 
+- [Заметка на Хабре](https://habr.com/ru/post/528106/)
 - https://youtu.be/rViOUxsGs2k
 - https://youtu.be/FndheiFSvPY
 - https://youtu.be/zIdsacU_y-k
