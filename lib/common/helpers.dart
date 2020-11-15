@@ -11,11 +11,13 @@ void out(dynamic value) {
   if (kDebugMode) debugPrint('$value');
 }
 
-class ValidationException {
-  final String message;
-
+class ValidationException implements Exception {
   ValidationException(this.message);
 
+  final String message;
+
   @override
-  String toString() => message;
+  String toString() {
+    return message;
+  }
 }
