@@ -1,6 +1,6 @@
 # flutter_idiomatic
 
-It is starter kit with idiomatic code structure :) BLoC & GraphQL CRUD. With Unit tests, Widget tests and Integration tests (Behavior Driven Development).
+It is starter kit with idiomatic code structure :) Firebase Authentication & GraphQL CRUD via BLoC. With Unit tests, Widget tests and Integration tests as BDD.
 
 - [Заметка на Хабре](https://habr.com/ru/post/528106/)
 - https://youtu.be/rViOUxsGs2k
