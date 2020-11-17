@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:formz/formz.dart';
-import 'package:meta/meta.dart';
 
 enum ConfirmedPasswordInputValidationError { invalid }
 
