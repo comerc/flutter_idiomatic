@@ -39,6 +39,7 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(
       status: TodosStatus.busy,
       origin: origin,
+      // errorMessage: '',
     ));
     try {
       final items = await repository.readTodos(
@@ -61,8 +62,9 @@ class TodosCubit extends Cubit<TodosState> {
         hasMore: hasMore,
         nextDateTime: nextDateTime,
       ));
-    } catch (error) {
-      return Future.error(error);
+//  } catch (error) {
+//    // emit(state.copyWith(errorMessage: '$error'));
+//    return Future.error(error);
     } finally {
       emit(state.copyWith(
         status: TodosStatus.ready,
@@ -118,6 +120,7 @@ class TodosState extends Equatable {
     this.nextDateTime,
     this.newId,
     this.isSubmitMode = false,
+    // this.errorMessage = '',
   });
 
   final List<TodoModel> items;
@@ -127,6 +130,7 @@ class TodosState extends Equatable {
   final bool hasMore;
   final int newId;
   final bool isSubmitMode;
+  // final String errorMessage;
 
   bool get hasReallyNewId =>
       newId != null &&
@@ -141,5 +145,6 @@ class TodosState extends Equatable {
         nextDateTime,
         newId,
         isSubmitMode,
+        // errorMessage,
       ];
 }
