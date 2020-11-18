@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:formz/formz.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_idiomatic/import.dart';
@@ -33,7 +34,7 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(newId: id));
   }
 
-  Future<void> load({TodosOrigin origin}) async {
+  Future<void> load({@required TodosOrigin origin}) async {
     const kLimit = 10;
     if (state.status == TodosStatus.busy) return;
     emit(state.copyWith(
@@ -63,7 +64,7 @@ class TodosCubit extends Cubit<TodosState> {
         nextDateTime: nextDateTime,
       ));
 //  } catch (error) {
-//    // emit(state.copyWith(errorMessage: '$error'));
+//    emit(state.copyWith(errorMessage: '$error'));
 //    return Future.error(error);
     } finally {
       emit(state.copyWith(

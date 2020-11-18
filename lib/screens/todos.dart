@@ -39,7 +39,8 @@ class _TodosBodyState extends State<TodosBody> {
   @override
   void initState() {
     super.initState();
-    _load(getBloc<TodosCubit>(context), origin: TodosOrigin.start);
+    _load(getBloc<TodosCubit>(context),
+        origin: TodosOrigin.start, isFirstCall: true);
     _controller.addListener(_onScroll);
   }
 
@@ -318,7 +319,11 @@ class _TodosBodyState extends State<TodosBody> {
   }
 }
 
-Future<void> _load(TodosCubit cubit, {TodosOrigin origin}) async {
+Future<void> _load(TodosCubit cubit,
+    {TodosOrigin origin, bool isFirstCall = false}) async {
+  if (isFirstCall) {
+    await Future.delayed(Duration.zero);
+  }
   try {
     await cubit.load(origin: origin);
   } catch (error) {
