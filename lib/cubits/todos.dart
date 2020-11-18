@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:formz/formz.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:characters/characters.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_idiomatic/import.dart';
 
@@ -36,9 +37,9 @@ class TodosCubit extends Cubit<TodosState> {
 
   Future<void> load({@required TodosOrigin origin}) async {
     const kLimit = 10;
-    if (state.status == TodosStatus.busy) return;
+    if (state.status == TodosStatus.loading) return;
     emit(state.copyWith(
-      status: TodosStatus.busy,
+      status: TodosStatus.loading,
       origin: origin,
       // errorMessage: '',
     ));
@@ -88,27 +89,30 @@ class TodosCubit extends Cubit<TodosState> {
     }
   }
 
-  Future<void> add(String title) async {
-    final titleInput = TitleInputModel.dirty(title);
-    final status = Formz.validate([titleInput]);
-    if (status.isInvalid) {
-      return Future.error(ValidationException(titleInput.error));
+  Future<void> add(TodosData data) async {
+    // final titleInput = TitleInputModel.dirty(title);
+    // final status = Formz.validate([titleInput]);
+    // if (status.isInvalid) {
+    //   return Future.error(ValidationException(titleInput.error));
+    // }
+    // emit(state.copyWith(isSubmitMode: true));
+    // try {
+    if (data.title.characters.length < 4) {
+      throw ValidationException('Invalid input < 4 characters');
     }
-    emit(state.copyWith(isSubmitMode: true));
-    try {
-      final item = await repository.createTodo(titleInput.value);
-      emit(state.copyWith(
-        items: [item, ...state.items],
-      ));
-    } catch (error) {
-      return Future.error(error);
-    } finally {
-      emit(state.copyWith(isSubmitMode: false));
-    }
+    final item = await repository.createTodo(data);
+    emit(state.copyWith(
+      items: [item, ...state.items],
+    ));
+    // } catch (error) {
+    //   return Future.error(error);
+    // } finally {
+    //   emit(state.copyWith(isSubmitMode: false));
+    // }
   }
 }
 
-enum TodosStatus { initial, busy, ready }
+enum TodosStatus { initial, loading, ready }
 enum TodosOrigin { initial, start, refreshIndicator, loadNew, loadMore }
 
 @CopyWith()
@@ -120,7 +124,7 @@ class TodosState extends Equatable {
     this.hasMore = false,
     this.nextDateTime,
     this.newId,
-    this.isSubmitMode = false,
+    // this.isSubmitMode = false,
     // this.errorMessage = '',
   });
 
@@ -130,7 +134,7 @@ class TodosState extends Equatable {
   final DateTime nextDateTime;
   final bool hasMore;
   final int newId;
-  final bool isSubmitMode;
+  // final bool isSubmitMode;
   // final String errorMessage;
 
   bool get hasReallyNewId =>
@@ -145,7 +149,16 @@ class TodosState extends Equatable {
         hasMore,
         nextDateTime,
         newId,
-        isSubmitMode,
+        // isSubmitMode,
         // errorMessage,
       ];
+}
+
+@JsonSerializable(createFactory: false)
+class TodosData {
+  TodosData({this.title});
+
+  final String title;
+
+  Map<String, dynamic> toJson() => _$TodosDataToJson(this);
 }

@@ -14,7 +14,6 @@ export 'models/confirmed_password_input.dart';
 export 'models/email_input.dart';
 export 'models/password_input.dart';
 export 'models/repository.dart';
-export 'models/title_input.dart';
 export 'models/todo.dart';
 export 'models/user.dart';
 export 'repositories/authentication.dart';

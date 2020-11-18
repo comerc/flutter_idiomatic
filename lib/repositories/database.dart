@@ -60,10 +60,10 @@ class DatabaseRepository {
     return mutationResult.data['delete_todos_by_pk']['id'] as int;
   }
 
-  Future<TodoModel> createTodo(String title) async {
+  Future<TodoModel> createTodo(TodosData data) async {
     final options = MutationOptions(
       documentNode: _API.createTodo,
-      variables: {'title': title},
+      variables: data.toJson(),
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );

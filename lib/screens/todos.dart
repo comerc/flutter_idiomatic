@@ -31,7 +31,7 @@ class TodosBody extends StatefulWidget {
 }
 
 class _TodosBodyState extends State<TodosBody> {
-  final _inputKey = GlobalKey<_InputState>();
+  final _inputKey = GlobalKey<FormFieldState<String>>();
   final _listKey = GlobalKey<AnimatedListState>();
   final _controller = ScrollController();
   int _loadMoreItemsLength = 0;
@@ -40,7 +40,7 @@ class _TodosBodyState extends State<TodosBody> {
   void initState() {
     super.initState();
     _load(getBloc<TodosCubit>(context),
-        origin: TodosOrigin.start, isFirstCall: true);
+        origin: TodosOrigin.start, isFirstTime: true);
     _controller.addListener(_onScroll);
   }
 
@@ -79,23 +79,23 @@ class _TodosBodyState extends State<TodosBody> {
         //     );
         //   },
         // ),
+        // BlocListener<TodosCubit, TodosState>(
+        //   listenWhen: (TodosState previous, TodosState current) {
+        //     return previous.isSubmitMode != current.isSubmitMode;
+        //   },
+        //   listener: (BuildContext context, TodosState state) {
+        //     if (state.isSubmitMode) {
+        //       BotToast.showLoading();
+        //     } else {
+        //       BotToast.closeAllLoading();
+        //     }
+        //   },
+        // ),
         BlocListener<TodosCubit, TodosState>(
           listenWhen: (TodosState previous, TodosState current) {
-            return previous.isSubmitMode != current.isSubmitMode;
-          },
-          listener: (BuildContext context, TodosState state) {
-            if (state.isSubmitMode) {
-              BotToast.showLoading();
-            } else {
-              BotToast.closeAllLoading();
-            }
-          },
-        ),
-        BlocListener<TodosCubit, TodosState>(
-          listenWhen: (TodosState previous, TodosState current) {
-            if (current.isSubmitMode) {
-              return false;
-            }
+            // if (current.isSubmitMode) {
+            //   return false;
+            // }
             if (current.origin == TodosOrigin.loadMore &&
                 previous.items.length < current.items.length) {
               _loadMoreItemsLength =
@@ -127,12 +127,25 @@ class _TodosBodyState extends State<TodosBody> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(8),
-                      child: _Input(
+                      child: TextFormField(
                         key: _inputKey,
-                        onSubmitted: (String value) {
-                          _add(getBloc<TodosCubit>(context), title: value);
+                        decoration: InputDecoration(
+                          labelText: 'Add new Todo',
+                          // helperText: '',
+                          // errorText: null,
+                        ),
+                        onFieldSubmitted: (String value) {
+                          final data = TodosData(title: value.trim());
+                          _add(getBloc<TodosCubit>(context), data);
                         },
                       ),
+                      // child: _Input(
+                      //   key: _inputKey,
+                      //   onSubmitted: (String value) {
+                      //     final data = TodosData(title: value.trim());
+                      //     _add(getBloc<TodosCubit>(context), data);
+                      //   },
+                      // ),
                     ),
                     Divider(height: 1),
                     if (state.status == TodosStatus.initial)
@@ -224,7 +237,8 @@ class _TodosBodyState extends State<TodosBody> {
               },
               animation: animation,
               child: ListTile(
-                title: Text('$index of ${state.items.length} - ${item.title}'),
+                title: Text(
+                    '${index + 1} of ${state.items.length} - ${item.title}'),
               ),
               // _Item(
               //   item: item,
@@ -260,9 +274,10 @@ class _TodosBodyState extends State<TodosBody> {
     }
   }
 
-  Future<void> _add(TodosCubit cubit, {String title}) async {
+  Future<void> _add(TodosCubit cubit, TodosData data) async {
+    BotToast.showLoading();
     try {
-      await cubit.add(title);
+      await cubit.add(data);
     } on ValidationException catch (error) {
       BotToast.showNotification(
         title: (_) => Text(
@@ -275,7 +290,7 @@ class _TodosBodyState extends State<TodosBody> {
     } on Exception {
       BotToast.showNotification(
         title: (_) => Text(
-          'Can not add todo "$title"',
+          'Can not add todo "${data.title}"',
           overflow: TextOverflow.fade,
           softWrap: false,
         ),
@@ -283,12 +298,14 @@ class _TodosBodyState extends State<TodosBody> {
           onLongPress: () {}, // чтобы сократить время для splashColor
           onPressed: () {
             close();
-            _add(cubit, title: title);
+            _add(cubit, data);
           },
           child: Text('Repeat'.toUpperCase()),
         ),
       );
       return;
+    } finally {
+      BotToast.closeAllLoading();
     }
     const kDuration = Duration(milliseconds: 300);
     // ignore: unawaited_futures
@@ -299,7 +316,8 @@ class _TodosBodyState extends State<TodosBody> {
     );
     // ignore: avoid_redundant_argument_values
     _listKey.currentState?.insertItem(0, duration: kDuration);
-    _inputKey.currentState?.controller?.clear();
+    _inputKey.currentState?.reset();
+    // _inputKey.currentState?.controller?.clear();
   }
 
   void _onScroll() {
@@ -320,8 +338,8 @@ class _TodosBodyState extends State<TodosBody> {
 }
 
 Future<void> _load(TodosCubit cubit,
-    {TodosOrigin origin, bool isFirstCall = false}) async {
-  if (isFirstCall) {
+    {TodosOrigin origin, bool isFirstTime = false}) async {
+  if (isFirstTime) {
     await Future.delayed(Duration.zero);
   }
   try {
@@ -360,7 +378,7 @@ class _LoadNewButton extends StatelessWidget {
     return RaisedButton(
       shape: StadiumBorder(),
       color: theme.accentColor,
-      onPressed: (state.status == TodosStatus.busy)
+      onPressed: (state.status == TodosStatus.loading)
           ? null
           : () {
               _load(getBloc<TodosCubit>(context), origin: TodosOrigin.loadNew);
@@ -391,40 +409,40 @@ class _LoadNewButton extends StatelessWidget {
   }
 }
 
-class _Input extends StatefulWidget {
-  _Input({
-    Key key,
-    this.onSubmitted,
-  }) : super(key: key);
+// class _Input extends StatefulWidget {
+//   _Input({
+//     Key key,
+//     this.onSubmitted,
+//   }) : super(key: key);
 
-  final ValueChanged<String> onSubmitted;
+//   final ValueChanged<String> onSubmitted;
 
-  @override
-  _InputState createState() => _InputState();
-}
+//   @override
+//   _InputState createState() => _InputState();
+// }
 
-class _InputState extends State<_Input> {
-  final controller = TextEditingController();
+// class _InputState extends State<_Input> {
+//   final controller = TextEditingController();
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     controller.dispose();
+//     super.dispose();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: 'Add new Todo',
-        // helperText: '',
-        // errorText: null,
-      ),
-      onSubmitted: widget.onSubmitted,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return TextField(
+//       controller: controller,
+//       decoration: InputDecoration(
+//         labelText: 'Add new Todo',
+//         // helperText: '',
+//         // errorText: null,
+//       ),
+//       onSubmitted: widget.onSubmitted,
+//     );
+//   }
+// }
 
 // class _Item extends StatelessWidget {
 //   _Item({
@@ -454,7 +472,7 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.status == TodosStatus.busy &&
+    if (state.status == TodosStatus.loading &&
         state.origin == TodosOrigin.loadMore) {
       return Center(
         child: Padding(
