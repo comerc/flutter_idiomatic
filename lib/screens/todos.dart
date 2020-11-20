@@ -39,8 +39,7 @@ class _TodosBodyState extends State<TodosBody> {
   @override
   void initState() {
     super.initState();
-    _load(getBloc<TodosCubit>(context),
-        origin: TodosOrigin.start, isFirstTime: true);
+    load(() => getBloc<TodosCubit>(context).load(origin: TodosOrigin.start));
     _controller.addListener(_onScroll);
   }
 
@@ -121,8 +120,8 @@ class _TodosBodyState extends State<TodosBody> {
           return Stack(
             children: <Widget>[
               RefreshIndicator(
-                onRefresh: () => _load(getBloc<TodosCubit>(context),
-                    origin: TodosOrigin.refreshIndicator),
+                onRefresh: () => load(() => getBloc<TodosCubit>(context)
+                    .load(origin: TodosOrigin.refreshIndicator)),
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -196,7 +195,8 @@ class _TodosBodyState extends State<TodosBody> {
         return _Footer(
           state: state,
           onPressed: () {
-            _load(getBloc<TodosCubit>(context), origin: TodosOrigin.loadMore);
+            load(() => getBloc<TodosCubit>(context)
+                .load(origin: TodosOrigin.loadMore));
           },
         );
       }
@@ -324,7 +324,7 @@ class _TodosBodyState extends State<TodosBody> {
     if (_isBottom) {
       final cubit = getBloc<TodosCubit>(context);
       if (cubit.state.hasMore) {
-        _load(cubit, origin: TodosOrigin.loadMore);
+        load(() => cubit.load(origin: TodosOrigin.loadMore));
       }
     }
   }
@@ -334,34 +334,6 @@ class _TodosBodyState extends State<TodosBody> {
     final maxScroll = _controller.position.maxScrollExtent;
     final currentScroll = _controller.offset;
     return currentScroll >= (maxScroll * 0.9);
-  }
-}
-
-Future<void> _load(TodosCubit cubit,
-    {TodosOrigin origin, bool isFirstTime = false}) async {
-  if (isFirstTime) {
-    await Future.delayed(Duration.zero);
-  }
-  try {
-    await cubit.load(origin: origin);
-  } catch (error) {
-    if (origin == TodosOrigin.refreshIndicator) return;
-    BotToast.showNotification(
-      crossPage: false,
-      title: (_) => Text(
-        '$error',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: (Function close) => FlatButton(
-        onLongPress: () {}, // чтобы сократить время для splashColor
-        onPressed: () {
-          close();
-          _load(cubit, origin: origin);
-        },
-        child: Text('Repeat'.toUpperCase()),
-      ),
-    );
   }
 }
 
@@ -381,7 +353,8 @@ class _LoadNewButton extends StatelessWidget {
       onPressed: (state.status == TodosStatus.loading)
           ? null
           : () {
-              _load(getBloc<TodosCubit>(context), origin: TodosOrigin.loadNew);
+              load(() => getBloc<TodosCubit>(context)
+                  .load(origin: TodosOrigin.loadNew));
             },
       child: Row(
         mainAxisSize: MainAxisSize.min,

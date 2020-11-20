@@ -52,9 +52,7 @@ class GitHubRepositoriesBody extends StatelessWidget {
           return Center(
               child: FloatingActionButton(
             onPressed: () {
-              _load(
-                getBloc<GitHubRepositoriesCubit>(context),
-              );
+              load(() => getBloc<GitHubRepositoriesCubit>(context).load());
             },
             child: Icon(Icons.replay),
           ));
@@ -77,9 +75,8 @@ class GitHubRepositoriesBody extends StatelessWidget {
                         child: FlatButton(
                           shape: StadiumBorder(),
                           onPressed: () {
-                            _load(
-                              getBloc<GitHubRepositoriesCubit>(context),
-                            );
+                            load(() => getBloc<GitHubRepositoriesCubit>(context)
+                                .load());
                           },
                           child: Text(
                             'Refresh'.toUpperCase(),
@@ -103,29 +100,6 @@ class GitHubRepositoriesBody extends StatelessWidget {
         );
       },
     );
-  }
-
-  Future<void> _load(GitHubRepositoriesCubit cubit) async {
-    try {
-      await cubit.load();
-    } on Exception {
-      BotToast.showNotification(
-        crossPage: false,
-        title: (_) => Text(
-          'Can not load repositories',
-          overflow: TextOverflow.fade,
-          softWrap: false,
-        ),
-        trailing: (Function close) => FlatButton(
-          onLongPress: () {}, // чтобы сократить время для splashColor
-          onPressed: () {
-            close();
-            _load(cubit);
-          },
-          child: Text('Repeat'.toUpperCase()),
-        ),
-      );
-    }
   }
 }
 
