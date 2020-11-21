@@ -80,7 +80,7 @@ class App extends StatelessWidget {
   }
 }
 
-final navigatorKey = GlobalKey<NavigatorState>(); // видимость нужна для тестов
+final navigatorKey = GlobalKey<NavigatorState>();
 
 NavigatorState get navigator => navigatorKey.currentState;
 
