@@ -80,7 +80,7 @@ class App extends StatelessWidget {
   }
 }
 
-final navigatorKey = GlobalKey<NavigatorState>();
+final navigatorKey = GlobalKey<NavigatorState>(); // видимость нужна для тестов
 
 NavigatorState get navigator => navigatorKey.currentState;
 
@@ -96,7 +96,6 @@ class AppView extends StatelessWidget {
       // home: TodosScreen(),
       builder: (BuildContext context, Widget child) {
         var result = child;
-        result = BotToastInit()(context, result);
         result = BlocListener<AuthenticationCubit, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
             final cases = {
@@ -119,6 +118,7 @@ class AppView extends StatelessWidget {
           },
           child: result,
         );
+        result = BotToastInit()(context, result);
         return result;
       },
       onGenerateRoute: (_) => SplashScreen().getRoute(),
