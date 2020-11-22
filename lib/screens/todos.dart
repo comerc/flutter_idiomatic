@@ -135,14 +135,14 @@ class _TodosBodyState extends State<TodosBody> {
                         ),
                         onFieldSubmitted: (String value) {
                           final data = TodosData(title: value.trim());
-                          _add(getBloc<TodosCubit>(context), data);
+                          _add(() => getBloc<TodosCubit>(context).add(data));
                         },
                       ),
                       // child: _Input(
                       //   key: _inputKey,
                       //   onSubmitted: (String value) {
                       //     final data = TodosData(title: value.trim());
-                      //     _add(getBloc<TodosCubit>(context), data);
+                      //     _save(() => getBloc<TodosCubit>(context).add(data));
                       //   },
                       // ),
                     ),
@@ -274,50 +274,21 @@ class _TodosBodyState extends State<TodosBody> {
     }
   }
 
-  Future<void> _add(TodosCubit cubit, TodosData data) async {
-    BotToast.showLoading();
-    try {
-      await cubit.add(data);
-    } on ValidationException catch (error) {
-      BotToast.showNotification(
-        title: (_) => Text(
-          '$error',
-          overflow: TextOverflow.fade,
-          softWrap: false,
-        ),
+  void _add(Future<void> Function() future) {
+    save(() async {
+      await future();
+      const kDuration = Duration(milliseconds: 300);
+      // ignore: unawaited_futures
+      _controller.animateTo(
+        0,
+        duration: kDuration,
+        curve: Curves.easeOut,
       );
-      return;
-    } on Exception {
-      BotToast.showNotification(
-        title: (_) => Text(
-          'Can not add todo "${data.title}"',
-          overflow: TextOverflow.fade,
-          softWrap: false,
-        ),
-        trailing: (Function close) => FlatButton(
-          onLongPress: () {}, // чтобы сократить время для splashColor
-          onPressed: () {
-            close();
-            _add(cubit, data);
-          },
-          child: Text('Repeat'.toUpperCase()),
-        ),
-      );
-      return;
-    } finally {
-      BotToast.closeAllLoading();
-    }
-    const kDuration = Duration(milliseconds: 300);
-    // ignore: unawaited_futures
-    _controller.animateTo(
-      0,
-      duration: kDuration,
-      curve: Curves.easeOut,
-    );
-    // ignore: avoid_redundant_argument_values
-    _listKey.currentState?.insertItem(0, duration: kDuration);
-    _inputKey.currentState?.reset();
-    // _inputKey.currentState?.controller?.clear();
+      // ignore: avoid_redundant_argument_values
+      _listKey.currentState?.insertItem(0, duration: kDuration);
+      _inputKey.currentState?.reset();
+      // _inputKey.currentState?.controller?.clear();
+    });
   }
 
   void _onScroll() {
