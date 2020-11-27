@@ -29,11 +29,7 @@ Future<void> load(Future<void> Function() future) async {
   } catch (error) {
     BotToast.showNotification(
       crossPage: false,
-      title: (_) => Text(
-        '$error',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
+      title: (_) => Text('$error'),
       trailing: (Function close) => FlatButton(
         onLongPress: () {}, // чтобы сократить время для splashColor
         onPressed: () {
@@ -54,21 +50,13 @@ Future<void> save(Future<void> Function() future) async {
   } on ValidationException catch (error) {
     BotToast.showNotification(
       crossPage: false,
-      title: (_) => Text(
-        '$error',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
+      title: (_) => Text('$error'),
     );
     return Future.error(error);
   } catch (error) {
     BotToast.showNotification(
       // crossPage: true, // !!!!
-      title: (_) => Text(
-        '$error',
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
+      title: (_) => Text('$error'),
       trailing: (Function close) => FlatButton(
         onLongPress: () {}, // чтобы сократить время для splashColor
         onPressed: () {

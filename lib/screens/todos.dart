@@ -61,9 +61,7 @@ class _TodosBodyState extends State<TodosBody> {
         //   listener: (BuildContext context, TodosState state) {
         //     BotToast.showNotification(
         //       title: (_) => Text(
-        //         state.errorMessage,
-        //         overflow: TextOverflow.fade,
-        //         softWrap: false,
+        //         state.errorMessage
         //       ),
         //       trailing: (Function close) => FlatButton(
         //         onLongPress: () {}, // чтобы сократить время для splashColor
@@ -257,11 +255,7 @@ class _TodosBodyState extends State<TodosBody> {
     } on Exception {
       // TODO: undo https://stackoverflow.com/questions/53175605/flutter-dismissible-undo-animation-using-animatedlist
       BotToast.showNotification(
-        title: (_) => Text(
-          'Can not remove todo $id',
-          overflow: TextOverflow.fade,
-          softWrap: false,
-        ),
+        title: (_) => Text('Can not remove todo $id'),
         trailing: (Function close) => FlatButton(
           onLongPress: () {}, // чтобы сократить время для splashColor
           onPressed: () {
