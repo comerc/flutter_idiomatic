@@ -116,7 +116,6 @@ class _PasswordInput extends StatelessWidget {
 class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // print(runtimeType);
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (LoginState previous, LoginState current) =>
           previous.status != current.status,
