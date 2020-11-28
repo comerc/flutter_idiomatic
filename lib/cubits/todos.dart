@@ -10,14 +10,15 @@ import 'package:flutter_idiomatic/import.dart';
 part 'todos.g.dart';
 
 class TodosCubit extends Cubit<TodosState> {
-  TodosCubit(this.repository)
+  TodosCubit(DatabaseRepository repository)
       : assert(repository != null),
+        _repository = repository,
         super(TodosState()) {
     _fetchNewNotificationSubscription =
         repository.fetchNewTodoNotification.listen(fetchNewNotification);
   }
 
-  final DatabaseRepository repository;
+  final DatabaseRepository _repository;
   StreamSubscription<int> _fetchNewNotificationSubscription;
   bool _isStartedSubscription = false;
 
@@ -44,7 +45,7 @@ class TodosCubit extends Cubit<TodosState> {
       // errorMessage: '',
     ));
     try {
-      final items = await repository.readTodos(
+      final items = await _repository.readTodos(
         createdAt: origin == TodosOrigin.loadMore ? state.nextDateTime : null,
         limit: kLimit + 1,
       );
@@ -80,7 +81,7 @@ class TodosCubit extends Cubit<TodosState> {
       items: [...state.items]..removeWhere((TodoModel item) => item.id == id),
     ));
     try {
-      final deletedId = await repository.deleteTodo(id);
+      final deletedId = await _repository.deleteTodo(id);
       if (deletedId != id) {
         throw Exception('Can not remove todo $id');
       }
@@ -100,7 +101,7 @@ class TodosCubit extends Cubit<TodosState> {
     if (data.title.characters.length < 4) {
       throw ValidationException('Invalid input < 4 characters');
     }
-    final item = await repository.createTodo(data);
+    final item = await _repository.createTodo(data);
     emit(state.copyWith(
       items: [item, ...state.items],
     ));

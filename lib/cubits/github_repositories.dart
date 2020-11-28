@@ -9,11 +9,12 @@ part 'github_repositories.g.dart';
 
 class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
     with ReplayCubitMixin {
-  GitHubRepositoriesCubit(this.repository)
+  GitHubRepositoriesCubit(GitHubRepository repository)
       : assert(repository != null),
+        _repository = repository,
         super(GitHubRepositoriesState());
 
-  final GitHubRepository repository;
+  final GitHubRepository _repository;
 
   Future<void> reset() async {
     emit(GitHubRepositoriesState());
@@ -23,7 +24,7 @@ class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
     if (state.status == GitHubStatus.busy) return;
     emit(state.copyWith(status: GitHubStatus.busy));
     try {
-      final items = await repository.readRepositories();
+      final items = await _repository.readRepositories();
       emit(state.copyWith(
         items: items,
       ));
@@ -51,7 +52,7 @@ class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
       loadingItems: {...state.loadingItems}..add(id),
     ));
     try {
-      await repository.toggleStar(id: id, value: value);
+      await _repository.toggleStar(id: id, value: value);
     } catch (error) {
       emit(state.copyWith(
         items: _updateStarLocally(id, !value),

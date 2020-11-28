@@ -7,11 +7,12 @@ import 'package:flutter_idiomatic/import.dart';
 part 'sign_up.g.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit(this.repository)
+  SignUpCubit(AuthenticationRepository repository)
       : assert(repository != null),
+        _repository = repository,
         super(SignUpState());
 
-  final AuthenticationRepository repository;
+  final AuthenticationRepository _repository;
 
   void doEmailChanged(String value) {
     final emailInput = EmailInputModel.dirty(value);
@@ -61,7 +62,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await repository.signUp(
+      await _repository.signUp(
         email: state.emailInput.value,
         password: state.passwordInput.value,
       );
