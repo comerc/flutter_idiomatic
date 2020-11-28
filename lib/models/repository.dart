@@ -20,7 +20,7 @@ class RepositoryModel extends Equatable {
   @override
   List<Object> get props => [id, name, viewerHasStarred];
 
-  factory RepositoryModel.fromJson(Map<String, dynamic> json) =>
+  static RepositoryModel fromJson(Map<String, dynamic> json) =>
       _$RepositoryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RepositoryModelToJson(this);

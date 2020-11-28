@@ -20,7 +20,7 @@ class TodoModel extends Equatable {
   @override
   List<Object> get props => [id, title, createdAt];
 
-  factory TodoModel.fromJson(Map<String, dynamic> json) =>
+  static TodoModel fromJson(Map<String, dynamic> json) =>
       _$TodoModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TodoModelToJson(this);
