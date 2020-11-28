@@ -5,50 +5,36 @@ const _kEnableWebsockets = false;
 const _kRepositoriesLimit = 8;
 
 class GitHubRepository {
-  GitHubRepository({GraphQLClient client}) : _client = client ?? _getClient();
+  GitHubRepository({
+    GraphQLService service,
+  }) : _service = service ??
+            GraphQLService(
+              client: _createClient(),
+              timeout: kGraphQLTimeoutDuration,
+            );
 
-  final GraphQLClient _client;
+  final GraphQLService _service;
 
   Future<List<RepositoryModel>> readRepositories() async {
-    final options = QueryOptions(
+    return _service.query<RepositoryModel>(
       documentNode: _API.readRepositories,
       variables: {'nRepositories': _kRepositoriesLimit},
-      fetchPolicy: FetchPolicy.noCache,
-      errorPolicy: ErrorPolicy.all,
+      toRoot: (dynamic rawJson) => rawJson['viewer']['repositories']['nodes'],
+      convert: RepositoryModel.fromJson,
     );
-    final queryResult =
-        await _client.query(options).timeout(kGraphQLTimeoutDuration);
-    if (queryResult.hasException) {
-      throw queryResult.exception;
-    }
-    final dataItems =
-        (queryResult.data['viewer']['repositories']['nodes'] as List)
-            .cast<Map<String, dynamic>>();
-    final items = <RepositoryModel>[];
-    for (final dataItem in dataItems) {
-      items.add(RepositoryModel.fromJson(dataItem));
-    }
-    return items;
   }
 
   Future<bool> toggleStar({String id, bool value}) async {
-    final options = MutationOptions(
+    return _service.mutate<bool>(
       documentNode: value ? _API.addStar : _API.removeStar,
       variables: {'starrableId': id},
-      fetchPolicy: FetchPolicy.noCache,
-      errorPolicy: ErrorPolicy.all,
+      toRoot: (dynamic rawJson) => rawJson['action']['starrable'],
+      convert: (Map<String, dynamic> json) => json['viewerHasStarred'] as bool,
     );
-    final mutationResult =
-        await _client.mutate(options).timeout(kGraphQLTimeoutDuration);
-    if (mutationResult.hasException) {
-      throw mutationResult.exception;
-    }
-    return mutationResult.data['action']['starrable']['viewerHasStarred']
-        as bool;
   }
 }
 
-GraphQLClient _getClient() {
+GraphQLClient _createClient() {
   final httpLink = HttpLink(
     uri: 'https://api.github.com/graphql',
   );

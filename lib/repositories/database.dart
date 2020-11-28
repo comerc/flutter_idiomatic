@@ -4,81 +4,58 @@ import 'package:flutter_idiomatic/import.dart';
 const _kEnableWebsockets = true;
 
 class DatabaseRepository {
-  DatabaseRepository({GraphQLClient client}) : _client = client ?? _getClient();
+  DatabaseRepository({
+    GraphQLService service,
+  }) : _service = service ??
+            GraphQLService(
+              client: _createClient(),
+              timeout: kGraphQLTimeoutDuration,
+            );
 
-  final GraphQLClient _client;
+  final GraphQLService _service;
 
   Future<List<TodoModel>> readTodos({DateTime createdAt, int limit}) async {
-    final options = QueryOptions(
+    return _service.query<TodoModel>(
       documentNode: _API.readTodos,
       variables: {
         'user_id': kDatabaseUserId,
         'created_at': (createdAt ?? DateTime.now().toUtc()).toIso8601String(),
         'limit': limit,
       },
-      fetchPolicy: FetchPolicy.noCache,
-      errorPolicy: ErrorPolicy.all,
+      root: 'todos',
+      convert: TodoModel.fromJson,
     );
-    final queryResult =
-        await _client.query(options).timeout(kGraphQLTimeoutDuration);
-    if (queryResult.hasException) {
-      throw queryResult.exception;
-    }
-    final dataItems =
-        (queryResult.data['todos'] as List).cast<Map<String, dynamic>>();
-    final items = <TodoModel>[];
-    for (final dataItem in dataItems) {
-      items.add(TodoModel.fromJson(dataItem));
-    }
-    return items;
   }
 
   Stream<int> get fetchNewTodoNotification {
-    final operation = Operation(
+    return _service.subscribe<int>(
       documentNode: _API.fetchNewTodoNotification,
       variables: {'user_id': kDatabaseUserId},
-      // extensions: null,
-      // operationName: 'FetchNewTodoNotification',
+      toRoot: (dynamic rawJson) => rawJson['todos'][0],
+      convert: (Map<String, dynamic> json) => json['id'] as int,
     );
-    return _client.subscribe(operation).map((FetchResult fetchResult) {
-      return fetchResult.data['todos'][0]['id'] as int;
-    });
   }
 
   Future<int> deleteTodo(int id) async {
-    final options = MutationOptions(
+    return _service.mutate<int>(
       documentNode: _API.deleteTodo,
       variables: {'id': id},
-      fetchPolicy: FetchPolicy.noCache,
-      errorPolicy: ErrorPolicy.all,
+      root: 'delete_todos_by_pk',
+      convert: (Map<String, dynamic> json) => json['id'] as int,
     );
-    final mutationResult =
-        await _client.mutate(options).timeout(kGraphQLTimeoutDuration);
-    if (mutationResult.hasException) {
-      throw mutationResult.exception;
-    }
-    return mutationResult.data['delete_todos_by_pk']['id'] as int;
   }
 
   Future<TodoModel> createTodo(TodosData data) async {
-    final options = MutationOptions(
+    return _service.mutate<TodoModel>(
       documentNode: _API.createTodo,
       variables: data.toJson(),
-      fetchPolicy: FetchPolicy.noCache,
-      errorPolicy: ErrorPolicy.all,
+      root: 'insert_todos_one',
+      convert: TodoModel.fromJson,
     );
-    final mutationResult =
-        await _client.mutate(options).timeout(kGraphQLTimeoutDuration);
-    if (mutationResult.hasException) {
-      throw mutationResult.exception;
-    }
-    final dataItem =
-        mutationResult.data['insert_todos_one'] as Map<String, dynamic>;
-    return TodoModel.fromJson(dataItem);
   }
 }
 
-GraphQLClient _getClient() {
+GraphQLClient _createClient() {
   final httpLink = HttpLink(
     uri: 'https://hasura.io/learn/graphql',
   );

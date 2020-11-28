@@ -1,4 +1,5 @@
 export 'common/const.dart';
+export 'common/graphql_service.dart';
 export 'common/helpers.dart';
 export 'common/route.dart';
 export 'common/simple_bloc_observer.dart';
