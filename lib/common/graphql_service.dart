@@ -14,13 +14,12 @@ class GraphQLService {
     DocumentNode documentNode,
     Map<String, dynamic> variables,
     String root,
-    dynamic Function(dynamic json) toRoot,
+    dynamic Function(dynamic rawJson) toRoot,
     T Function(Map<String, dynamic> json) convert,
   }) async {
     final hasRoot = root != null && root.isNotEmpty;
     final hasToRoot = toRoot != null;
-    assert((hasRoot || hasToRoot) && !(hasRoot && hasToRoot),
-        'Assign "root" or "toRoot"');
+    assert(!(hasRoot && hasToRoot), 'Assign "root" or "toRoot" or nothing');
     final options = QueryOptions(
       documentNode: documentNode,
       variables: variables,
@@ -31,7 +30,11 @@ class GraphQLService {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    final rawJson = hasRoot ? queryResult.data[root] : toRoot(queryResult.data);
+    final rawJson = hasRoot
+        ? queryResult.data[root]
+        : hasToRoot
+            ? toRoot(queryResult.data)
+            : queryResult.data;
     final jsons = (rawJson as List).cast<Map<String, dynamic>>();
     final result = <T>[];
     for (final json in jsons) {
@@ -44,13 +47,12 @@ class GraphQLService {
     DocumentNode documentNode,
     Map<String, dynamic> variables,
     String root,
-    dynamic Function(dynamic json) toRoot,
+    dynamic Function(dynamic rawJson) toRoot,
     T Function(Map<String, dynamic> json) convert,
   }) async {
     final hasRoot = root != null && root.isNotEmpty;
     final hasToRoot = toRoot != null;
-    assert((hasRoot || hasToRoot) && !(hasRoot && hasToRoot),
-        'Assign "root" or "toRoot"');
+    assert(!(hasRoot && hasToRoot), 'Assign "root" or "toRoot" or nothing');
     final options = MutationOptions(
       documentNode: documentNode,
       variables: variables,
@@ -61,8 +63,11 @@ class GraphQLService {
     if (mutationResult.hasException) {
       throw mutationResult.exception;
     }
-    final rawJson =
-        hasRoot ? mutationResult.data[root] : toRoot(mutationResult.data);
+    final rawJson = hasRoot
+        ? mutationResult.data[root]
+        : hasToRoot
+            ? toRoot(mutationResult.data)
+            : mutationResult.data;
     final json = rawJson as Map<String, dynamic>;
     return convert(json);
   }
@@ -71,13 +76,12 @@ class GraphQLService {
     DocumentNode documentNode,
     Map<String, dynamic> variables,
     String root,
-    dynamic Function(dynamic json) toRoot,
+    dynamic Function(dynamic rawJson) toRoot,
     T Function(Map<String, dynamic> json) convert,
   }) {
     final hasRoot = root != null && root.isNotEmpty;
     final hasToRoot = toRoot != null;
-    assert((hasRoot || hasToRoot) && !(hasRoot && hasToRoot),
-        'Assign "root" or "toRoot"');
+    assert(!(hasRoot && hasToRoot), 'Assign "root" or "toRoot" or nothing');
     final operation = Operation(
       documentNode: documentNode,
       variables: variables,
@@ -85,8 +89,11 @@ class GraphQLService {
       // operationName: '',
     );
     return _client.subscribe(operation).map((FetchResult fetchResult) {
-      final rawJson =
-          hasRoot ? fetchResult.data[root] : toRoot(fetchResult.data);
+      final rawJson = hasRoot
+          ? fetchResult.data[root]
+          : hasToRoot
+              ? toRoot(fetchResult.data)
+              : fetchResult.data;
       final json = rawJson as Map<String, dynamic>;
       return convert(json);
     });
