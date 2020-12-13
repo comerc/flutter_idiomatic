@@ -69,7 +69,7 @@ GraphQLClient _createClient() {
       config: SocketClientConfig(
         inactivityTimeout: const Duration(seconds: 15),
         initPayload: () async {
-          out('initPayload');
+          out('**** initPayload');
           return {
             'headers': {'Authorization': 'Bearer $kDatabaseToken'},
           };
@@ -78,7 +78,6 @@ GraphQLClient _createClient() {
     );
     link = link.concat(websocketLink);
   }
-  // TODO: применение ValueNotifier и GraphQLProvider - для чего? изучить исходники
   return GraphQLClient(
     cache: InMemoryCache(),
     // cache: NormalizedInMemoryCache(
