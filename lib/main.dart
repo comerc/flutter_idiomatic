@@ -9,6 +9,8 @@ import 'package:bot_toast/bot_toast.dart';
 // import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_idiomatic/import.dart';
 
+// TODO: прикрутить json_serializable_immutable_collections & built_collection (смотри minsk8)
+
 void main() {
   // timeDilation = 10.0; // Will slow down animations by a factor of two
   // debugPaintSizeEnabled = true;
