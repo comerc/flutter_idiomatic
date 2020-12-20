@@ -101,6 +101,7 @@ class AppView extends StatelessWidget {
       // home: TodosScreen(),
       builder: (BuildContext context, Widget child) {
         var result = child;
+        result = BotToastInit()(context, result);
         result = BlocListener<AuthenticationCubit, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
             final cases = {
@@ -123,7 +124,6 @@ class AppView extends StatelessWidget {
           },
           child: result,
         );
-        result = BotToastInit()(context, result);
         return result;
       },
       onGenerateRoute: (_) => SplashScreen().getRoute(),
