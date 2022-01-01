@@ -3,37 +3,41 @@ import 'package:gql/ast.dart';
 
 class GraphQLService {
   GraphQLService({
-    GraphQLClient client,
-    this.timeout,
-  }) : _client = client;
+    required this.client,
+    required this.queryTimeout,
+    required this.mutationTimeout,
+    this.fragments,
+  });
 
-  final GraphQLClient _client;
-  final Duration timeout;
+  final GraphQLClient client;
+  final Duration queryTimeout;
+  final Duration mutationTimeout;
+  final DocumentNode? fragments;
 
   Future<List<T>> query<T>({
-    DocumentNode documentNode,
-    Map<String, dynamic> variables,
-    String root,
-    dynamic Function(dynamic rawJson) toRoot,
-    T Function(Map<String, dynamic> json) convert,
+    required DocumentNode document,
+    required Map<String, dynamic> variables,
+    String? root,
+    dynamic Function(dynamic rawJson)? toRoot,
+    required T Function(Map<String, dynamic> json) convert,
   }) async {
     final hasRoot = root != null && root.isNotEmpty;
     final hasToRoot = toRoot != null;
     assert(!(hasRoot && hasToRoot), 'Assign "root" or "toRoot" or nothing');
     final options = QueryOptions(
-      documentNode: documentNode,
+      document: _addFragments(document),
       variables: variables,
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client.query(options).timeout(timeout);
+    final queryResult = await client.query(options).timeout(queryTimeout);
     if (queryResult.hasException) {
-      throw queryResult.exception;
+      throw queryResult.exception!;
     }
     final rawJson = hasRoot
-        ? queryResult.data[root]
+        ? queryResult.data![root]
         : hasToRoot
-            ? toRoot(queryResult.data)
+            ? toRoot!(queryResult.data)
             : queryResult.data;
     final jsons = (rawJson as List).cast<Map<String, dynamic>>();
     final result = <T>[];
@@ -43,59 +47,71 @@ class GraphQLService {
     return result;
   }
 
-  Future<T> mutate<T>({
-    DocumentNode documentNode,
-    Map<String, dynamic> variables,
-    String root,
-    dynamic Function(dynamic rawJson) toRoot,
-    T Function(Map<String, dynamic> json) convert,
+  Future<T?> mutate<T>({
+    required DocumentNode document,
+    required Map<String, dynamic> variables,
+    String? root,
+    dynamic Function(dynamic rawJson)? toRoot,
+    required T Function(Map<String, dynamic> json) convert,
   }) async {
     final hasRoot = root != null && root.isNotEmpty;
     final hasToRoot = toRoot != null;
     assert(!(hasRoot && hasToRoot), 'Assign "root" or "toRoot" or nothing');
     final options = MutationOptions(
-      documentNode: documentNode,
+      document: _addFragments(document),
       variables: variables,
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final mutationResult = await _client.mutate(options).timeout(timeout);
+    final mutationResult =
+        await client.mutate(options).timeout(mutationTimeout);
     if (mutationResult.hasException) {
-      throw mutationResult.exception;
+      throw mutationResult.exception!;
     }
     final rawJson = hasRoot
-        ? mutationResult.data[root]
+        ? mutationResult.data![root]
         : hasToRoot
-            ? toRoot(mutationResult.data)
+            ? toRoot!(mutationResult.data)
             : mutationResult.data;
-    final json = rawJson as Map<String, dynamic>;
-    return convert(json);
+    return (rawJson == null) ? null : convert(rawJson as Map<String, dynamic>);
   }
 
-  Stream<T> subscribe<T>({
-    DocumentNode documentNode,
-    Map<String, dynamic> variables,
-    String root,
-    dynamic Function(dynamic rawJson) toRoot,
-    T Function(Map<String, dynamic> json) convert,
+  Stream<T?> subscribe<T>({
+    required DocumentNode document,
+    required Map<String, dynamic> variables,
+    String? root,
+    dynamic Function(dynamic rawJson)? toRoot,
+    required T Function(Map<String, dynamic> json) convert,
   }) {
     final hasRoot = root != null && root.isNotEmpty;
     final hasToRoot = toRoot != null;
     assert(!(hasRoot && hasToRoot), 'Assign "root" or "toRoot" or nothing');
-    final operation = Operation(
-      documentNode: documentNode,
+    final operation = SubscriptionOptions(
+      document: _addFragments(document),
       variables: variables,
-      // extensions: null,
-      // operationName: '',
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
     );
-    return _client.subscribe(operation).map((FetchResult fetchResult) {
+    return client.subscribe(operation).map((QueryResult queryResult) {
+      if (queryResult.hasException) {
+        throw queryResult.exception!;
+      }
       final rawJson = hasRoot
-          ? fetchResult.data[root]
+          ? queryResult.data![root]
           : hasToRoot
-              ? toRoot(fetchResult.data)
-              : fetchResult.data;
-      final json = rawJson as Map<String, dynamic>;
-      return convert(json);
+              ? toRoot!(queryResult.data)
+              : queryResult.data;
+      return (rawJson == null)
+          ? null
+          : convert(rawJson as Map<String, dynamic>);
     });
+  }
+
+  DocumentNode _addFragments(DocumentNode document) {
+    return (fragments == null)
+        ? document
+        : DocumentNode(
+            definitions: [...fragments!.definitions, ...document.definitions],
+          );
   }
 }
