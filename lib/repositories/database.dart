@@ -17,8 +17,8 @@ class DatabaseRepository {
 
   Future<List<TodoModel>> readTodos(
       {DateTime? createdAt, required int limit}) async {
-    return _service.query<TodoModel>(
-      document: API.readTodos,
+    return _service.query(
+      document: DatabaseAPI.readTodos,
       variables: {
         'user_id': kDatabaseUserId,
         'created_at': (createdAt ?? DateTime.now().toUtc()).toIso8601String(),
@@ -30,8 +30,8 @@ class DatabaseRepository {
   }
 
   Stream<int?> get fetchNewTodoNotification {
-    return _service.subscribe<int?>(
-      document: API.fetchNewTodoNotification,
+    return _service.subscribe(
+      document: DatabaseAPI.fetchNewTodoNotification,
       variables: {'user_id': kDatabaseUserId},
       toRoot: (dynamic rawJson) =>
           (rawJson as Map<String, List<int>>)['todos']![0],
@@ -40,8 +40,8 @@ class DatabaseRepository {
   }
 
   Future<int?> deleteTodo(int id) async {
-    return _service.mutate<int?>(
-      document: API.deleteTodo,
+    return _service.mutate(
+      document: DatabaseAPI.deleteTodo,
       variables: {'id': id},
       root: 'delete_todos_by_pk',
       convert: (Map<String, dynamic> json) => json['id'] as int,
@@ -49,8 +49,8 @@ class DatabaseRepository {
   }
 
   Future<TodoModel?> createTodo(TodosData data) async {
-    return _service.mutate<TodoModel?>(
-      document: API.createTodo,
+    return _service.mutate(
+      document: DatabaseAPI.createTodo,
       variables: data.toJson(),
       root: 'insert_todos_one',
       convert: TodoModel.fromJson,

@@ -1,7 +1,7 @@
 // ignore_for_file: require_trailing_commas
 import 'package:graphql/client.dart';
 
-mixin API {
+mixin DatabaseAPI {
   static final createTodo = gql(r'''
     mutation CreateTodo($title: String) {
       insert_todos_one(object: {title: $title}) {
