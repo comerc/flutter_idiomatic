@@ -6,28 +6,31 @@ const _kRepositoriesLimit = 8;
 
 class GitHubRepository {
   GitHubRepository({
-    GraphQLService service,
+    GraphQLService? service,
   }) : _service = service ??
             GraphQLService(
               client: _createClient(),
-              timeout: kGraphQLTimeoutDuration,
+              queryTimeout: kGraphQLQueryTimeout,
+              mutationTimeout: kGraphQLMutationTimeout,
             );
 
   final GraphQLService _service;
 
   Future<List<RepositoryModel>> readRepositories() async {
-    return _service.query<RepositoryModel>(
-      documentNode: _API.readRepositories,
+    return _service.query(
+      document: GitHubAPI.readRepositories,
       variables: {'nRepositories': _kRepositoriesLimit},
+      // ignore: avoid_dynamic_calls
       toRoot: (dynamic rawJson) => rawJson['viewer']['repositories']['nodes'],
       convert: RepositoryModel.fromJson,
     );
   }
 
-  Future<bool> toggleStar({String id, bool value}) async {
-    return _service.mutate<bool>(
-      documentNode: value ? _API.addStar : _API.removeStar,
+  Future<bool?> toggleStar({required String id, required bool value}) async {
+    return _service.mutate(
+      document: value ? GitHubAPI.addStar : GitHubAPI.removeStar,
       variables: {'starrableId': id},
+      // ignore: avoid_dynamic_calls
       toRoot: (dynamic rawJson) => rawJson['action']['starrable'],
       convert: (Map<String, dynamic> json) => json['viewerHasStarred'] as bool,
     );
@@ -36,7 +39,7 @@ class GitHubRepository {
 
 GraphQLClient _createClient() {
   final httpLink = HttpLink(
-    uri: 'https://api.github.com/graphql',
+    'https://api.github.com/graphql',
   );
   final authLink = AuthLink(
     getToken: () async => 'Bearer $kGitHubPersonalAccessToken',
@@ -44,7 +47,7 @@ GraphQLClient _createClient() {
   var link = authLink.concat(httpLink);
   if (_kEnableWebsockets) {
     final websocketLink = WebSocketLink(
-      url: 'ws://localhost:8080/ws/graphql',
+      'ws://localhost:8080/ws/graphql',
       config: SocketClientConfig(
         inactivityTimeout: Duration(seconds: 15),
         // initPayload: () async => {
@@ -55,7 +58,7 @@ GraphQLClient _createClient() {
     link = link.concat(websocketLink);
   }
   return GraphQLClient(
-    cache: InMemoryCache(),
+    cache: GraphQLCache(),
     // cache: NormalizedInMemoryCache(
     //   dataIdFromObject: typenameDataIdFromObject,
     // ),
@@ -64,73 +67,4 @@ GraphQLClient _createClient() {
     // ),
     link: link,
   );
-}
-
-mixin _API {
-  static final fragments = gql(r'''
-    fragment RepositoryFields on Repository {
-      # __typename
-      id
-      name
-      viewerHasStarred
-    }
-  ''');
-
-  static final readRepositories = gql(r'''
-    query ReadRepositories($nRepositories: Int!) {
-      viewer {
-        repositories(last: $nRepositories) {
-          nodes {
-            ...RepositoryFields
-          }
-        }
-      }
-    }
-  ''')..definitions.addAll(fragments.definitions);
-
-  static final addStar = gql(r'''
-    mutation AddStar($starrableId: ID!) {
-      action: addStar(input: {starrableId: $starrableId}) {
-        starrable {
-          viewerHasStarred
-        }
-      }
-    }
-  ''');
-
-  static final removeStar = gql(r'''
-    mutation RemoveStar($starrableId: ID!) {
-      action: removeStar(input: {starrableId: $starrableId}) {
-        starrable {
-          viewerHasStarred
-        }
-      }
-    }
-  ''');
-
-  // static final searchRepositories = gql(r'''
-  //   query SearchRepositories($nRepositories: Int!, $query: String!, $cursor: String) {
-  //     search(last: $nRepositories, query: $query, type: REPOSITORY, after: $cursor) {
-  //       nodes {
-  //         # __typename
-  //         ... on Repository {
-  //           name
-  //           shortDescriptionHTML
-  //           viewerHasStarred
-  //           stargazers {
-  //             totalCount
-  //           }
-  //           forks {
-  //             totalCount
-  //           }
-  //           updatedAt
-  //         }
-  //       }
-  //       pageInfo {
-  //         endCursor
-  //         hasNextPage
-  //       }
-  //     }
-  //   }
-  // '''); // ..definitions.addAll(fragments.definitions);
 }

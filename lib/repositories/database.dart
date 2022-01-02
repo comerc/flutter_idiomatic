@@ -33,8 +33,8 @@ class DatabaseRepository {
     return _service.subscribe(
       document: DatabaseAPI.fetchNewTodoNotification,
       variables: {'user_id': kDatabaseUserId},
-      toRoot: (dynamic rawJson) =>
-          (rawJson as Map<String, List<int>>)['todos']![0],
+      // ignore: avoid_dynamic_calls
+      toRoot: (dynamic rawJson) => rawJson['todos'][0],
       convert: (Map<String, dynamic> json) => json['id'] as int,
     );
   }
