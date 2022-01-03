@@ -5,18 +5,17 @@ import 'package:flutter_idiomatic/import.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit(AuthenticationRepository repository)
-      : assert(repository != null),
-        _repository = repository,
+      : _repository = repository,
         super(AuthenticationState.unknown()) {
     _userSubscription = repository.user.listen(changeUser);
   }
 
   final AuthenticationRepository _repository;
-  StreamSubscription<UserModel> _userSubscription;
+  late StreamSubscription<UserModel> _userSubscription;
 
   @override
   Future<void> close() {
-    _userSubscription?.cancel();
+    _userSubscription.cancel();
     return super.close();
   }
 

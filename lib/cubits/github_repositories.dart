@@ -10,8 +10,7 @@ part 'github_repositories.g.dart';
 class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
     with ReplayCubitMixin {
   GitHubRepositoriesCubit(GitHubRepository repository)
-      : assert(repository != null),
-        _repository = repository,
+      : _repository = repository,
         super(GitHubRepositoriesState());
 
   final GitHubRepository _repository;
@@ -46,7 +45,7 @@ class GitHubRepositoriesCubit extends HydratedCubit<GitHubRepositoriesState>
     return items;
   }
 
-  Future<void> toggleStar({String id, bool value}) async {
+  Future<void> toggleStar({required String id, required bool value}) async {
     emit(state.copyWith(
       items: _updateStarLocally(id, value),
       loadingItems: {...state.loadingItems}..add(id),
@@ -82,7 +81,7 @@ class GitHubRepositoriesState extends Equatable {
     this.items = const [],
     this.status = GitHubStatus.initial,
     this.loadingItems = const {},
-  }) : assert(items != null);
+  });
 
   final List<RepositoryModel> items;
   final GitHubStatus status;

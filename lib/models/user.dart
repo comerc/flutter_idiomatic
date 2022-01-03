@@ -9,12 +9,11 @@ import 'package:equatable/equatable.dart';
 class UserModel extends Equatable {
   /// {@macro user}
   const UserModel({
-    @required this.email,
-    @required this.id,
-    @required this.name,
-    @required this.photo,
-  })  : assert(email != null),
-        assert(id != null);
+    required this.email,
+    required this.id,
+    required this.name,
+    required this.photo,
+  });
 
   /// The current user's email address.
   final String email;
@@ -29,8 +28,18 @@ class UserModel extends Equatable {
   final String photo;
 
   /// Empty user which represents an unauthenticated user.
-  static const empty = UserModel(email: '', id: '', name: null, photo: null);
+  static const empty = UserModel(
+    email: '',
+    id: '',
+    name: '',
+    photo: '',
+  );
 
   @override
-  List<Object> get props => [email, id, name, photo];
+  List<Object> get props => [
+        email,
+        id,
+        name,
+        photo,
+      ];
 }

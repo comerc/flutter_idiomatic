@@ -11,24 +11,23 @@ part 'todos.g.dart';
 
 class TodosCubit extends Cubit<TodosState> {
   TodosCubit(DatabaseRepository repository)
-      : assert(repository != null),
-        _repository = repository,
+      : _repository = repository,
         super(TodosState()) {
     _fetchNewNotificationSubscription =
         repository.fetchNewTodoNotification.listen(fetchNewNotification);
   }
 
   final DatabaseRepository _repository;
-  StreamSubscription<int> _fetchNewNotificationSubscription;
+  late StreamSubscription<int?> _fetchNewNotificationSubscription;
   bool _isStartedSubscription = false;
 
   @override
   Future<void> close() {
-    _fetchNewNotificationSubscription?.cancel();
+    _fetchNewNotificationSubscription.cancel();
     return super.close();
   }
 
-  void fetchNewNotification(int id) {
+  void fetchNewNotification(int? id) {
     if (!_isStartedSubscription) {
       _isStartedSubscription = true;
       return;
@@ -36,7 +35,7 @@ class TodosCubit extends Cubit<TodosState> {
     emit(state.copyWith(newId: id));
   }
 
-  Future<void> load({@required TodosOrigin origin}) async {
+  Future<void> load({required TodosOrigin origin}) async {
     const kLimit = 10;
     if (state.status == TodosStatus.loading) return;
     emit(state.copyWith(
@@ -50,7 +49,7 @@ class TodosCubit extends Cubit<TodosState> {
         limit: kLimit + 1,
       );
       var hasMore = false;
-      DateTime nextDateTime;
+      DateTime? nextDateTime;
       if (items.length == kLimit + 1) {
         hasMore = true;
         final lastItem = items.removeLast();
@@ -102,6 +101,7 @@ class TodosCubit extends Cubit<TodosState> {
       throw ValidationException('Invalid input < 4 characters');
     }
     final item = await _repository.createTodo(data);
+    if (item == null) return;
     emit(state.copyWith(
       items: [item, ...state.items],
     ));
@@ -132,9 +132,9 @@ class TodosState extends Equatable {
   final List<TodoModel> items;
   final TodosStatus status;
   final TodosOrigin origin;
-  final DateTime nextDateTime;
+  final DateTime? nextDateTime;
   final bool hasMore;
-  final int newId;
+  final int? newId;
   // final bool isSubmitMode;
   // final String errorMessage;
 
@@ -143,7 +143,7 @@ class TodosState extends Equatable {
       items.indexWhere((TodoModel item) => item.id == newId) == -1;
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         items,
         status,
         origin,
@@ -157,7 +157,7 @@ class TodosState extends Equatable {
 
 @JsonSerializable(createFactory: false)
 class TodosData {
-  TodosData({this.title});
+  TodosData({required this.title});
 
   final String title;
 

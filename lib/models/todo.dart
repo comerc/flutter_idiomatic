@@ -8,9 +8,9 @@ part 'todo.g.dart';
 @JsonSerializable()
 class TodoModel extends Equatable {
   TodoModel({
-    this.id,
-    this.title,
-    this.createdAt,
+    required this.id,
+    required this.title,
+    required this.createdAt,
   });
 
   final int id;

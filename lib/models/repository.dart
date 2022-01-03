@@ -8,9 +8,9 @@ part 'repository.g.dart';
 @JsonSerializable(fieldRename: FieldRename.none)
 class RepositoryModel extends Equatable {
   RepositoryModel({
-    this.id,
-    this.name,
-    this.viewerHasStarred,
+    required this.id,
+    required this.name,
+    required this.viewerHasStarred,
   });
 
   final String id;
