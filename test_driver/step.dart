@@ -2,76 +2,76 @@ import 'package:gherkin/gherkin.dart' hide step;
 import 'package:gherkin/gherkin.dart' as gherkin;
 
 abstract class Step extends StepDefinition<World> {
-  Step([StepDefinitionConfiguration configuration]) : super(configuration);
+  Step([StepDefinitionConfiguration? configuration]) : super(configuration);
 }
 
 abstract class StepWithWorld<TWorld extends World>
     extends StepDefinition<TWorld> {
-  StepWithWorld([StepDefinitionConfiguration configuration])
+  StepWithWorld([StepDefinitionConfiguration? configuration])
       : super(configuration);
 }
 
 abstract class Step1WithWorld<TInput1, TWorld extends World>
     extends StepDefinition1<TWorld, TInput1> {
-  Step1WithWorld([StepDefinitionConfiguration configuration])
+  Step1WithWorld([StepDefinitionConfiguration? configuration])
       : super(configuration);
 }
 
 abstract class Step1<TInput1> extends Step1WithWorld<TInput1, World> {
-  Step1([StepDefinitionConfiguration configuration]) : super(configuration);
+  Step1([StepDefinitionConfiguration? configuration]) : super(configuration);
 }
 
 abstract class Step2WithWorld<TInput1, TInput2, TWorld extends World>
     extends StepDefinition2<TWorld, TInput1, TInput2> {
-  Step2WithWorld([StepDefinitionConfiguration configuration])
+  Step2WithWorld([StepDefinitionConfiguration? configuration])
       : super(configuration);
 }
 
 abstract class Step2<TInput1, TInput2>
     extends Step2WithWorld<TInput1, TInput2, World> {
-  Step2([StepDefinitionConfiguration configuration]) : super(configuration);
+  Step2([StepDefinitionConfiguration? configuration]) : super(configuration);
 }
 
 abstract class Step3WithWorld<TInput1, TInput2, TInput3, TWorld extends World>
     extends StepDefinition3<TWorld, TInput1, TInput2, TInput3> {
-  Step3WithWorld([StepDefinitionConfiguration configuration])
+  Step3WithWorld([StepDefinitionConfiguration? configuration])
       : super(configuration);
 }
 
 abstract class Step3<TInput1, TInput2, TInput3>
     extends Step3WithWorld<TInput1, TInput2, TInput3, World> {
-  Step3([StepDefinitionConfiguration configuration]) : super(configuration);
+  Step3([StepDefinitionConfiguration? configuration]) : super(configuration);
 }
 
 abstract class Step4WithWorld<TInput1, TInput2, TInput3, TInput4,
         TWorld extends World>
     extends StepDefinition4<TWorld, TInput1, TInput2, TInput3, TInput4> {
-  Step4WithWorld([StepDefinitionConfiguration configuration])
+  Step4WithWorld([StepDefinitionConfiguration? configuration])
       : super(configuration);
 }
 
 abstract class Step4<TInput1, TInput2, TInput3, TInput4>
     extends Step4WithWorld<TInput1, TInput2, TInput3, TInput4, World> {
-  Step4([StepDefinitionConfiguration configuration]) : super(configuration);
+  Step4([StepDefinitionConfiguration? configuration]) : super(configuration);
 }
 
 abstract class Step5WithWorld<TInput1, TInput2, TInput3, TInput4, TInput5,
         TWorld extends World>
     extends StepDefinition5<TWorld, TInput1, TInput2, TInput3, TInput4,
         TInput5> {
-  Step5WithWorld([StepDefinitionConfiguration configuration])
+  Step5WithWorld([StepDefinitionConfiguration? configuration])
       : super(configuration);
 }
 
 abstract class Step5<TInput1, TInput2, TInput3, TInput4, TInput5>
     extends Step5WithWorld<TInput1, TInput2, TInput3, TInput4, TInput5, World> {
-  Step5([StepDefinitionConfiguration configuration]) : super(configuration);
+  Step5([StepDefinitionConfiguration? configuration]) : super(configuration);
 }
 
 StepDefinitionGeneric<TWorld> step<TWorld extends World>(
   Pattern pattern,
   Future<void> Function(StepContext<TWorld> context) onInvoke, {
-  StepDefinitionConfiguration configuration,
+  StepDefinitionConfiguration? configuration,
 }) {
   return gherkin.step<TWorld, dynamic, dynamic, dynamic, dynamic, dynamic>(
     pattern,
@@ -88,7 +88,7 @@ StepDefinitionGeneric<TWorld> step1<TInput1, TWorld extends World>(
     StepContext<TWorld> context,
   )
       onInvoke, {
-  StepDefinitionConfiguration configuration,
+  StepDefinitionConfiguration? configuration,
 }) {
   return gherkin.step<TWorld, TInput1, dynamic, dynamic, dynamic, dynamic>(
     pattern,
@@ -106,7 +106,7 @@ StepDefinitionGeneric<TWorld> step2<TInput1, TInput2, TWorld extends World>(
     StepContext<TWorld> context,
   )
       onInvoke, {
-  StepDefinitionConfiguration configuration,
+  StepDefinitionConfiguration? configuration,
 }) {
   return gherkin.step<TWorld, TInput1, TInput2, dynamic, dynamic, dynamic>(
     pattern,
@@ -126,7 +126,7 @@ StepDefinitionGeneric<TWorld>
     StepContext<TWorld> context,
   )
       onInvoke, {
-  StepDefinitionConfiguration configuration,
+  StepDefinitionConfiguration? configuration,
 }) {
   return gherkin.step<TWorld, TInput1, TInput2, TInput3, dynamic, dynamic>(
     pattern,
@@ -147,7 +147,7 @@ StepDefinitionGeneric<TWorld>
     StepContext<TWorld> context,
   )
       onInvoke, {
-  StepDefinitionConfiguration configuration,
+  StepDefinitionConfiguration? configuration,
 }) {
   return gherkin.step<TWorld, TInput1, TInput2, TInput3, TInput4, dynamic>(
     pattern,
@@ -169,7 +169,7 @@ StepDefinitionGeneric<TWorld>
     StepContext<TWorld> context,
   )
       onInvoke, {
-  StepDefinitionConfiguration configuration,
+  StepDefinitionConfiguration? configuration,
 }) {
   return gherkin.step<TWorld, TInput1, TInput2, TInput3, TInput4, TInput5>(
     pattern,

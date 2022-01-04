@@ -9,7 +9,7 @@ import 'package:flutter_idiomatic/import.dart';
 class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
-class MockLoginCubit extends MockBloc<LoginState> implements LoginCubit {}
+class MockLoginCubit extends MockCubit<LoginState> implements LoginCubit {}
 
 // ignore: avoid_implementing_value_types
 class MockEmailInputModel extends Mock implements EmailInputModel {}
@@ -38,7 +38,7 @@ void main() {
   const testPassword = 'testP@ssw0rd1';
 
   group('LoginForm', () {
-    LoginCubit loginCubit;
+    late LoginCubit loginCubit;
 
     setUp(() {
       loginCubit = MockLoginCubit();

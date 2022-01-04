@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_idiomatic/import.dart';
 
-class MockAuthenticationBloc extends MockBloc<AuthenticationState>
+class MockAuthenticationBloc extends MockCubit<AuthenticationState>
     implements AuthenticationCubit {}
 
 // ignore: must_be_immutable, avoid_implementing_value_types
@@ -16,8 +16,8 @@ class MockUserModel extends Mock implements UserModel {
 
 void main() {
   group('HomeScreen', () {
-    AuthenticationCubit authenticationBloc;
-    UserModel user;
+    late AuthenticationCubit authenticationBloc;
+    late UserModel user;
 
     setUp(() {
       authenticationBloc = MockAuthenticationBloc();
