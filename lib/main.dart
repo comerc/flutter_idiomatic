@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:path_provider/path_provider.dart';
 // import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_idiomatic/import.dart';
 
@@ -29,13 +30,29 @@ void main() {
     await Firebase.initializeApp();
     EquatableConfig.stringify = kDebugMode;
     // Bloc.observer = SimpleBlocObserver();
-    HydratedBloc.storage = await HydratedStorage.build();
-    runApp(
-      App(
-        authenticationRepository: AuthenticationRepository(),
-        gitHubRepository: GitHubRepository(),
-        databaseRepository: DatabaseRepository(),
+    // TODO: delete follow code after migrate
+    // HydratedBloc.storage = await HydratedStorage.build();
+    // runApp(
+    //   App(
+    //     authenticationRepository: AuthenticationRepository(),
+    //     gitHubRepository: GitHubRepository(),
+    //     databaseRepository: DatabaseRepository(),
+    //   ),
+    // );
+    final storage = await HydratedStorage.build(
+      storageDirectory: kIsWeb
+          ? HydratedStorage.webStorageDirectory
+          : await getTemporaryDirectory(),
+    );
+    HydratedBlocOverrides.runZoned(
+      () => runApp(
+        App(
+          authenticationRepository: AuthenticationRepository(),
+          gitHubRepository: GitHubRepository(),
+          databaseRepository: DatabaseRepository(),
+        ),
       ),
+      storage: storage,
     );
   }, (error, stackTrace) {
     out('**** runZonedGuarded ****');
@@ -49,10 +66,10 @@ void main() {
 
 class App extends StatelessWidget {
   App({
-    Key key,
-    @required this.authenticationRepository,
-    @required this.gitHubRepository,
-    @required this.databaseRepository,
+    Key? key,
+    required this.authenticationRepository,
+    required this.gitHubRepository,
+    required this.databaseRepository,
   })  : assert(authenticationRepository != null),
         assert(gitHubRepository != null),
         assert(databaseRepository != null),
@@ -87,7 +104,7 @@ class App extends StatelessWidget {
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-NavigatorState get navigator => navigatorKey.currentState;
+NavigatorState get navigator => navigatorKey.currentState!;
 
 class AppView extends StatelessWidget {
   @override
@@ -99,7 +116,7 @@ class AppView extends StatelessWidget {
         BotToastNavigatorObserver(),
       ],
       // home: TodosScreen(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         var result = child;
         result = BlocListener<AuthenticationCubit, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
@@ -119,7 +136,7 @@ class AppView extends StatelessWidget {
               AuthenticationStatus.unknown: () {},
             };
             assert(cases.length == AuthenticationStatus.values.length);
-            cases[state.status]();
+            cases[state.status]!();
           },
           child: result,
         );

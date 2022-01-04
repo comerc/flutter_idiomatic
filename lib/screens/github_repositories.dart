@@ -105,9 +105,9 @@ class GitHubRepositoriesBody extends StatelessWidget {
 
 class _Item extends StatelessWidget {
   _Item({
-    Key key,
-    this.item,
-    this.isLoading,
+    Key? key,
+    required this.item,
+    required this.isLoading,
   }) : super(key: key);
 
   final RepositoryModel item;
@@ -165,13 +165,13 @@ class _Item extends StatelessWidget {
 
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
-    Key key,
-    this.title,
-    this.buildOnPressed,
+    Key? key,
+    required this.title,
+    required this.buildOnPressed,
   }) : super(key: key);
 
   final String title;
-  final VoidCallback Function(GitHubRepositoriesCubit cubit) buildOnPressed;
+  final VoidCallback? Function(GitHubRepositoriesCubit cubit) buildOnPressed;
 
   @override
   Widget build(BuildContext context) {

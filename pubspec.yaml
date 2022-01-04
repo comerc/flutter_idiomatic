@@ -41,6 +41,7 @@ dependencies:
   google_sign_in: ^5.2.1
   formz: ^0.4.1
   bot_toast: ^4.0.1
+  path_provider: ^2.0.8
   bloc: ^8.0.1
   flutter_bloc: ^8.0.0
   hydrated_bloc: ^8.0.0

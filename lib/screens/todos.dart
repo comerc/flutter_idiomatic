@@ -105,7 +105,7 @@ class _TodosBodyState extends State<TodosBody> {
             final insertIndex = state.items.length - _loadMoreItemsLength;
             for (int offset = 0; offset < _loadMoreItemsLength; offset++) {
               _listKey.currentState
-                  .insertItem(insertIndex + offset, duration: Duration.zero);
+                  ?.insertItem(insertIndex + offset, duration: Duration.zero);
             }
           },
         ),
@@ -203,7 +203,7 @@ class _TodosBodyState extends State<TodosBody> {
         key: Key('${item.id}'),
         direction: DismissDirection.endToStart,
         onDismissed: (DismissDirection direction) {
-          _listKey.currentState.removeItem(
+          _listKey.currentState?.removeItem(
               index,
               (BuildContext context, Animation<double> animation) =>
                   Container(),
@@ -224,7 +224,7 @@ class _TodosBodyState extends State<TodosBody> {
         child: Column(
           children: [
             AnimatedBuilder(
-              builder: (BuildContext context, Widget child) {
+              builder: (BuildContext context, Widget? child) {
                 return ClipRect(
                   child: Align(
                     alignment: Alignment.topCenter,
@@ -249,7 +249,7 @@ class _TodosBodyState extends State<TodosBody> {
     };
   }
 
-  Future<void> _remove(TodosCubit cubit, {int id}) async {
+  Future<void> _remove(TodosCubit cubit, {required int id}) async {
     try {
       await cubit.remove(id);
     } on Exception {
@@ -304,8 +304,8 @@ class _TodosBodyState extends State<TodosBody> {
 
 class _LoadNewButton extends StatelessWidget {
   _LoadNewButton({
-    Key key,
-    this.state,
+    Key? key,
+    required this.state,
   }) : super(key: key);
 
   final TodosState state;
@@ -400,13 +400,13 @@ class _LoadNewButton extends StatelessWidget {
 
 class _Footer extends StatelessWidget {
   _Footer({
-    Key key,
-    this.state,
+    Key? key,
+    required this.state,
     this.onPressed,
   }) : super(key: key);
 
   final TodosState state;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
