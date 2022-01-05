@@ -133,7 +133,6 @@ class AppView extends StatelessWidget {
                   (Route route) => false,
                 );
               },
-              AuthenticationStatus.unknown: () {},
             };
             assert(cases.length == AuthenticationStatus.values.length);
             cases[state.status]!();
