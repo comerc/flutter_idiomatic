@@ -24,36 +24,6 @@ void main() {
     // ).thenReturn(UserModel.empty);
   });
 
-  // group('AuthenticationState', () {
-  //   group('AuthenticationState.unknown', () {
-  //     test('supports value comparisons', () {
-  //       expect(
-  //         AuthenticationState.unknown(),
-  //         AuthenticationState.unknown(),
-  //       );
-  //     });
-  //   });
-
-  //   group('AuthenticationState.authenticated', () {
-  //     test('supports value comparisons', () {
-  //       final user = MockUserModel();
-  //       expect(
-  //         AuthenticationState.authenticated(user),
-  //         AuthenticationState.authenticated(user),
-  //       );
-  //     });
-  //   });
-
-  //   group('AuthenticationState.unauthenticated', () {
-  //     test('supports value comparisons', () {
-  //       expect(
-  //         AuthenticationState.unauthenticated(),
-  //         AuthenticationState.unauthenticated(),
-  //       );
-  //     });
-  //   });
-  // });
-
   group('AuthenticationCubit', () {
     test(
         'initial state is AuthenticationState.unauthenticated when user is empty',
