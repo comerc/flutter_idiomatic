@@ -6,7 +6,13 @@ import 'package:flutter_idiomatic/import.dart';
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit(AuthenticationRepository repository)
       : _repository = repository,
-        super(AuthenticationState.unknown()) {
+        // TODO: authenticationRepository.currentUser
+        // super(
+        //   authenticationRepository.currentUser.isNotEmpty
+        //       ? AppState.authenticated(authenticationRepository.currentUser)
+        //       : const AppState.unauthenticated(),
+        // ) {
+        super(AuthenticationState.unauthenticated()) {
     _userSubscription = repository.user.listen(changeUser);
   }
 
@@ -90,15 +96,19 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
 // class AuthenticationLogoutRequested extends AuthenticationEvent {}
 
-enum AuthenticationStatus { authenticated, unauthenticated, unknown }
+enum AuthenticationStatus {
+  authenticated,
+  unauthenticated,
+  // unknown,
+}
 
 class AuthenticationState extends Equatable {
   const AuthenticationState._({
-    this.status = AuthenticationStatus.unknown,
+    required this.status,
     this.user = UserModel.empty,
   });
 
-  const AuthenticationState.unknown() : this._();
+  // const AuthenticationState.unknown() : this._();
 
   const AuthenticationState.authenticated(UserModel user)
       : this._(status: AuthenticationStatus.authenticated, user: user);

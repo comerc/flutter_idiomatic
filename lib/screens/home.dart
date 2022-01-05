@@ -25,9 +25,9 @@ class HomeScreen extends StatelessWidget {
           children: <Widget>[
             Avatar(photo: user.photo),
             SizedBox(height: 4),
-            Text(user.email, style: textTheme.headline6),
+            Text(user.email ?? '', style: textTheme.headline6),
             SizedBox(height: 4),
-            Text(user.name, style: textTheme.headline5),
+            Text(user.name ?? '', style: textTheme.headline5),
             SizedBox(height: 4),
             _GitHubRepositoriesButton(),
             SizedBox(height: 4),

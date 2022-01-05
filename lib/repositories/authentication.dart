@@ -111,9 +111,9 @@ extension on User {
   UserModel get toUserModel {
     return UserModel(
       id: uid,
-      email: email ?? '',
-      name: displayName ?? '',
-      photo: photoURL ?? '',
+      email: email,
+      name: displayName,
+      photo: photoURL,
     );
   }
 }

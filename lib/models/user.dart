@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 
 /// {@template user}
@@ -9,36 +8,37 @@ import 'package:equatable/equatable.dart';
 class UserModel extends Equatable {
   /// {@macro user}
   const UserModel({
-    required this.email,
     required this.id,
-    required this.name,
-    required this.photo,
+    this.email,
+    this.name,
+    this.photo,
   });
-
-  /// The current user's email address.
-  final String email;
 
   /// The current user's id.
   final String id;
 
+  /// The current user's email address.
+  final String? email;
+
   /// The current user's name (display name).
-  final String name;
+  final String? name;
 
   /// Url for the current user's photo.
-  final String photo;
+  final String? photo;
 
   /// Empty user which represents an unauthenticated user.
-  static const empty = UserModel(
-    email: '',
-    id: '',
-    name: '',
-    photo: '',
-  );
+  static const empty = UserModel(id: '');
+
+  /// Convenience getter to determine whether the current user is empty.
+  bool get isEmpty => this == UserModel.empty;
+
+  /// Convenience getter to determine whether the current user is not empty.
+  bool get isNotEmpty => this != UserModel.empty;
 
   @override
-  List<Object> get props => [
-        email,
+  List<Object?> get props => [
         id,
+        email,
         name,
         photo,
       ];
