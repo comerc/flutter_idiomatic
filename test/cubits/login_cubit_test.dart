@@ -8,54 +8,21 @@ class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
 void main() {
-  group('LoginState', () {
-    const emailInput = EmailInputModel.dirty('email');
-    const passwordInput = PasswordInputModel.dirty('password');
-    test('supports value comparisons', () {
-      expect(LoginState(), LoginState());
-    });
+  const invalidEmailString = 'invalid';
+  const invalidEmail = EmailInputModel.dirty(invalidEmailString);
 
-    test('returns same object when no properties are passed', () {
-      expect(LoginState().copyWith(), LoginState());
-    });
+  const validEmailString = 'test@gmail.com';
+  const validEmail = EmailInputModel.dirty(validEmailString);
 
-    test('returns object with updated status when status is passed', () {
-      expect(
-        LoginState().copyWith(status: FormzStatus.pure),
-        LoginState(),
-      );
-    });
+  const invalidPasswordString = 'invalid';
+  const invalidPassword = PasswordInputModel.dirty(invalidPasswordString);
 
-    test('returns object with updated email when email is passed', () {
-      expect(
-        LoginState().copyWith(emailInput: emailInput),
-        LoginState(emailInput: emailInput),
-      );
-    });
+  const validPasswordString = 't0pS3cret1234';
+  const validPassword = PasswordInputModel.dirty(validPasswordString);
 
-    test('returns object with updated password when password is passed', () {
-      expect(
-        LoginState().copyWith(passwordInput: passwordInput),
-        LoginState(passwordInput: passwordInput),
-      );
-    });
-  });
+  late AuthenticationRepository authenticationRepository;
 
   group('LoginCubit', () {
-    const invalidEmailString = 'invalid';
-    const invalidEmail = EmailInputModel.dirty(invalidEmailString);
-
-    const validEmailString = 'test@gmail.com';
-    const validEmail = EmailInputModel.dirty(validEmailString);
-
-    const invalidPasswordString = 'invalid';
-    const invalidPassword = PasswordInputModel.dirty(invalidPasswordString);
-
-    const validPasswordString = 't0pS3cret1234';
-    const validPassword = PasswordInputModel.dirty(validPasswordString);
-
-    late AuthenticationRepository authenticationRepository;
-
     setUp(() {
       authenticationRepository = MockAuthenticationRepository();
       when(
