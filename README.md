@@ -125,4 +125,4 @@ $ flutter drive
 - [Patreon](https://www.patreon.com/comerc)
 - [QIWI](https://donate.qiwi.com/payin/comerc)
 
-😺
+😺 We love cats!
