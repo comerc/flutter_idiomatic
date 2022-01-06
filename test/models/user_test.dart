@@ -6,25 +6,29 @@ void main() {
     const id = 'mock-id';
     const email = 'mock-email';
 
-    test('throws AssertionError when email is null', () {
-      expect(
-        () => UserModel(email: null, id: id, name: null, photo: null),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when id is null', () {
-      expect(
-        () => UserModel(email: email, id: null, name: null, photo: null),
-        throwsAssertionError,
-      );
-    });
-
     test('uses value equality', () {
       expect(
-        UserModel(email: email, id: id, name: null, photo: null),
-        UserModel(email: email, id: id, name: null, photo: null),
+        UserModel(email: email, id: id),
+        equals(UserModel(email: email, id: id)),
       );
+    });
+
+    test('isEmpty returns true for empty user', () {
+      expect(UserModel.empty.isEmpty, isTrue);
+    });
+
+    test('isEmpty returns false for non-empty user', () {
+      final user = UserModel(email: email, id: id);
+      expect(user.isEmpty, isFalse);
+    });
+
+    test('isNotEmpty returns false for empty user', () {
+      expect(UserModel.empty.isNotEmpty, isFalse);
+    });
+
+    test('isNotEmpty returns true for non-empty user', () {
+      final user = UserModel(email: email, id: id);
+      expect(user.isNotEmpty, isTrue);
     });
   });
 }
