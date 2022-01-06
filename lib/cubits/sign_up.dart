@@ -38,7 +38,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       status: Formz.validate([
         state.emailInput,
         passwordInput,
-        state.confirmedPasswordInput,
+        confirmedPasswordInput,
       ]),
     ));
   }
@@ -67,7 +67,12 @@ class SignUpCubit extends Cubit<SignUpState> {
         password: state.passwordInput.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
-    } on Exception {
+    } on SignUpWithEmailAndPasswordFailure catch (e) {
+      emit(state.copyWith(
+        errorMessage: e.message,
+        status: FormzStatus.submissionFailure,
+      ));
+    } catch (_) {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
     }
   }
@@ -80,6 +85,7 @@ class SignUpState extends Equatable {
     this.passwordInput = const PasswordInputModel.pure(),
     this.confirmedPasswordInput = const ConfirmedPasswordInputModel.pure(),
     this.status = FormzStatus.pure,
+    this.errorMessage,
   });
 
   final EmailInputModel emailInput;
@@ -88,8 +94,16 @@ class SignUpState extends Equatable {
   // https://github.com/numen31337/copy_with_extension/pull/23
   // TODO: @CopyWithField(required: true)
   final FormzStatus status;
+  final String? errorMessage;
 
   @override
-  List<Object> get props =>
-      [emailInput, passwordInput, confirmedPasswordInput, status];
+  List<Object?> get props {
+    return [
+      emailInput,
+      passwordInput,
+      confirmedPasswordInput,
+      status,
+      errorMessage,
+    ];
+  }
 }

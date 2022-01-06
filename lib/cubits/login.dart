@@ -39,7 +39,12 @@ class LoginCubit extends Cubit<LoginState> {
         password: state.passwordInput.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
-    } on Exception {
+    } on LogInWithEmailAndPasswordFailure catch (e) {
+      emit(state.copyWith(
+        errorMessage: e.message,
+        status: FormzStatus.submissionFailure,
+      ));
+    } catch (_) {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
     }
   }
@@ -49,11 +54,13 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       await _repository.logInWithGoogle();
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
-    } on Exception {
+    } on LogInWithGoogleFailure catch (e) {
+      emit(state.copyWith(
+        errorMessage: e.message,
+        status: FormzStatus.submissionFailure,
+      ));
+    } catch (_) {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
-      // ignore: avoid_catching_errors
-    } on NoSuchMethodError {
-      emit(state.copyWith(status: FormzStatus.pure));
     }
   }
 }
@@ -64,6 +71,7 @@ class LoginState extends Equatable {
     this.emailInput = const EmailInputModel.pure(),
     this.passwordInput = const PasswordInputModel.pure(),
     this.status = FormzStatus.pure,
+    this.errorMessage,
   });
 
   final EmailInputModel emailInput;
@@ -71,7 +79,15 @@ class LoginState extends Equatable {
   // https://github.com/numen31337/copy_with_extension/pull/23
   // TODO: @CopyWithField(required: true)
   final FormzStatus status;
+  final String? errorMessage;
 
   @override
-  List<Object> get props => [emailInput, passwordInput, status];
+  List<Object?> get props {
+    return [
+      emailInput,
+      passwordInput,
+      status,
+      errorMessage,
+    ];
+  }
 }
