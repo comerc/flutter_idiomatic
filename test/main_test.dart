@@ -1,25 +1,15 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:flutter_idiomatic/import.dart';
 
-// ignore: must_be_immutable, avoid_implementing_value_types
-class MockUser extends Mock implements UserModel {
-  @override
-  String get id => 'id';
-
-  @override
-  String get name => 'Joe';
-
-  @override
-  String get email => 'joe@gmail.com';
-}
+class MockUser extends Mock implements UserModel {}
 
 class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
-class MockAuthenticationCubit extends MockBloc<AuthenticationState>
+class MockAuthenticationCubit extends MockCubit<AuthenticationState>
     implements AuthenticationCubit {}
 
 class MockGitHubRepository extends Mock implements GitHubRepository {}
@@ -28,30 +18,23 @@ class MockDatabaseRepository extends Mock implements DatabaseRepository {}
 
 void main() {
   group('App', () {
-    AuthenticationRepository authenticationRepository;
-    GitHubRepository gitHubRepository;
-    DatabaseRepository databaseRepository;
-
+    late AuthenticationRepository authenticationRepository;
+    late UserModel user;
+    late GitHubRepository gitHubRepository;
+    late DatabaseRepository databaseRepository;
     setUp(() {
       authenticationRepository = MockAuthenticationRepository();
+      user = MockUser();
       gitHubRepository = MockGitHubRepository();
       databaseRepository = MockDatabaseRepository();
-      when(authenticationRepository.user).thenAnswer(
+      when(() => authenticationRepository.user).thenAnswer(
         (_) => Stream.empty(),
       );
+      when(() => authenticationRepository.currentUser).thenReturn(user);
+      when(() => user.isNotEmpty).thenReturn(true);
+      when(() => user.isEmpty).thenReturn(false);
+      when(() => user.email).thenReturn('test@gmail.com');
     });
-
-    test('throws AssertionError when authenticationRepository is null', () {
-      expect(
-        () => App(
-          authenticationRepository: null,
-          gitHubRepository: null,
-          databaseRepository: null,
-        ),
-        throwsAssertionError,
-      );
-    });
-
     testWidgets('renders AppView', (tester) async {
       await tester.pumpWidget(
         App(
@@ -60,19 +43,17 @@ void main() {
           databaseRepository: databaseRepository,
         ),
       );
+      await tester.pump();
       expect(find.byType(AppView), findsOneWidget);
     });
   });
-
   group('AppView', () {
-    AuthenticationCubit authenticationCubit;
-    AuthenticationRepository authenticationRepository;
-
+    late AuthenticationRepository authenticationRepository;
+    late AuthenticationCubit authenticationCubit;
     setUp(() {
-      authenticationCubit = MockAuthenticationCubit();
       authenticationRepository = MockAuthenticationRepository();
+      authenticationCubit = MockAuthenticationCubit();
     });
-
     testWidgets('renders SplashScreen by default', (tester) async {
       await tester.pumpWidget(
         BlocProvider.value(value: authenticationCubit, child: AppView()),
@@ -80,13 +61,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(SplashScreen), findsOneWidget);
     });
-
-    testWidgets('navigates to LoginScreen when status is unauthenticated',
+    testWidgets('navigates to LoginScreen when unauthenticated',
         (tester) async {
-      whenListen(
-        authenticationCubit,
-        Stream.value(AuthenticationState.unauthenticated()),
-      );
+      when(() => authenticationCubit.state)
+          .thenReturn(AuthenticationState.unauthenticated());
       await tester.pumpWidget(
         RepositoryProvider.value(
           value: authenticationRepository,
@@ -99,13 +77,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(LoginScreen), findsOneWidget);
     });
+    testWidgets('navigates to HomeScreen when authenticated', (tester) async {
+      final user = MockUser();
+      when(() => user.email).thenReturn('test@gmail.com');
+      when(() => authenticationCubit.state)
+          .thenReturn(AuthenticationState.authenticated(user));
 
-    testWidgets('navigates to HomeScreen when status is authenticated',
-        (tester) async {
-      whenListen(
-        authenticationCubit,
-        Stream.value(AuthenticationState.authenticated(MockUser())),
-      );
       await tester.pumpWidget(
         RepositoryProvider.value(
           value: authenticationRepository,
