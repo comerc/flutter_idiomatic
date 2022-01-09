@@ -1,4 +1,5 @@
 // общий import исключает дублирование на глобальные имена внутри проекта
+export 'common/cache_client.dart';
 export 'common/const.dart';
 export 'common/graphql_service.dart';
 export 'common/helpers.dart';
