@@ -150,13 +150,27 @@ class LogOutFailure implements Exception {}
 class AuthenticationRepository {
   /// {@macro authentication_repository}
   AuthenticationRepository({
+    CacheClient? cacheClient,
     FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+  })  : _cacheClient = cacheClient ?? CacheClient(),
+        _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn.standard();
 
+  final CacheClient _cacheClient;
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+
+  /// Whether or not the current environment is web
+  /// Should only be overriden for testing purposes. Otherwise,
+  /// defaults to [kIsWeb]
+  @visibleForTesting
+  bool isWeb = kIsWeb;
+
+  /// User cache key.
+  /// Should only be used for testing purposes.
+  @visibleForTesting
+  static const userCacheKey = '__user_cache_key__';
 
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
@@ -164,8 +178,17 @@ class AuthenticationRepository {
   /// Emits [User.empty] if the user is not authenticated.
   Stream<UserModel> get user {
     return _firebaseAuth.authStateChanges().map((User? firebaseUser) {
-      return firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
+      final user =
+          firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
+      _cacheClient.write(key: userCacheKey, value: user);
+      return user;
     });
+  }
+
+  /// Returns the current cached user.
+  /// Defaults to [UserModel.empty] if there is no cached user.
+  UserModel get currentUser {
+    return _cacheClient.read(key: userCacheKey) ?? UserModel.empty;
   }
 
   /// Creates a new user with the provided [email] and [password].

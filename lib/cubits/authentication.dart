@@ -6,13 +6,11 @@ import 'package:flutter_idiomatic/import.dart';
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit(AuthenticationRepository repository)
       : _repository = repository,
-        // TODO: authenticationRepository.currentUser
-        // super(
-        //   authenticationRepository.currentUser.isNotEmpty
-        //       ? AppState.authenticated(authenticationRepository.currentUser)
-        //       : const AppState.unauthenticated(),
-        // ) {
-        super(AuthenticationState.unauthenticated()) {
+        super(
+          repository.currentUser.isNotEmpty
+              ? AuthenticationState.authenticated(repository.currentUser)
+              : const AuthenticationState.unauthenticated(),
+        ) {
     _userSubscription = repository.user.listen(changeUser);
   }
 

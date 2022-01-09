@@ -18,10 +18,9 @@ void main() {
     when(() => authenticationRepository.user).thenAnswer(
       (_) => Stream.empty(),
     );
-    // TODO: authenticationRepository.currentUser
-    // when(
-    //   () => authenticationRepository.currentUser,
-    // ).thenReturn(UserModel.empty);
+    when(
+      () => authenticationRepository.currentUser,
+    ).thenReturn(UserModel.empty);
   });
 
   group('AuthenticationCubit', () {
