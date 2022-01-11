@@ -3,7 +3,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:formz/formz.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:flutter_idiomatic/import.dart';
 
 class MockAuthenticationRepository extends Mock
@@ -42,7 +42,9 @@ void main() {
 
     setUp(() {
       loginCubit = MockLoginCubit();
-      when(loginCubit.state).thenReturn(LoginState());
+      when(() => loginCubit.state).thenReturn(LoginState());
+      when(() => loginCubit.logInWithGoogle()).thenAnswer((_) async {});
+      when(() => loginCubit.logInWithCredentials()).thenAnswer((_) async {});
     });
 
     group('calls', () {
@@ -58,7 +60,7 @@ void main() {
           ),
         );
         await tester.enterText(find.byKey(Key('_EmailInput')), testEmail);
-        verify(loginCubit.doEmailChanged(testEmail)).called(1);
+        verify(() => loginCubit.doEmailChanged(testEmail)).called(1);
       });
 
       testWidgets('doPasswordChanged when password changes', (tester) async {
@@ -73,12 +75,12 @@ void main() {
           ),
         );
         await tester.enterText(find.byKey(Key('_PasswordInput')), testPassword);
-        verify(loginCubit.doPasswordChanged(testPassword)).called(1);
+        verify(() => loginCubit.doPasswordChanged(testPassword)).called(1);
       });
 
       testWidgets('logInWithCredentials when login button is pressed',
           (tester) async {
-        when(loginCubit.state).thenReturn(
+        when(() => loginCubit.state).thenReturn(
           LoginState(status: FormzStatus.valid),
         );
         await tester.pumpWidget(
@@ -92,7 +94,7 @@ void main() {
           ),
         );
         await tester.tap(find.byKey(Key('_LoginButton')));
-        verify(loginCubit.logInWithCredentials()).called(1);
+        verify(() => loginCubit.logInWithCredentials()).called(1);
       });
 
       testWidgets('logInWithGoogle when sign in with google button is pressed',
@@ -108,7 +110,7 @@ void main() {
           ),
         );
         await tester.tap(find.byKey(Key('_GoogleLoginButton')));
-        verify(loginCubit.logInWithGoogle()).called(1);
+        verify(() => loginCubit.logInWithGoogle()).called(1);
       });
     });
 
@@ -139,8 +141,9 @@ void main() {
       testWidgets('invalid email error text when email is invalid',
           (tester) async {
         final emailInput = MockEmailInputModel();
-        when(emailInput.invalid).thenReturn(true);
-        when(loginCubit.state).thenReturn(LoginState(emailInput: emailInput));
+        when(() => emailInput.invalid).thenReturn(true);
+        when(() => loginCubit.state)
+            .thenReturn(LoginState(emailInput: emailInput));
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -157,8 +160,8 @@ void main() {
       testWidgets('invalid password error text when password is invalid',
           (tester) async {
         final passwordInput = MockPasswordInputModel();
-        when(passwordInput.invalid).thenReturn(true);
-        when(loginCubit.state)
+        when(() => passwordInput.invalid).thenReturn(true);
+        when(() => loginCubit.state)
             .thenReturn(LoginState(passwordInput: passwordInput));
         await tester.pumpWidget(
           MaterialApp(
@@ -175,7 +178,7 @@ void main() {
 
       testWidgets('disabled login button when status is not validated',
           (tester) async {
-        when(loginCubit.state).thenReturn(
+        when(() => loginCubit.state).thenReturn(
           LoginState(status: FormzStatus.invalid),
         );
         await tester.pumpWidget(
@@ -196,7 +199,7 @@ void main() {
 
       testWidgets('enabled login button when status is validated',
           (tester) async {
-        when(loginCubit.state).thenReturn(
+        when(() => loginCubit.state).thenReturn(
           LoginState(status: FormzStatus.valid),
         );
         await tester.pumpWidget(
