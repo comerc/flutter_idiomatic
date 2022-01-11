@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_idiomatic/import.dart';
 
-// ignore: must_be_immutable, avoid_implementing_value_types
+// ignore: avoid_implementing_value_types
 class MockUserModel extends Mock implements UserModel {}
 
 void main() {

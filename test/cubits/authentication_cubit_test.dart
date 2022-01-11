@@ -6,7 +6,7 @@ import 'package:flutter_idiomatic/import.dart';
 class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
-// ignore: must_be_immutable, avoid_implementing_value_types
+// ignore: avoid_implementing_value_types
 class MockUserModel extends Mock implements UserModel {}
 
 void main() {
