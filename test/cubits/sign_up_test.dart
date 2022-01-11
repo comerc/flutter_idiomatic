@@ -8,31 +8,79 @@ class MockAuthenticationRepository extends Mock
     implements AuthenticationRepository {}
 
 void main() {
-  const invalidEmailString = 'invalid';
-  const invalidEmail = EmailInputModel.dirty(invalidEmailString);
+  group('SignUpState', () {
+    const emailInput = EmailInputModel.dirty('email');
+    const passwordString = 'password';
+    const passwordInput = PasswordInputModel.dirty(passwordString);
+    const confirmedPassword = ConfirmedPasswordInputModel.dirty(
+      password: passwordString,
+      value: passwordString,
+    );
 
-  const validEmailString = 'test@gmail.com';
-  const validEmail = EmailInputModel.dirty(validEmailString);
+    test('supports value comparisons', () {
+      expect(SignUpState(), SignUpState());
+    });
 
-  const invalidPasswordString = 'invalid';
-  const invalidPassword = PasswordInputModel.dirty(invalidPasswordString);
+    test('returns same object when no properties are passed', () {
+      expect(SignUpState().copyWith(), SignUpState());
+    });
 
-  const validPasswordString = 't0pS3cret1234';
-  const validPassword = PasswordInputModel.dirty(validPasswordString);
+    test('returns object with updated status when status is passed', () {
+      expect(
+        SignUpState().copyWith(status: FormzStatus.pure),
+        SignUpState(),
+      );
+    });
 
-  const invalidConfirmedPasswordString = 'invalid';
-  const invalidConfirmedPassword = ConfirmedPasswordInputModel.dirty(
-    password: validPasswordString,
-    value: invalidConfirmedPasswordString,
-  );
+    test('returns object with updated email when email is passed', () {
+      expect(
+        SignUpState().copyWith(emailInput: emailInput),
+        SignUpState(emailInput: emailInput),
+      );
+    });
 
-  const validConfirmedPasswordString = 't0pS3cret1234';
-  const validConfirmedPassword = ConfirmedPasswordInputModel.dirty(
-    password: validPasswordString,
-    value: validConfirmedPasswordString,
-  );
+    test('returns object with updated password when password is passed', () {
+      expect(
+        SignUpState().copyWith(passwordInput: passwordInput),
+        SignUpState(passwordInput: passwordInput),
+      );
+    });
+
+    test(
+        'returns object with updated confirmedPassword'
+        ' when confirmedPassword is passed', () {
+      expect(
+        SignUpState().copyWith(confirmedPasswordInput: confirmedPassword),
+        SignUpState(confirmedPasswordInput: confirmedPassword),
+      );
+    });
+  });
 
   group('SignUpCubit', () {
+    const invalidEmailString = 'invalid';
+    const invalidEmail = EmailInputModel.dirty(invalidEmailString);
+
+    const validEmailString = 'test@gmail.com';
+    const validEmail = EmailInputModel.dirty(validEmailString);
+
+    const invalidPasswordString = 'invalid';
+    const invalidPassword = PasswordInputModel.dirty(invalidPasswordString);
+
+    const validPasswordString = 't0pS3cret1234';
+    const validPassword = PasswordInputModel.dirty(validPasswordString);
+
+    const invalidConfirmedPasswordString = 'invalid';
+    const invalidConfirmedPassword = ConfirmedPasswordInputModel.dirty(
+      password: validPasswordString,
+      value: invalidConfirmedPasswordString,
+    );
+
+    const validConfirmedPasswordString = 't0pS3cret1234';
+    const validConfirmedPassword = ConfirmedPasswordInputModel.dirty(
+      password: validPasswordString,
+      value: validConfirmedPasswordString,
+    );
+
     late AuthenticationRepository authenticationRepository;
 
     setUp(() {

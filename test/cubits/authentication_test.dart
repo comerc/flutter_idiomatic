@@ -10,20 +10,39 @@ class MockAuthenticationRepository extends Mock
 class MockUserModel extends Mock implements UserModel {}
 
 void main() {
-  final user = MockUserModel();
-  late AuthenticationRepository authenticationRepository;
+  group('AuthenticationState', () {
+    group('unauthenticated', () {
+      test('has correct status', () {
+        final state = AuthenticationState.unauthenticated();
+        expect(state.status, AuthenticationStatus.unauthenticated);
+        expect(state.user, UserModel.empty);
+      });
+    });
 
-  setUp(() {
-    authenticationRepository = MockAuthenticationRepository();
-    when(() => authenticationRepository.user).thenAnswer(
-      (_) => Stream.empty(),
-    );
-    when(
-      () => authenticationRepository.currentUser,
-    ).thenReturn(UserModel.empty);
+    group('authenticated', () {
+      test('has correct status', () {
+        final user = MockUserModel();
+        final state = AuthenticationState.authenticated(user);
+        expect(state.status, AuthenticationStatus.authenticated);
+        expect(state.user, user);
+      });
+    });
   });
 
   group('AuthenticationCubit', () {
+    final user = MockUserModel();
+    late AuthenticationRepository authenticationRepository;
+
+    setUp(() {
+      authenticationRepository = MockAuthenticationRepository();
+      when(() => authenticationRepository.user).thenAnswer(
+        (_) => Stream.empty(),
+      );
+      when(
+        () => authenticationRepository.currentUser,
+      ).thenReturn(UserModel.empty);
+    });
+
     test(
         'initial state is AuthenticationState.unauthenticated when user is empty',
         () async {
