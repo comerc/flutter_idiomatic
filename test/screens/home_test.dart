@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_idiomatic/import.dart';
 
-class MockAuthenticationBloc extends MockCubit<AuthenticationState>
+class MockAuthenticationCubit extends MockCubit<AuthenticationState>
     implements AuthenticationCubit {}
 
 // ignore: avoid_implementing_value_types
@@ -13,14 +13,14 @@ class MockUserModel extends Mock implements UserModel {}
 
 void main() {
   group('HomeScreen', () {
-    late AuthenticationCubit authenticationBloc;
+    late AuthenticationCubit authenticationCubit;
     late UserModel user;
 
     setUp(() {
-      authenticationBloc = MockAuthenticationBloc();
+      authenticationCubit = MockAuthenticationCubit();
       user = MockUserModel();
       when(() => user.email).thenReturn('test@gmail.com');
-      when(() => authenticationBloc.state)
+      when(() => authenticationCubit.state)
           .thenReturn(AuthenticationState.authenticated(user));
     });
 
@@ -33,14 +33,14 @@ void main() {
           (tester) async {
         await tester.pumpWidget(
           BlocProvider.value(
-            value: authenticationBloc,
+            value: authenticationCubit,
             child: MaterialApp(
               home: HomeScreen(),
             ),
           ),
         );
         await tester.tap(find.byKey(Key('_LogoutButton')));
-        verify(() => authenticationBloc.requestLogout()).called(1);
+        verify(() => authenticationCubit.requestLogout()).called(1);
       });
     });
 
@@ -48,7 +48,7 @@ void main() {
       testWidgets('avatar widget', (tester) async {
         await tester.pumpWidget(
           BlocProvider.value(
-            value: authenticationBloc,
+            value: authenticationCubit,
             child: MaterialApp(
               home: HomeScreen(),
             ),
@@ -60,7 +60,7 @@ void main() {
       testWidgets('email address', (tester) async {
         await tester.pumpWidget(
           BlocProvider.value(
-            value: authenticationBloc,
+            value: authenticationCubit,
             child: MaterialApp(
               home: HomeScreen(),
             ),
@@ -73,7 +73,7 @@ void main() {
         when(() => user.name).thenReturn('Joe');
         await tester.pumpWidget(
           BlocProvider.value(
-            value: authenticationBloc,
+            value: authenticationCubit,
             child: MaterialApp(
               home: HomeScreen(),
             ),
