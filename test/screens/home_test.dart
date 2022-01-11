@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:flutter_idiomatic/import.dart';
 
 class MockAuthenticationBloc extends MockCubit<AuthenticationState>
     implements AuthenticationCubit {}
 
-// ignore: must_be_immutable, avoid_implementing_value_types
-class MockUserModel extends Mock implements UserModel {
-  @override
-  String get email => 'test@gmail.com';
-}
+// ignore: avoid_implementing_value_types
+class MockUserModel extends Mock implements UserModel {}
 
 void main() {
   group('HomeScreen', () {
@@ -22,9 +19,9 @@ void main() {
     setUp(() {
       authenticationBloc = MockAuthenticationBloc();
       user = MockUserModel();
-      when(authenticationBloc.state).thenReturn(
-        AuthenticationState.authenticated(user),
-      );
+      when(() => user.email).thenReturn('test@gmail.com');
+      when(() => authenticationBloc.state)
+          .thenReturn(AuthenticationState.authenticated(user));
     });
 
     test('has a route', () {
@@ -43,7 +40,7 @@ void main() {
           ),
         );
         await tester.tap(find.byKey(Key('_LogoutButton')));
-        verify(authenticationBloc.requestLogout()).called(1);
+        verify(() => authenticationBloc.requestLogout()).called(1);
       });
     });
 
@@ -73,7 +70,7 @@ void main() {
       });
 
       testWidgets('name', (tester) async {
-        when(user.name).thenReturn('Joe');
+        when(() => user.name).thenReturn('Joe');
         await tester.pumpWidget(
           BlocProvider.value(
             value: authenticationBloc,
