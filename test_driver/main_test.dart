@@ -25,7 +25,7 @@ Future<void> main() {
     ..restartAppBetweenScenarios = true
     // ..buildFlavor = "staging" // uncomment when using build flavor and check android/ios flavor setup see android file android\app\build.gradle
     // ..targetDeviceId = "all" // uncomment to run tests on all connected devices or set specific device target id
-    // ..targetDeviceId = "emulator-5554" // $ flutter devices
+    ..targetDeviceId = "emulator-5554" // $ flutter devices
     // ..tagExpression = "@smoke" // uncomment to see an example of running scenarios based on tag expressions
     // ..exitAfterTestRun = true // set to false if debugging to exit cleanly
     ..targetAppPath = "test_driver/app.dart";
