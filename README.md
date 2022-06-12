@@ -6,6 +6,7 @@ It is starter kit with idiomatic code structure :) Firebase Authentication & Gra
 - https://youtu.be/rViOUxsGs2k
 - https://youtu.be/FndheiFSvPY
 - https://youtu.be/zIdsacU_y-k
+- [Альтернатива](https://habr.com/ru/company/atisu/blog/597709/)
 
 Inspired by [flutter_bloc example](https://github.com/felangel/bloc/tree/master/examples/flutter_firebase_login).
 
